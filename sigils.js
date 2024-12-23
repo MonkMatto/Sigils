@@ -7,8 +7,8 @@ function makeAddress() {
 }
 
 let guardian = true;
-let address = "0xF8d9056db2C2189155bc25A30269dc5dDeD15d46"; // will be added by solidity script
-// let address  = makeAddress(); // randomizer for testing
+// let address = "0xF8d9056db2C2189155bc25A30269dc5dDeD15d46"; // will be added by solidity script
+let address  = makeAddress(); // randomizer for testing
 
 const project = "Sigils 2.0";
 console.log(`${project} copyright Matto 2024`);
@@ -305,13 +305,18 @@ document.addEventListener("keydown", (event) => {
   const k = event.key.toUpperCase();
   if (k === "S") {
     let name = background
-      ? `Sigils-background_${address}`
-      : `Sigils_${address}`;
+      ? `Sigils_${address}`
+      : `Sigils_NOBKG_${address}`;
     saveStrings([svg], name, "svg");
+  } else if (k === "P") {
+    let name = background
+      ? `Sigils_${address}`
+      : `Sigils_NOBKG_${address}`;
+    saveStrings([svg], name, "png");
   } else if (k === "H") {
     showSignature = !showSignature;
     updateSVG();
-  } else if (k === "P") {
+  } else if (k === "B") {
     background = !background;
     updateSVG();
   } else if (k === "I") {
@@ -353,12 +358,34 @@ function rplc(s, o, n) {
 }
 
 function saveStrings(content, name, extension) {
+  if (extension === "png") {
+    let mult = 6;
+    const canvas = document.createElement("canvas");
+    const ctx = canvas.getContext("2d");
+    canvas.width = width * mult;
+    canvas.height = height * mult;
+    ctx.fillStyle = backgroundColor;
+    ctx.fillRect(0, 0, width * mult, height * mult);
+    const img = new Image();
+    img.onload = () => { 
+      ctx.drawImage(img, 0, 0);
+      canvas.toBlob((blob) => {
+        const link = document.createElement("a");
+        link.href = URL.createObjectURL(blob);
+        link.download = `${name}.${extension}`;
+        link.click();
+      });
+    };
+    img.src = `data:image/svg+xml;base64,${btoa(content)}`;
+    return;
+  }
   const blob = new Blob(content, { type: "image/svg+xml" });
   const link = document.createElement("a");
   link.href = URL.createObjectURL(blob);
   link.download = `${name}.${extension}`;
   link.click();
 }
+
 
 // p5
 // function keyPressed() {
