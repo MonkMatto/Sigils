@@ -13,7 +13,7 @@ let address  = makeAddress(); // randomizer for testing
 const project = "Sigils 2.0";
 console.log(`${project} copyright Matto 2024`);
 console.log(
-  "URL PARAMETERS IN HTML MODE: address=0x..., background=bool, stroke-width=positive-number, signature=bool, invert=bool, random=bool, distance=number"
+  "URL PARAMETERS IN HTML MODE: address=0x..., background=bool, simplify=bool, signature=bool, invert=bool, stroke-width=positive-number, distance=number"
 );
 console.log(`DEFAULT ADDRESS: ${address}`);
 let background = true;
