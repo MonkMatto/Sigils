@@ -19,6 +19,7 @@ console.log(`DEFAULT ADDRESS: ${address}`);
 let background = true;
 let invert = false;
 let simplify = false;
+let still = false;
 let strokeWidth = 1;
 let distance = 10;
 let showSignature = false;
@@ -34,6 +35,12 @@ if (urlAddress) {
     console.log(`CUSTOM ADDRESS: ${address}`);
   }
 }
+
+const urlStill = urlParams.get("still");
+if (urlStill == "true") {
+  still = true;
+}
+
 const urlBackground = urlParams.get("background");
 if (urlBackground == "false") {
   background = false;
@@ -95,10 +102,11 @@ for (let i = 0; i < shapes; i++) {
 }
 let spacing = Math.floor((width - distance * 10) / shapes);
 let bg = `<g id="background"><desc>Background Color</desc>`;
-let mg1 = `<g id="midground-1"><desc>Midground Circles at nodes, stroke-width = 1x.</desc>`;
-let mg2 = `<g id="midground-2"><desc>Midground lines at center, stroke-width = 2x.</desc>`;
+let mg1 = `<g id="midground-1"><desc>Midground circles at nodes, stroke-width = 1x.</desc>`;
+let mg2 = `<g id="midground-2"><desc>Midground concentric circles and lines at center, stroke-width = 2x.</desc>`;
 let fg = `<g id="foreground"><desc>Foreground shapes, stroke-width = 3x.</desc>`;
-let svg;
+let svg, svgStill;
+let shapeGroups = new Array(shapes);
 
 let pens = [
   `stroke:${strokeColor}; stroke-width:${
@@ -141,16 +149,16 @@ function signature() {
   return s;
 }
 
-// function draw() {
-for (let i = 0; i < shapes; i++) {
+for (let i = 0; i < shapes; i++) { 
+  shapeGroups[i] = `<g id="shape${i}">`;
   let shape = shapes - i;
 
   let radius = (spacing * shape) / 2;
   let value = parseInt(hashArray[i], 16);
   let sections = 1 + (value % 16);
 
-  // 40 concentric circles
   mg2 += C(mid, mid, radius, `${pens[1]}`);
+  shapeGroups[i] += C(mid, mid, radius, `${pens[1]}`);
 
   if (sections == 1) {
     console.log(`Nothing drawn for shape ${i}, shifting color.`);
@@ -161,6 +169,7 @@ for (let i = 0; i < shapes; i++) {
     points[i].push({ mid, mid });
     if (guardian) {
       fg += MC(mid, mid, radius, 4, `${pens[2]}`);
+      shapeGroups[i] += MC(mid, mid, radius, 4, `${pens[2]}`);
     }
   } else {
     console.log(`Drawing ${sections} sections for shape ${i}.`);
@@ -182,11 +191,29 @@ for (let i = 0; i < shapes; i++) {
             `${pens[0]}`
           ); // add circles
 
+          shapeGroups[i] += CC(
+            points[i][j].x,
+            points[i][j].y,
+            strokeWidth * 4,
+            3,
+            `${pens[0]}`
+          ); // add circles
+
           // lines from inscription points to center
           mg2 += L(points[i][j].x, points[i][j].y, mid, mid, `${pens[1]}`);
+
+          shapeGroups[i] += L(points[i][j].x, points[i][j].y, mid, mid, `${pens[1]}`);
         }
         if (j == 0) {
           fg += L(
+            points[i][j].x,
+            points[i][j].y,
+            points[i][sections - 1].x,
+            points[i][sections - 1].y,
+            `${pens[2]}`
+          );
+
+          shapeGroups[i] += L(
             points[i][j].x,
             points[i][j].y,
             points[i][sections - 1].x,
@@ -201,9 +228,20 @@ for (let i = 0; i < shapes; i++) {
             points[i][j - 1].y,
             `${pens[2]}`
           );
+
+          shapeGroups[i] += L(
+            points[i][j].x,
+            points[i][j].y,
+            points[i][j - 1].x,
+            points[i][j - 1].y,
+            `${pens[2]}` 
+          );
         }
       }
       bg += `${polygon}" style="stroke-opacity:0; fill-opacity:.075; fill:${color};" />`;
+      if (background) {
+        shapeGroups[i] += `${polygon}" style="stroke-opacity:0; fill-opacity:.075; fill:${color};" />`;
+      }
     }
     // add circles
     let dist = Math.sqrt(
@@ -218,9 +256,29 @@ for (let i = 0; i < shapes; i++) {
         dist,
         `stroke-opacity:0; fill-opacity:.02; fill:${color};`
       );
+      if (background) {
+        shapeGroups[i] += C(
+          points[i][j].x,
+          points[i][j].y,
+          dist,
+          `stroke-opacity:0; fill-opacity:.02; fill:${color};`
+        );
+      }
     }
   }
+
+// Add animation to the group
+  const rotationDuration = radius * 0.05; // Rotation duration proportional to radius
+  let startDeg = 0;
+  let endDeg = 360;
+  if (sections % 2 == 0) {
+    startDeg = 360;
+    endDeg = 0;
+  }
+  shapeGroups[i] += `<animateTransform attributeName="transform" type="rotate" from="${startDeg} ${mid} ${mid}" to="${endDeg} ${mid} ${mid}" dur="${rotationDuration}s" repeatCount="indefinite" />`;
+  shapeGroups[i] += "</g>";
 }
+
 bg += "</g>";
 mg1 += "</g>";
 mg2 += "</g>";
@@ -233,17 +291,28 @@ function updateSVG() {
   if (existingSVG) {
     existingSVG.remove();
   }
+  svg = svgStart;
+  svgStill = svgStart;
   if (background) {
-    svg = `${svgStart}${bg}${mg1}${mg2}${fg}`;
+    svgStill += `${bg}${mg1}${mg2}${fg}`;
   } else {
-    svg = `${svgStart}${mg1}${mg2}${fg}`;
+    svgStill += `${mg1}${mg2}${fg}`;
+  }
+  for (let i = 0; i < shapes; i++) {
+    svg += shapeGroups[i];
   }
   if (showSignature) {
+    svgStill += `${sig}</svg>`;
     svg += `${sig}</svg>`;
   } else {
+    svgStill += "</svg>";
     svg += "</svg>";
   }
-  document.body.insertAdjacentHTML("beforeend", svg);
+  if (still) {
+    document.body.insertAdjacentHTML("beforeend", svgStill);
+  } else {
+    document.body.insertAdjacentHTML("beforeend", svg);
+  }
 }
 
 function inscribe(n, s, r) {
