@@ -6,9 +6,11 @@ function makeAddress() {
   return a;
 }
 
-let guardian = true;
-// let address = "0xF8d9056db2C2189155bc25A30269dc5dDeD15d46"; // will be added by solidity script
-let address  = makeAddress(); // randomizer for testing
+const tokenData = {address: makeAddress(), guardian: true};
+
+let guardian = tokenData.guardian;
+let address  = tokenData.address;
+// let address = "0xF8d9056db2C2189155bc25A30269dc5dDeD15d46";
 
 const project = "Sigils 2.0";
 console.log(`${project} copyright Matto 2024`);
