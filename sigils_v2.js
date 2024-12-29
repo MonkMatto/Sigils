@@ -10,7 +10,7 @@ let guardian = true;
 // let address = "0xF8d9056db2C2189155bc25A30269dc5dDeD15d46"; // will be added by solidity script
 let address  = makeAddress(); // randomizer for testing
 
-const project = "Sigils 2.0";
+const project = "Sigils 3.0";
 console.log(`${project} copyright Matto 2024`);
 console.log(
   "URL PARAMETERS IN HTML MODE: address=0x..., background=bool, simplify=bool, signature=bool, invert=bool, stroke-width=positive-number, distance=number"
@@ -114,7 +114,7 @@ let pens = [
   }px; stroke-opacity:0.1;`,
   `stroke:${strokeColor}; stroke-width:${
     strokeWidth * 2
-  }px; stroke-opacity:0.05;`,
+  }px; stroke-opacity:0.075;`,
   `stroke:${strokeColor}; stroke-width:${
     strokeWidth * 3
   }px; stroke-opacity:1.0;`,
@@ -177,13 +177,14 @@ for (let i = 0; i < shapes; i++) {
 
     // draw the lines
     if (guardian) {
+      let tempStr;
       let polygon = `<polygon points="`;
       for (let j = 0; j < sections; j++) {
         polygon += `${points[i][j].x},${points[i][j].y} `;
 
         if (!simplify) {
           // concentric circles at inscription points
-          mg1 += CC(
+          tempStr = CC(
             points[i][j].x,
             points[i][j].y,
             strokeWidth * 4,
@@ -191,56 +192,41 @@ for (let i = 0; i < shapes; i++) {
             `${pens[0]}`
           ); // add circles
 
-          shapeGroups[i] += CC(
-            points[i][j].x,
-            points[i][j].y,
-            strokeWidth * 4,
-            3,
-            `${pens[0]}`
-          ); // add circles
+          mg1 += tempStr;
+          shapeGroups[i] += tempStr;
 
           // lines from inscription points to center
-          mg2 += L(points[i][j].x, points[i][j].y, mid, mid, `${pens[1]}`);
-
-          shapeGroups[i] += L(points[i][j].x, points[i][j].y, mid, mid, `${pens[1]}`);
+          tempStr = L(points[i][j].x, points[i][j].y, mid, mid, `${pens[1]}`);
+          mg2 += tempStr;
+          shapeGroups[i] += tempStr;
         }
         if (j == 0) {
-          fg += L(
+          tempStr = L(
             points[i][j].x,
             points[i][j].y,
             points[i][sections - 1].x,
             points[i][sections - 1].y,
             `${pens[2]}`
           );
+          fg += tempStr;
+          shapeGroups[i] += tempStr;
 
-          shapeGroups[i] += L(
-            points[i][j].x,
-            points[i][j].y,
-            points[i][sections - 1].x,
-            points[i][sections - 1].y,
-            `${pens[2]}`
-          );
         } else {
-          fg += L(
+          tempStr = L(
             points[i][j].x,
             points[i][j].y,
             points[i][j - 1].x,
             points[i][j - 1].y,
             `${pens[2]}`
           );
-
-          shapeGroups[i] += L(
-            points[i][j].x,
-            points[i][j].y,
-            points[i][j - 1].x,
-            points[i][j - 1].y,
-            `${pens[2]}` 
-          );
+          fg += tempStr;
+          shapeGroups[i] += tempStr;
         }
       }
-      bg += `${polygon}" style="stroke-opacity:0; fill-opacity:.075; fill:${color};" />`;
+      tempStr = `${polygon}" style="stroke-opacity:0; fill-opacity:.075; fill:${color};" />`;
+      bg += tempStr;
       if (background) {
-        shapeGroups[i] += `${polygon}" style="stroke-opacity:0; fill-opacity:.075; fill:${color};" />`;
+        shapeGroups[i] += tempStr;
       }
     }
     // add circles
@@ -268,7 +254,7 @@ for (let i = 0; i < shapes; i++) {
   }
 
 // Add animation to the group
-  const rotationDuration = radius * 0.05; // Rotation duration proportional to radius
+  const rotationDuration = radius * 0.2; // Rotation duration proportional to radius
   let startDeg = 0;
   let endDeg = 360;
   if (sections % 2 == 0) {
