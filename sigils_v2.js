@@ -12,8 +12,9 @@ let guardian = tokenData.guardian;
 let address  = tokenData.address;
 // let address = "0xF8d9056db2C2189155bc25A30269dc5dDeD15d46";
 
-const project = "Sigils 3.0";
-console.log(`${project} copyright Matto 2024`);
+const project = "Sigils";
+const version = "3.0";
+console.log(`${project} ${version} copyright Matto 2024`);
 console.log(
   "URL PARAMETERS IN HTML MODE: address=0x..., background=bool, simplify=bool, signature=bool, invert=bool, stroke-width=positive-number, distance=number"
 );
@@ -360,16 +361,16 @@ function L(x0, y0, x1, y1, s = "") {
 
 document.addEventListener("keydown", (event) => {
   const k = event.key.toUpperCase();
-  if (k === "S") {
-    let name = background
-      ? `Sigils_${address}`
-      : `Sigils_NOBKG_${address}`;
-    saveStrings([svg], name, "svg");
-  } else if (k === "P") {
-    let name = background
-      ? `Sigils_${address}`
-      : `Sigils_NOBKG_${address}`;
-    saveStrings([svg], name, "png");
+  if (k === "A" || k === "S" || k === "P") {
+    let bkStr = !background ? "_NOBKG" : "";
+    let name = `${project}_${address}${bkStr}`;
+    if (k === "A") {
+      saveStrings([svg], `${name}_ANIMI`, "svg");
+    } else if (k === "S") {
+      saveStrings([svgStill], `${name}_STILL`, "svg");
+    } else if (k === "P") {
+      saveStrings([svgStill], `${name}_BITMA`, "png");
+    }
   } else if (k === "H") {
     showSignature = !showSignature;
     updateSVG();
