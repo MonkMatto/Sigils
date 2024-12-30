@@ -23,8 +23,9 @@ let background = true;
 let invert = false;
 let simplify = false;
 let still = false;
-let strokeWidth = 1;
-let distance = 10;
+let customStroke = false;
+let strokeWidth;
+let distance = 0;
 let showSignature = false;
 let backgroundColor = "rgb(25,25,25)";
 let strokeColor = "white";
@@ -50,17 +51,19 @@ if (urlBackground == "false") {
 }
 console.log(`BACKGROUND MODE: ${background}`);
 
-const urlStroke = urlParams.get("stroke-wdith");
-if (urlStroke) {
-  strokeWidth = urlStroke;
-}
+// const urlStroke = urlParams.get("stroke-wdith");
+// if (urlStroke) {
+//   strokeWidth = urlStroke;
+// }
 const urlStrokeWidth = urlParams.get("stroke-width");
 if (urlStrokeWidth) {
   if (!isNaN(urlStrokeWidth)) {
     strokeWidth = urlStrokeWidth;
+    customStroke = true;
+    console.log(`CUSTOM STROKE WIDTH: ${strokeWidth}`);
   }
 }
-console.log(`STROKE WIDTH: ${strokeWidth}`);
+
 const urlSignature = urlParams.get("signature");
 if (urlSignature == "false") {
   showSignature = false;
@@ -87,11 +90,15 @@ if (urlInvert == "true") {
 
 const urlDistance = urlParams.get("distance");
 if (urlDistance) {
-  if (!isNaN(urlDistance)) {
-    distance = parseInt(urlDistance) * 10;
+  if (!isNaN(urlDistance) && urlDistance < 11) {
+    distance = parseInt(urlDistance);
   }
 }
-console.log(`DISTANCE: ${distance / 10}`);
+console.log(`DISTANCE: ${distance}`);
+if (!customStroke) {
+  strokeWidth = 1.1 - (distance * .1);
+  console.log(`STROKE WIDTH: ${strokeWidth}`);
+}
 
 let width = 1000;
 let height = 1000;
@@ -103,12 +110,12 @@ let points = new Array(shapes);
 for (let i = 0; i < shapes; i++) {
   points[i] = [];
 }
-let spacing = Math.floor((width - distance * 10) / shapes);
+let spacing = Math.floor((width - (distance + 1) * 90) / shapes);
 let bg = `<g id="background"><desc>Background Color</desc>`;
 let mg1 = `<g id="midground-1"><desc>Midground circles at nodes, stroke-width = 1x.</desc>`;
 let mg2 = `<g id="midground-2"><desc>Midground concentric circles and lines at center, stroke-width = 2x.</desc>`;
 let fg = `<g id="foreground"><desc>Foreground shapes, stroke-width = 3x.</desc>`;
-let svg, svgStill;
+let svgAnima, svgStill;
 let shapeGroups = new Array(shapes);
 
 let pens = [
@@ -280,7 +287,7 @@ function updateSVG() {
   if (existingSVG) {
     existingSVG.remove();
   }
-  svg = svgStart;
+  svgAnima = svgStart;
   svgStill = svgStart;
   if (background) {
     svgStill += `${bg}${mg1}${mg2}${fg}`;
@@ -288,19 +295,19 @@ function updateSVG() {
     svgStill += `${mg1}${mg2}${fg}`;
   }
   for (let i = 0; i < shapes; i++) {
-    svg += shapeGroups[i];
+    svgAnima += shapeGroups[i];
   }
   if (showSignature) {
     svgStill += `${sig}</svg>`;
-    svg += `${sig}</svg>`;
+    svgAnima += `${sig}</svg>`;
   } else {
     svgStill += "</svg>";
-    svg += "</svg>";
+    svgAnima += "</svg>";
   }
   if (still) {
     document.body.insertAdjacentHTML("beforeend", svgStill);
   } else {
-    document.body.insertAdjacentHTML("beforeend", svg);
+    document.body.insertAdjacentHTML("beforeend", svgAnima);
   }
 }
 
@@ -365,7 +372,7 @@ document.addEventListener("keydown", (event) => {
     let bkStr = !background ? "_NOBKG" : "";
     let name = `${project}_${address}${bkStr}`;
     if (k === "A") {
-      saveStrings([svg], `${name}_ANIMI`, "svg");
+      saveStrings([svgAnima], `${name}_ANIMA`, "svg");
     } else if (k === "S") {
       saveStrings([svgStill], `${name}_STILL`, "svg");
     } else if (k === "P") {
