@@ -38,7 +38,7 @@ contract SIGILS is ERC721Royalty, Ownable(msg.sender) {
     address public royaltyReceiver;
     string public description;
     string public website;
-    string private tokenImagePt1 = '<?xml version="1.0" encoding="utf-8"?><svg id="Sigils" viewBox="0 0 1000 1000" style="background-color:rgb(0,0,0)" xmlns="http://www.w3.org/2000/svg"><text x="50%" y="50%" dominant-baseline="middle" text-anchor="middle" font-family="Times New Roman, serif" font-size="150" font-style="italic" fill="white">Sigils</text>  <text x="50%" y="60%" dominant-baseline="middle" text-anchor="middle" font-family="Times New Roman, serif" font-size="100" font-style="italic" fill="white">#';
+    string private tokenImagePt1 = '<?xml version="1.0" encoding="utf-8"?><svg id="Sigils" viewBox="0 0 1000 1000" style="background-color:rgb(0,0,0)" xmlns="http://www.w3.org/2000/svg"><text x="50%" y="45%" dominant-baseline="middle" text-anchor="middle" font-family="Times New Roman, serif" font-size="120" font-style="italic" fill="white">Guardian Sigil</text><text x="50%" y="60%" dominant-baseline="middle" text-anchor="middle" font-family="Times New Roman, serif" font-size="90" font-style="italic" fill="white">#';
     string private tokenImagePt2 = '</text><g id="signature" style="stroke:white; stroke-width:3px; stroke-linecap:round;"><polyline points="924,956 920,956 920,860 940,872 960,860 960,956 956,956" /><polyline points="928,902 940,872 952,902" stroke-linejoin="bevel" /><line x1="934" y1="888" x2="946" y2="888" /><line x1="920" y1="902" x2="960" y2="902" /><line x1="932" y1="902" x2="932" y2="927" /><line x1="948" y1="902" x2="948" y2="927" /><circle cx="940" cy="940" r="15" /></g></svg>';
     string private htmlPart1 = 
         '<!DOCTYPE html><html lang="en"><head><meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>Sigils</title><style type="text/css" id="Sigils Generator">body {margin: 0;padding: 0;}canvas {padding: 0;margin: auto;display: block;position: absolute;top: 0;bottom: 0;left: 0;right: 0;}</style></head><body><script>';
@@ -61,6 +61,8 @@ contract SIGILS is ERC721Royalty, Ownable(msg.sender) {
     function BURN_AND_RECLAIM(uint256 _tokenId) external onlyOwner {
         _burn(_tokenId);
         // transfer base pledge to token burner
+
+
 
     }
 
