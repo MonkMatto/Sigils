@@ -51,10 +51,6 @@ if (urlBackground == "false") {
 }
 console.log(`BACKGROUND MODE: ${background}`);
 
-// const urlStroke = urlParams.get("stroke-wdith");
-// if (urlStroke) {
-//   strokeWidth = urlStroke;
-// }
 const urlStrokeWidth = urlParams.get("stroke-width");
 if (urlStrokeWidth) {
   if (!isNaN(urlStrokeWidth)) {
@@ -65,8 +61,8 @@ if (urlStrokeWidth) {
 }
 
 const urlSignature = urlParams.get("signature");
-if (urlSignature == "false") {
-  showSignature = false;
+if (urlSignature == "true") {
+  showSignature = true;
 }
 console.log(`SIGNATURE: ${showSignature}`);
 
@@ -95,6 +91,7 @@ if (urlDistance) {
   }
 }
 console.log(`DISTANCE: ${distance}`);
+
 if (!customStroke) {
   strokeWidth = 1.1 - (distance * .1);
   console.log(`STROKE WIDTH: ${strokeWidth}`);
@@ -263,11 +260,10 @@ for (let i = 0; i < shapes; i++) {
     }
   }
 
-// Add animation to the group
-  const rotationDuration = radius * 0.2; // Rotation duration proportional to radius
+  const rotationDuration = radius * 0.2; 
   let startDeg = 0;
   let endDeg = 360;
-  if (sections % 2 == 0) {
+  if ((sections + i) % 2 == 0) {
     startDeg = 360;
     endDeg = 0;
   }
@@ -381,46 +377,8 @@ document.addEventListener("keydown", (event) => {
   } else if (k === "H") {
     showSignature = !showSignature;
     updateSVG();
-  } else if (k === "B") {
-    background = !background;
-    updateSVG();
-  } else if (k === "I") {
-    let b = "black";
-    let w = "white";
-    let d = "rgb(25,25,25)";
-    let l = "rgb(230,230,230)";
-    let fgI = fg;
-    let mgI1 = mg1;
-    let mgI2 = mg2;
-    let svgSI = svgStart;
-    let sigI = sig;
-    if (invert) {
-      invert = false;
-      fgI = rplc(fgI, b, w);
-      mgI1 = rplc(mgI1, b, w);
-      mgI2 = rplc(mgI2, b, w);
-      sigI = rplc(sigI, b, w);
-      svgSI = rplc(svgSI, l, d);
-    } else {
-      invert = true;
-      fgI = rplc(fgI, w, b);
-      mgI1 = rplc(mgI1, w, b);
-      mgI2 = rplc(mgI2, w, b);
-      sigI = rplc(sigI, w, b);
-      svgSI = rplc(svgSI, d, l);
-    }
-    svgStart = svgSI;
-    mg1 = mgI1;
-    mg2 = mgI2;
-    fg = fgI;
-    sig = sigI;
-    updateSVG();
   }
 });
-
-function rplc(s, o, n) {
-  return s.split(o).join(n);
-}
 
 function saveStrings(content, name, extension) {
   if (extension === "png") {
@@ -533,4 +491,8 @@ function saveStrings(content, name, extension) {
 //     }
 //   }
 //   return list[list.length - 1];
+// }
+
+// function rplc(s, o, n) {
+//   return s.split(o).join(n);
 // }
