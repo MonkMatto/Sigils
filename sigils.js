@@ -6,11 +6,11 @@ function makeAddress() {
   return a;
 }
 
-const tokenData = {address: makeAddress(), guardian: true, wild: 1};
+const tokenData = {address: makeAddress(), guardian: true, magic: 1};
 
 let guardian = tokenData.guardian;
 let address  = tokenData.address;
-let wild = tokenData.wild;
+let magic = tokenData.magic;
 // let address = "0xF8d9056db2C2189155bc25A30269dc5dDeD15d46";
 
 const project = "Sigils";
@@ -25,8 +25,10 @@ let invert = false;
 let simplify = false;
 let still = false;
 let customStroke = false;
+let ghost = false;
 let strokeWidth;
 let distance = 0;
+let nodeStyle = 0;
 let showSignature = false;
 let backgroundColor = "rgb(25,25,25)";
 let strokeColor = "white";
@@ -44,6 +46,11 @@ if (urlAddress) {
 const urlStill = urlParams.get("still");
 if (urlStill == "true") {
   still = true;
+}
+
+const urlGhost = urlParams.get("ghost");  
+if (urlGhost == "true") {
+  ghost = true;
 }
 
 const urlBackground = urlParams.get("background");
@@ -128,6 +135,20 @@ let pens = [
   }px; stroke-opacity:1.0;`,
 ];
 
+if (ghost) {
+  pens = [
+    `stroke:${strokeColor}; stroke-width:${
+      strokeWidth * 1
+    }px; stroke-opacity:1;`,
+    `stroke:${strokeColor}; stroke-width:${
+      strokeWidth * 2
+    }px; stroke-opacity:0.075;`,
+    `stroke:${strokeColor}; stroke-width:${
+      strokeWidth * 3
+    }px; stroke-opacity:0.1;`,
+  ];
+}
+
 let hue = (parseInt(hashArray[0], 16) / 16) * 360;
 console.log(`STARTING HUE: ${hue}`);
 let saturation = 60;
@@ -192,7 +213,7 @@ for (let i = 0; i < shapes; i++) {
 
         if (!simplify) {
           // concentric circles at inscription points
-          if (wild == 0) {
+          if (nodeStyle == 0) {
             tempStr = CC(
               points[i][j].x,
               points[i][j].y,
@@ -200,7 +221,7 @@ for (let i = 0; i < shapes; i++) {
               3,
               `${pens[0]}`
             ); // add circles
-          } else if (wild == 1) {
+          } else if (nodeStyle == 1) {
             let dist = ((40 - i) * strokeWidth) / 2.5;
             // tangent lines
             let angle1 = Math.atan2(points[i][j].y - mid, points[i][j].x - mid);
