@@ -6,10 +6,11 @@ function makeAddress() {
   return a;
 }
 
-const tokenData = {address: makeAddress(), guardian: true};
+const tokenData = {address: makeAddress(), guardian: true, wild: 1};
 
 let guardian = tokenData.guardian;
 let address  = tokenData.address;
+let wild = tokenData.wild;
 // let address = "0xF8d9056db2C2189155bc25A30269dc5dDeD15d46";
 
 const project = "Sigils";
@@ -191,13 +192,38 @@ for (let i = 0; i < shapes; i++) {
 
         if (!simplify) {
           // concentric circles at inscription points
-          tempStr = CC(
-            points[i][j].x,
-            points[i][j].y,
-            strokeWidth * 4,
-            3,
-            `${pens[0]}`
-          ); // add circles
+          if (wild == 0) {
+            tempStr = CC(
+              points[i][j].x,
+              points[i][j].y,
+              strokeWidth * 4,
+              3,
+              `${pens[0]}`
+            ); // add circles
+          } else if (wild == 1) {
+            let dist = ((40 - i) * strokeWidth) / 2.5;
+            // tangent lines
+            let angle1 = Math.atan2(points[i][j].y - mid, points[i][j].x - mid);
+            let x1 = points[i][j].x + dist * Math.cos(angle1 + Math.PI / 2);
+            let y1 = points[i][j].y + dist * Math.sin(angle1 + Math.PI / 2);
+            let x2 = points[i][j].x + dist * Math.cos(angle1 - Math.PI / 2);
+            let y2 = points[i][j].y + dist * Math.sin(angle1 - Math.PI / 2);
+            // perpendicular lines
+            let angle2 = Math.atan2(points[i][j].y - mid, points[i][j].x - mid);
+            let x3 = points[i][j].x + 2 * dist * Math.cos(angle2 + Math.PI);
+            let y3 = points[i][j].y + 2 * dist * Math.sin(angle2 + Math.PI);
+            let x4 = points[i][j].x + 2 * dist * Math.cos(angle2);
+            let y4 = points[i][j].y + 2 * dist * Math.sin(angle2);
+            tempStr = L(
+              x3,
+              y3,
+              x4,
+              y4,
+              `${pens[1]}`
+            );
+            // draw a polygon with the four points
+            tempStr += `<polygon points="${x1},${y1} ${x3},${y3} ${x2},${y2} ${x4},${y4}" style="${pens[1]}" />`;
+          }
 
           mg1 += tempStr;
           shapeGroups[i] += tempStr;
