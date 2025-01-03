@@ -6,7 +6,16 @@ function makeAddress() {
   return a;
 }
 
-const tokenData = {address: makeAddress(), guardian: true, magic: 1};
+function makeMagic() {
+  let m = "";
+  for (let i = 0; i < 10; i++) {
+    m += Math.floor(Math.random() * 10).toString();
+  }
+  console.log(m);
+  return parseInt(m);
+}
+
+const tokenData = {address: makeAddress(), guardian: false, magic: makeMagic()};
 
 let guardian = tokenData.guardian;
 let address  = tokenData.address;
@@ -14,21 +23,36 @@ let magic = tokenData.magic;
 // let address = "0xF8d9056db2C2189155bc25A30269dc5dDeD15d46";
 
 const project = "Sigils";
-const version = "3.0";
-console.log(`${project} ${version} copyright Matto 2024`);
-console.log(
-  "URL PARAMETERS IN HTML MODE: address=0x..., background=bool, simplify=bool, signature=bool, invert=bool, stroke-width=positive-number, distance=number"
-);
+const version = "4.0";
+console.log(`${project} ${version} copyright Matto 2025`);
+// console.log(
+//   "URL PARAMETERS IN HTML MODE: address=0x...; bools: mono, simplify, signature, invert, ghost, ether-style, still; numbers: stroke-width, distance"
+// );
 console.log(`DEFAULT ADDRESS: ${address}`);
-let background = true;
-let invert = false;
-let simplify = false;
-let still = false;
-let customStroke = false;
-let ghost = false;
+let mono = magic % 5 == 0 ? true : false;
+magic = Math.floor(magic / 10);
+let invert = magic % 7 == 0 ? true : false;
+magic = Math.floor(magic / 10);
+let simplify = magic % 6 == 0 ? true : false;
+magic = Math.floor(magic / 10);
+let ghost = magic % 10 == 0 ? true : false;
+magic = Math.floor(magic / 10);
+let etherStyle = magic % 3 == 0 ? true : false;
+magic = Math.floor(magic / 10);
+
+let test = magic % 4; 
+magic = Math.floor(magic / 10);
+if (test == 2) {
+  distance = 0;
+} else if (test < 2) {
+  distance = magic % 4 + 1;
+} else {
+  distance = ((magic % 3) + 1) * -3;
+}
+
 let strokeWidth;
-let distance = 0;
-let nodeStyle = 0;
+let customStroke = false;
+let still = false;
 let showSignature = false;
 let backgroundColor = "rgb(25,25,25)";
 let strokeColor = "white";
@@ -52,12 +76,19 @@ const urlGhost = urlParams.get("ghost");
 if (urlGhost == "true") {
   ghost = true;
 }
+console.log(`GHOST MODE: ${ghost}`);
 
-const urlBackground = urlParams.get("background");
-if (urlBackground == "false") {
-  background = false;
+const urlMono = urlParams.get("mono");
+if (urlMono == "true") {
+  mono = true;
 }
-console.log(`BACKGROUND MODE: ${background}`);
+console.log(`MONO MODE: ${mono}`);
+
+const urlEtherStyle = urlParams.get("ether-style");
+if (urlEtherStyle == "true") {
+  etherStyle = true;
+}
+console.log(`ETHER STYLE: ${etherStyle}`);
 
 const urlStrokeWidth = urlParams.get("stroke-width");
 if (urlStrokeWidth) {
@@ -72,7 +103,6 @@ const urlSignature = urlParams.get("signature");
 if (urlSignature == "true") {
   showSignature = true;
 }
-console.log(`SIGNATURE: ${showSignature}`);
 
 const urlSimplify = urlParams.get("simplify");
 if (urlSimplify == "true") {
@@ -83,14 +113,10 @@ console.log(`SIMPLIFY: ${simplify}`);
 const urlInvert = urlParams.get("invert");
 if (urlInvert == "true") {
   invert = true;
-  backgroundColor = "rgb(230,230,230)";
-  strokeColor = "black";
-  console.log("INVERT MODE: true");
-} else {
-  backgroundColor = "rgb(25,25,25)";
-  strokeColor = "white";
-  console.log("INVERT MODE: false");
+} else if (urlInvert == "false") {
+  invert = false;
 }
+console.log(`INVERT: ${invert}`);
 
 const urlDistance = urlParams.get("distance");
 if (urlDistance) {
@@ -100,15 +126,18 @@ if (urlDistance) {
 }
 console.log(`DISTANCE: ${distance}`);
 
-if (!customStroke) {
-  strokeWidth = 1.1 - (distance * .1);
-  console.log(`STROKE WIDTH: ${strokeWidth}`);
-}
-
 let width = 1000;
 let height = 1000;
 let mid = width / 2;
-
+if (!customStroke) {
+  strokeWidth = Math.round(10 * (1.1 - (distance / 10))) / 10;
+  console.log(`STROKE WIDTH: ${strokeWidth}`);
+}
+if (invert) {
+  backgroundColor = "rgb(230,230,230)";
+  strokeColor = "black";
+  console.log("INVERT MODE: true");
+} 
 let hashArray = address.slice(2).split("");
 let shapes = hashArray.length;
 let points = new Array(shapes);
@@ -139,7 +168,7 @@ if (ghost) {
   pens = [
     `stroke:${strokeColor}; stroke-width:${
       strokeWidth * 1
-    }px; stroke-opacity:1;`,
+    }px; stroke-opacity:.5;`,
     `stroke:${strokeColor}; stroke-width:${
       strokeWidth * 2
     }px; stroke-opacity:0.075;`,
@@ -201,7 +230,7 @@ for (let i = 0; i < shapes; i++) {
       shapeGroups[i] += MC(mid, mid, radius, 4, `${pens[2]}`);
     }
   } else {
-    console.log(`Drawing ${sections} sections for shape ${i}.`);
+    // console.log(`Drawing ${sections} sections for shape ${i}.`);
     inscribe(i, sections, radius);
 
     // draw the lines
@@ -213,7 +242,7 @@ for (let i = 0; i < shapes; i++) {
 
         if (!simplify) {
           // concentric circles at inscription points
-          if (nodeStyle == 0) {
+          if (!etherStyle) {
             tempStr = CC(
               points[i][j].x,
               points[i][j].y,
@@ -221,7 +250,7 @@ for (let i = 0; i < shapes; i++) {
               3,
               `${pens[0]}`
             ); // add circles
-          } else if (nodeStyle == 1) {
+          } else {
             let dist = ((40 - i) * strokeWidth) / 2.5;
             // tangent lines
             let angle1 = Math.atan2(points[i][j].y - mid, points[i][j].x - mid);
@@ -240,10 +269,10 @@ for (let i = 0; i < shapes; i++) {
               y3,
               x4,
               y4,
-              `${pens[1]}`
+              `${pens[0]}`
             );
             // draw a polygon with the four points
-            tempStr += `<polygon points="${x1},${y1} ${x3},${y3} ${x2},${y2} ${x4},${y4}" style="${pens[1]}" />`;
+            tempStr += `<polygon points="${x1},${y1} ${x3},${y3} ${x2},${y2} ${x4},${y4}" style="${pens[0]}" />`;
           }
 
           mg1 += tempStr;
@@ -279,7 +308,7 @@ for (let i = 0; i < shapes; i++) {
       }
       tempStr = `${polygon}" style="stroke-opacity:0; fill-opacity:.075; fill:${color};" />`;
       bg += tempStr;
-      if (background) {
+      if (!mono) {
         shapeGroups[i] += tempStr;
       }
     }
@@ -296,7 +325,7 @@ for (let i = 0; i < shapes; i++) {
         dist,
         `stroke-opacity:0; fill-opacity:.02; fill:${color};`
       );
-      if (background) {
+      if (!mono) {
         shapeGroups[i] += C(
           points[i][j].x,
           points[i][j].y,
@@ -332,7 +361,7 @@ function updateSVG() {
   }
   svgAnima = svgStart;
   svgStill = svgStart;
-  if (background) {
+  if (!mono) {
     svgStill += `${bg}${mg1}${mg2}${fg}`;
   } else {
     svgStill += `${mg1}${mg2}${fg}`;
@@ -412,7 +441,7 @@ function L(x0, y0, x1, y1, s = "") {
 document.addEventListener("keydown", (event) => {
   const k = event.key.toUpperCase();
   if (k === "A" || k === "S" || k === "P") {
-    let bkStr = !background ? "_NOBKG" : "";
+    let bkStr = mono ? "_mono" : "";
     let name = `${project}_${address}${bkStr}`;
     if (k === "A") {
       saveStrings([svgAnima], `${name}_ANIMA`, "svg");
@@ -525,20 +554,7 @@ function saveStrings(content, name, extension) {
 //   seed = ((seed * 35932678341237) + nonce) % 999999999999 + 1
 // }
 
-// function selectByProbs(list, randomValue) {
-//   const totalWeight = list.reduce(function(acc, item, index) {
-//     return acc + (1 / (index + 2));
-//   }, 0);
-//   const threshold = totalWeight * randomValue;
-//   let currentSum = 0;
-//   for (let i = 0; i < list.length; i++) {
-//     currentSum += 1 / (i + 2);
-//     if (currentSum >= threshold) {
-//       return list[i];
-//     }
-//   }
-//   return list[list.length - 1];
-// }
+
 
 // function rplc(s, o, n) {
 //   return s.split(o).join(n);

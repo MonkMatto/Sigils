@@ -22,8 +22,6 @@ interface PLEDGE {
         returns (uint8, uint256, uint256, uint256, uint256, uint256);
 }
 
-
-
 /// @title SIGILS
 /// @notice ERC-721 NFT contract for the SIGILS collection
 /// @author Matto (AKA MonkMatto), 2024. More info: matto.xyz
@@ -34,6 +32,7 @@ contract SIGILS is ERC721Royalty, Ownable(msg.sender) {
 
     address public constant PLEDGE_CONTRACT = 0x910812c44eD2a3B611E4b051d9D83A88d652E2DD;
     uint256 public constant BASE_PLEDGE_COST = 2500; // does not include decimals
+    mapping(uint256 => uint256) public tokenMagic;
     uint96 public royaltyBPS;
     address public royaltyReceiver;
     string public description;
@@ -53,7 +52,10 @@ contract SIGILS is ERC721Royalty, Ownable(msg.sender) {
 
     /// @notice Mints tokens to an address
     /// @param _to The address to mint the token to
-    function MINT(address _to) external onlyOwner {
+    function MINT(address _to) external {
+        require(_getGuardianStatus(_to), "SIGILS: Guardian status not met");
+        // check that proper payment has been made
+        _makeMagic(_nextTokenId);
         _safeMint(_to, _nextTokenId);
         _nextTokenId++;
     }
@@ -61,9 +63,6 @@ contract SIGILS is ERC721Royalty, Ownable(msg.sender) {
     function BURN_AND_RECLAIM(uint256 _tokenId) external onlyOwner {
         _burn(_tokenId);
         // transfer base pledge to token burner
-
-
-
     }
 
 
@@ -115,6 +114,7 @@ contract SIGILS is ERC721Royalty, Ownable(msg.sender) {
                 Base64.encode(bytes(getHTML(_tokenId)))
             )
         );
+        string memory attributes = attributesArray(_tokenId);
         string memory uri = string(
             abi.encodePacked(
                 '{"artist": "Matto", "name": "Sigils #',
@@ -127,9 +127,9 @@ contract SIGILS is ERC721Royalty, Ownable(msg.sender) {
                 base64Image,
                 '", "animation_url": "',
                 base64HTML,
-                '", "attributes": [{"trait_type": "$PLEDGE VALUE", "value": "',
-                BASE_PLEDGE_COST.toString(),
-                '"}]}'
+                '", "attributes": ',
+                attributes,
+                "}"
             )
         );
         return
@@ -140,6 +140,42 @@ contract SIGILS is ERC721Royalty, Ownable(msg.sender) {
                 )
             );
     }
+
+    /// @notice Returns the attributes for a token
+    /// @param _tokenId The token ID to get the attributes for
+    function attributesArray(uint256 _tokenId) public view returns (string memory) {
+        string memory attributes = string(
+            abi.encodePacked(
+                '[{"trait_type": "$PLEDGE VALUE", "value": "',
+                BASE_PLEDGE_COST.toString(),
+                '"}, {"trait_type": "Magic", "value": "',
+                tokenMagic[_tokenId].toString(),
+                '"}, {"trait_type": "", "value": "',
+                ,
+                '"}, {"trait_type": "", "value": "',
+                ,
+                '"}, {"trait_type": "", "value": "',
+                ,
+                '"}, {"trait_type": "", "value": "',
+                ,
+                '"}, {"trait_type": "", "value": "',
+                ,
+                '"}, {"trait_type": "", "value": "',
+                ,
+                '"}, {"trait_type": "", "value": "',
+                ,
+                '"}, {"trait_type": "", "value": "',
+                ,
+                '"}, {"trait_type": "", "value": "',
+                ,
+                '"}, {"trait_type": "", "value": "',
+
+                '"}]'
+            )
+        );
+        return attributes;
+    }
+
 
     /// @notice Returns the total supply of tokens
     function totalSupply() external view returns (uint256) {
