@@ -5,8 +5,6 @@ import "@openzeppelin/contracts/token/ERC721/extensions/ERC721Royalty.sol";
 import "@openzeppelin/contracts/utils/Strings.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 
-
-
 /// @notice This interface is needed to interact with the PLEDGE contract.
 /// @dev the getPledgerData function returns the following values in this order: 
 ///       pledger status (0 == unpledged, 1 == active pledge, 2 == failed pledge, 3 == completed pledge), 
@@ -65,25 +63,77 @@ contract SIGILS is ERC721Royalty, Ownable(msg.sender) {
         // transfer base pledge to token burner
     }
 
+    function _makeMagic(uint256 _tokenId) internal {
+        tokenMagic[_tokenId] = uint256(keccak256(abi.encodePacked(_tokenId, block.timestamp, msg.sender))) % 1000000000;
+    }
 
     /// @notice Assembles the HTML for a token
     /// @param _tokenId The token ID to assemble the HTML for
     function getHTML(
-        uint256 _tokenId
+        address _address,
+        uint8[] memory dataArray
     ) public view returns (string memory) {
         string memory html = string(
             abi.encodePacked(
                 htmlPart1,
                 'tokenData = {address: "',
-                Strings.toHexString(uint160(ownerOf(_tokenId)), 20),
-                '" guardian: ',
-                _getGuardianStatus(ownerOf(_tokenId)),
-                '};',
+                Strings.toHexString(uint160(_address), 20),
+                '" data: [',
+                dataArray[0].toString(),
+                ',',
+                dataArray[1].toString(),
+                ',',
+                dataArray[2].toString(),
+                ',',
+                dataArray[3].toString(),
+                ',',
+                dataArray[4].toString(),
+                ',',
+                dataArray[5].toString(),
+                ',',
+                dataArray[6].toString(),
+                ']};',
                 script,
                 htmlPart2
             )
         );
         return html;
+    }
+
+    /// @notice Generates the magic for a token
+    /// index 0 guardian: 0 false 1 true
+    /// index 1 mono: 0 false 1 true
+    /// index 2 invert: 0 false 1 true
+    /// index 3 simplified: 0 false 1 true
+    /// index 4 ghost: 0 false 1 true
+    /// index 5 etherStyle: 0 false 1 true
+    /// index 6 distance: 0, 1, 2, 3, 4, 30, 60, 90
+    /// index 6 index mappings: 0, 1, 2, 3, 4, -3, -6, -9
+
+    function getTokenDataArray(uint256 _tokenId) public view returns (uint8[]) {
+        uint8[] memory data = new uint8[](7);
+        uint256 magic = tokenMagic[_tokenId];
+        data[0] = _getGuardianStatus(ownerOf(_tokenId)) ? 1 : 0;
+        data[1] = magic % 5 == 0 ? 1 : 0;
+        magic /= 10;
+        data[2] = magic % 7 == 0 ? 1 : 0;
+        magic /= 10;
+        data[3] = magic % 6 == 0 ? 1 : 0;
+        magic /= 10;
+        data[4] = magic % 10 == 0 ? 1 : 0;
+        magic /= 10;
+        data[5] = magic % 3 == 0 ? 1 : 0;
+        magic /= 10;
+        uint8 test = magic % 4;
+        magic /= 10;
+        if (test == 2) {
+            data[6] = 0;
+        } else if (test < 2) {
+            data[6] = magic % 4 + 1;
+        } else {
+            data[6] = ((magic % 3) + 1) * 30;
+        }
+        return data;
     }
 
     /// @notice Token URI function for ERC721
@@ -95,6 +145,7 @@ contract SIGILS is ERC721Royalty, Ownable(msg.sender) {
             _tokenId < _nextTokenId,
             "ERC721Metadata: URI query for nonexistent token"
         );
+        uint8[] memory data = getTokenDataArray(_tokenId);
         string memory tokenImageSVG = string(
             abi.encodePacked(
                 tokenImagePt1,
@@ -111,10 +162,10 @@ contract SIGILS is ERC721Royalty, Ownable(msg.sender) {
         string memory base64HTML = string(
             abi.encodePacked(
                 "data:text/html;base64,",
-                Base64.encode(bytes(getHTML(_tokenId)))
+                Base64.encode(bytes(getHTML(ownerOf(_tokenId)), data))
             )
         );
-        string memory attributes = attributesArray(_tokenId);
+        string memory attributes = attributesArray(data);
         string memory uri = string(
             abi.encodePacked(
                 '{"artist": "Matto", "name": "Sigils #',
@@ -143,39 +194,39 @@ contract SIGILS is ERC721Royalty, Ownable(msg.sender) {
 
     /// @notice Returns the attributes for a token
     /// @param _tokenId The token ID to get the attributes for
-    function attributesArray(uint256 _tokenId) public view returns (string memory) {
+    function attributesArray(uint8[] memory data) public view returns (string memory) {
+        string memory negativeSign = data[6] < 5 ? "" : "-";
+        uint8 distance = data[6] < 5 ? data[6] : data[6] / 10;
         string memory attributes = string(
             abi.encodePacked(
                 '[{"trait_type": "$PLEDGE VALUE", "value": "',
                 BASE_PLEDGE_COST.toString(),
                 '"}, {"trait_type": "Magic", "value": "',
                 tokenMagic[_tokenId].toString(),
-                '"}, {"trait_type": "", "value": "',
-                ,
-                '"}, {"trait_type": "", "value": "',
-                ,
-                '"}, {"trait_type": "", "value": "',
-                ,
-                '"}, {"trait_type": "", "value": "',
-                ,
-                '"}, {"trait_type": "", "value": "',
-                ,
-                '"}, {"trait_type": "", "value": "',
-                ,
-                '"}, {"trait_type": "", "value": "',
-                ,
-                '"}, {"trait_type": "", "value": "',
-                ,
-                '"}, {"trait_type": "", "value": "',
-                ,
-                '"}, {"trait_type": "", "value": "',
-
+                '"}, {"trait_type": "Owned by Guardian", "value": "',
+                _trueFalse(data[0]),
+                '"}, {"trait_type": "Mono", "value": "',
+                _trueFalse(data[1]),
+                '"}, {"trait_type": "Invert", "value": "',
+                _trueFalse(data[2]),
+                '"}, {"trait_type": "Simplified", "value": "',
+                _trueFalse(data[3]),
+                '"}, {"trait_type": "Ghost", "value": "',
+                _trueFalse(data[4]),
+                '"}, {"trait_type": "EtherStyle", "value": "',
+                _trueFalse(data[5]),
+                '"}, {"trait_type": "Distance", "value": "',
+                negativeSign,
+                distance.toString(),
                 '"}]'
             )
         );
         return attributes;
     }
 
+    function _trueFalse(uint8 _value) internal pure returns (string memory) {
+        return _value == 1 ? "True" : "False";
+    }
 
     /// @notice Returns the total supply of tokens
     function totalSupply() external view returns (uint256) {
