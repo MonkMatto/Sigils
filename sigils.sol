@@ -54,13 +54,22 @@ contract SIGILS is ERC721Royalty, Ownable(msg.sender) {
     event Reclaimed(address indexed sender, uint256 tokenId, uint256 ERC20Reclaimed);
 
     function _getGuardianStatus(address _address) internal view returns (bool) {
-        (uint8 pledgerStatus, uint256 PLEDGEBalance, uint256 pledgedPLEDGEBalance, , uint256 transferablePLEDGEThisWindow, ) = iPLEDGE(PLEDGE_CONTRACT).getPledgerData(_address);
-        return pledgerStatus == 1 && pledgedPLEDGEBalance >= 1_000_000 * 10**18 && transferablePLEDGEThisWindow > 2 * BASE_PLEDGE_COST;
+        (uint8 pledgerStatus, , uint256 pledgedPLEDGEBalance, , , ) = iPLEDGE(PLEDGE_CONTRACT).getPledgerData(_address);
+        return pledgerStatus == 1 && pledgedPLEDGEBalance >= 1_000_000 * 10**18;
+    }
+
+
+    modifier ensureNoPledgeBreak(address _address) {
+        (uint8 pledgerStatus, , , , uint256 transferablePLEDGEThisWindow, ) = iPLEDGE(PLEDGE_CONTRACT).getPledgerData(_address);
+        if (pledgerStatus == 1) {
+            require(transferablePLEDGEThisWindow > 2 * BASE_PLEDGE_COST, "Pledge break detected");
+        }
+        _;
     }
 
     /// @notice Mints tokens to an address
     /// @param _to The address to mint the token to
-    function MINT(address _to) external {
+    function MINT(address _to) external ensureNoPledgeBreak(msg.sender) {
         require(_getGuardianStatus(_to), "Guardian status not met");
         iERC20(PLEDGE_CONTRACT).transferFrom(msg.sender, address(this), BASE_PLEDGE_COST);
         iERC20(PLEDGE_CONTRACT).transferFrom(msg.sender, artistAddress, BASE_PLEDGE_COST);
@@ -73,7 +82,7 @@ contract SIGILS is ERC721Royalty, Ownable(msg.sender) {
         require(ownerOf(_tokenId) == msg.sender, "Only token owner can burn");
         _burn(_tokenId);
         // transfer base pledge to token burner
-        iERC20(ERC20).transfer(msg.sender, BASE_PLEDGE_COST);
+        iERC20(PLEDGE_CONTRACT).transfer(msg.sender, BASE_PLEDGE_COST);
         emit Reclaimed(msg.sender, _tokenId, BASE_PLEDGE_COST);
     }
 
@@ -82,7 +91,8 @@ contract SIGILS is ERC721Royalty, Ownable(msg.sender) {
     }
 
     /// @notice Assembles the HTML for a token
-    /// @param _tokenId The token ID to assemble the HTML for
+    /// @param _address The address of the token owner
+    /// @param dataArray The array of uint8 values representing the magic
     function getHTML(
         address _address,
         uint8[] memory dataArray
@@ -93,19 +103,19 @@ contract SIGILS is ERC721Royalty, Ownable(msg.sender) {
                 'tokenData = {address: "',
                 Strings.toHexString(uint160(_address), 20),
                 '" data: [',
-                dataArray[0].toString(),
+                Strings.toString(dataArray[0]),
                 ',',
-                dataArray[1].toString(),
+                Strings.toString(dataArray[1]),
                 ',',
-                dataArray[2].toString(),
+                Strings.toString(dataArray[2]),
                 ',',
-                dataArray[3].toString(),
+                Strings.toString(dataArray[3]),
                 ',',
-                dataArray[4].toString(),
+                Strings.toString(dataArray[4]),
                 ',',
-                dataArray[5].toString(),
+                Strings.toString(dataArray[5]),
                 ',',
-                dataArray[6].toString(),
+                Strings.toString(dataArray[6]),
                 ']};',
                 script,
                 htmlPart2
@@ -125,7 +135,7 @@ contract SIGILS is ERC721Royalty, Ownable(msg.sender) {
     /// index 6 index mappings: 0, 1, 2, 3, 4, -3, -6, -9
     /// @param _tokenId The token ID to get the magic for
     /// @return An array of uint8 values representing the magic
-    function getTokenDataArray(uint256 _tokenId) public view returns (uint8[]) {
+    function getTokenDataArray(uint256 _tokenId) public view returns (uint8[] memory) {
         uint8[] memory data = new uint8[](7);
         uint256 magic = tokenMagic[_tokenId];
         data[0] = _getGuardianStatus(ownerOf(_tokenId)) ? 1 : 0;
@@ -139,14 +149,14 @@ contract SIGILS is ERC721Royalty, Ownable(msg.sender) {
         magic /= 10;
         data[5] = magic % 3 == 0 ? 1 : 0;
         magic /= 10;
-        uint8 test = magic % 4;
+        uint8 test = uint8(magic % 4);
         magic /= 10;
         if (test == 2) {
             data[6] = 0;
         } else if (test < 2) {
-            data[6] = magic % 4 + 1;
+            data[6] = uint8(magic % 4) + 1;
         } else {
-            data[6] = ((magic % 3) + 1) * 30;
+            data[6] = (uint8(magic % 3) + 1) * 30;
         }
         return data;
     }
@@ -164,7 +174,7 @@ contract SIGILS is ERC721Royalty, Ownable(msg.sender) {
         string memory tokenImageSVG = string(
             abi.encodePacked(
                 tokenImagePt1,
-                _tokenId.toString(),
+                Strings.toString(_tokenId),
                 tokenImagePt2
             )
         );
@@ -177,7 +187,7 @@ contract SIGILS is ERC721Royalty, Ownable(msg.sender) {
         string memory base64HTML = string(
             abi.encodePacked(
                 "data:text/html;base64,",
-                Base64.encode(bytes(getHTML(ownerOf(_tokenId)), data))
+                Base64.encode(bytes(getHTML(ownerOf(_tokenId), data)))
             )
         );
         string memory attributes = attributesArray(data);
@@ -208,16 +218,14 @@ contract SIGILS is ERC721Royalty, Ownable(msg.sender) {
     }
 
     /// @notice Returns the attributes for a token
-    /// @param _tokenId The token ID to get the attributes for
-    function attributesArray(uint8[] memory data) public view returns (string memory) {
+    /// @param data The array of uint8 values representing the magic
+    function attributesArray(uint8[] memory data) public pure returns (string memory) {
         string memory negativeSign = data[6] < 5 ? "" : "-";
         uint8 distance = data[6] < 5 ? data[6] : data[6] / 10;
         string memory attributes = string(
             abi.encodePacked(
                 '[{"trait_type": "$PLEDGE VALUE", "value": "',
-                BASE_PLEDGE_COST.toString(),
-                '"}, {"trait_type": "Magic", "value": "',
-                tokenMagic[_tokenId].toString(),
+                Strings.toString(BASE_PLEDGE_COST),
                 '"}, {"trait_type": "Owned by Guardian", "value": "',
                 _trueFalse(data[0]),
                 '"}, {"trait_type": "Mono", "value": "',
@@ -232,7 +240,7 @@ contract SIGILS is ERC721Royalty, Ownable(msg.sender) {
                 _trueFalse(data[5]),
                 '"}, {"trait_type": "Distance", "value": "',
                 negativeSign,
-                distance.toString(),
+                Strings.toString(distance),
                 '"}]'
             )
         );
