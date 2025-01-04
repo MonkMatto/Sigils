@@ -13,15 +13,22 @@ import "@openzeppelin/contracts/access/Ownable.sol";
 ///       $PLEDGE transferred this window, 
 ///       transferable $PLEDGE this window, 
 ///       time remaining in the current window.
-interface PLEDGE {
+interface iPLEDGE {
     function getPledgerData(address _address) 
         external 
         view 
         returns (uint8, uint256, uint256, uint256, uint256, uint256);
 }
 
-/// @title SIGILS
-/// @notice ERC-721 NFT contract for the SIGILS collection
+interface iERC20 {
+  function balanceOf(address owner) external view returns (uint256);
+  function decimals() external view returns (uint8);
+  function transfer(address to, uint value) external returns (bool);
+  function transferFrom(address from, address to, uint value) external returns (bool); 
+}
+
+/// @title GUARDIAN SIGILS
+/// @notice ERC-721 NFT contract for the GUARDIAN SIGILS collection
 /// @author Matto (AKA MonkMatto), 2024. More info: matto.xyz
 contract SIGILS is ERC721Royalty, Ownable(msg.sender) {
     constructor() ERC721("SIGILS", "SIGILS") {}
@@ -29,10 +36,11 @@ contract SIGILS is ERC721Royalty, Ownable(msg.sender) {
     using Strings for string;
 
     address public constant PLEDGE_CONTRACT = 0x910812c44eD2a3B611E4b051d9D83A88d652E2DD;
-    uint256 public constant BASE_PLEDGE_COST = 2500; // does not include decimals
+    uint256 public constant BASE_PLEDGE_COST = 2_500 * 10**18;
     mapping(uint256 => uint256) public tokenMagic;
     uint96 public royaltyBPS;
     address public royaltyReceiver;
+    address public artistAddress;
     string public description;
     string public website;
     string private tokenImagePt1 = '<?xml version="1.0" encoding="utf-8"?><svg id="Sigils" viewBox="0 0 1000 1000" style="background-color:rgb(0,0,0)" xmlns="http://www.w3.org/2000/svg"><text x="50%" y="45%" dominant-baseline="middle" text-anchor="middle" font-family="Times New Roman, serif" font-size="120" font-style="italic" fill="white">Guardian Sigil</text><text x="50%" y="60%" dominant-baseline="middle" text-anchor="middle" font-family="Times New Roman, serif" font-size="90" font-style="italic" fill="white">#';
@@ -43,28 +51,34 @@ contract SIGILS is ERC721Royalty, Ownable(msg.sender) {
         'const project="Sigils 1.1";console.log(`${project} copyright Matto 2024`),console.log("URL PARAMETERS IN HTML MODE: address=0x..., plot=bool, stroke-width=positive-number, signature=bool, invert=bool, random=bool, distance=number"),console.log(`DEFAULT ADDRESS: ${address}`);let plot=!1,invert=!1,strokeWidth=1,distance=10,showSignature=!0,backgroundColor="rgb(25,25,25)",strokeColor="white";const urlParams=new URLSearchParams(window.location.search),urlAddress=urlParams.get("address");if(urlAddress){let t=/^0x[0-9a-fA-F]{40}$/;t.test(urlAddress)&&(address=urlAddress,console.log(`CUSTOM ADDRESS: ${address}`))}const urlPlot=urlParams.get("plot");"true"==urlPlot&&(plot=!0),console.log(`PLOT MODE: ${plot}`);const urlStroke=urlParams.get("stroke-wdith");urlStroke&&(strokeWidth=urlStroke);const urlStrokeWidth=urlParams.get("stroke-width");urlStrokeWidth&&!isNaN(urlStrokeWidth)&&(strokeWidth=urlStrokeWidth),console.log(`STROKE WIDTH: ${strokeWidth}`);const urlSignature=urlParams.get("signature");"false"==urlSignature&&(showSignature=!1),console.log(`SIGNATURE: ${showSignature}`);const urlInvert=urlParams.get("invert");"true"==urlInvert?(invert=!0,backgroundColor="rgb(230,230,230)",strokeColor="black",console.log("INVERT MODE: true")):(backgroundColor="rgb(25,25,25)",strokeColor="white",console.log("INVERT MODE: false"));const urlRandom=urlParams.get("random");"true"==urlRandom&&(address=makeHash(40),console.log(`RANDOM ADDRESS: ${address}`));const urlDistance=urlParams.get("distance");urlDistance&&!isNaN(urlDistance)&&(distance=10*parseInt(urlDistance)),console.log(`DISTANCE: ${distance/10}`);let width=1e3,height=1e3,mid=width/2,hashArray=address.slice(2).split(""),shapes=hashArray.length,points=Array(shapes);for(let i=0;i<shapes;i++)points[i]=[];let spacing=Math.floor((width-10*distance)/shapes),bg=`<g id="background"><desc>Background Color</desc>`,mg1=`<g id="midground-1"><desc>Midground Circles at nodes, stroke-width = 1x.</desc>`,mg2=`<g id="midground-2"><desc>Midground lines at center, stroke-width = 2x.</desc>`,fg=`<g id="foreground"><desc>Foreground shapes, stroke-width = 3x.</desc>`,svg,pens=[`stroke:${strokeColor}; stroke-width:${1*strokeWidth}px; stroke-opacity:0.1;`,`stroke:${strokeColor}; stroke-width:${2*strokeWidth}px; stroke-opacity:0.2;`,`stroke:${strokeColor}; stroke-width:${3*strokeWidth}px; stroke-opacity:1.0;`,],hue=parseInt(hashArray[0],16)/16*360;console.log(`STARTING HUE: ${hue}`);let saturation=100,lightness=50,color;setColor(hue,saturation,lightness);let svgStart=`<?xml version="1.0" encoding="utf-8"?><svg id="${project}" viewBox="0 0 ${width} ${width}" style="background-color:${backgroundColor}; stroke:${strokeColor}; stroke-linecap:round; fill-opacity:0;" xmlns="http://www.w3.org/2000/svg">`,sig=signature();function setColor(t,e,r){color=`hsl(${t},${e}%,${r}%)`}function signature(){let t=`<g id="signature" style="stroke:${strokeColor}; stroke-width:${3*strokeWidth}px; stroke-opacity:1; stroke-linecap:round; fill-opacity:0;" ><desc>Signature, stroke-width = 3x.</desc>`;return t+=`<polyline points="924,956 920,956 920,860 940,872 960,860 960,956 956,956" />`,t+=`<polyline points="928,902 940,872 952,902" stroke-linejoin="bevel" />`,t+=L(934,888,946,888),t+=L(920,902,960,902),t+=L(932,902,932,927),t+=L(948,902,948,927),t+=C(940,940,15),t+="</g>"}for(let i=0;i<shapes;i++){let e=spacing*(shapes-i)/2,r=1+parseInt(hashArray[i],16)%16;if(mg2+=C(mid,mid,e,`${pens[1]}`),1==r)console.log(`Nothing drawn for shape ${i}, shifting color.`),setColor(hue+=22.5,saturation,lightness);else if(2==r)console.log(`Drawing a single circle for shape ${i}.`),points[i].push({mid,mid}),fg+=MC(mid,mid,e,4,`${pens[2]}`);else{console.log(`Drawing ${r} sections for shape ${i}.`),inscribe(i,r,e);let s=`<polygon points="`;for(let o=0;o<r;o++)s+=`${points[i][o].x},${points[i][o].y} `,mg2+=L(points[i][o].x,points[i][o].y,mid,mid,`${pens[1]}`),0==o?fg+=L(points[i][o].x,points[i][o].y,points[i][r-1].x,points[i][r-1].y,`${pens[2]}`):fg+=L(points[i][o].x,points[i][o].y,points[i][o-1].x,points[i][o-1].y,`${pens[2]}`),mg1+=CC(points[i][o].x,points[i][o].y,4*strokeWidth,3,`${pens[0]}`);bg+=`${s}" style="stroke-opacity:0; fill-opacity:.075; fill:${color};" />`;let l=Math.sqrt(Math.pow(points[i][0].x-points[i][1].x,2)+Math.pow(points[i][0].y-points[i][1].y,2));for(let n=0;n<r;n++)bg+=C(points[i][n].x,points[i][n].y,l,`stroke-opacity:0; fill-opacity:.02; fill:${color};`)}}function updateSVG(){let t=document.getElementById(project);t&&t.remove(),svg=plot?`${svgStart}${mg1}${mg2}${fg}`:`${svgStart}${bg}${mg1}${mg2}${fg}`,showSignature?svg+=`${sig}</svg>`:svg+="</svg>",document.body.insertAdjacentHTML("beforeend",svg)}function inscribe(t,e,r){for(let s=0;s<e;s++){let o=s/e*Math.PI*2;o-=Math.PI/2;let l=mid+r*Math.cos(o),n=mid+r*Math.sin(o);points[t].push({x:l,y:n})}}function C(t,e,r,s=""){r<0&&(r=0);let o=`<circle cx="${t}" cy="${e}" r="${r}" `;return""==s?o+="/>":o+=`style="${s}" />`,o}function FC(t,e,r,s=""){let o=`<g style="${s}"><desc>Filled Circle</desc>`,l=.9*strokeWidth;for(let n=r;n>0;n-=l)o+=C(t,e,n);return o+"</g>"}function MC(t,e,r,s,o=""){let l=`<g style="${o}"><desc>Multiple Circles</desc>`,n=.9*strokeWidth;for(let d=0;d<s;d++)l+=C(t,e,r),r-=n;return l+"</g>"}function CC(t,e,r,s,o=""){let l=`<g style="${o}"><desc>Concentric Circles</desc>`;for(let n=1;n<s;n++)l+=C(t,e,r*n);return l+"</g>"}function L(t,e,r,s,o=""){let l=`<line x1="${t}" y1="${e}" x2="${r}" y2="${s}" `;return""==o?l+="/>":l+=`style="${o}" />`,l}function makeHash(t=64){let e="0123456789abcdef",r="";for(let s=0;s<t;s++)r+=e.charAt(Math.floor(Math.random()*e.length));return"0x"+r}function rplc(t,e,r){return t.split(e).join(r)}function saveStrings(t,e,r){let s=new Blob(t,{type:"image/svg+xml"}),o=document.createElement("a");o.href=URL.createObjectURL(s),o.download=`${e}.${r}`,o.click()}bg+="</g>",mg1+="</g>",mg2+="</g>",fg+="</g>",updateSVG(),document.addEventListener("keydown",t=>{let e=t.key.toUpperCase();if("S"===e)saveStrings([svg],plot?`Sigils-plot_${address}`:`Sigils_${address}`,"svg");else if("H"===e)showSignature=!showSignature,updateSVG();else if("P"===e)plot=!plot,updateSVG();else if("I"===e){let r="black",s="white",o="rgb(25,25,25)",l="rgb(230,230,230)",n=fg,d=mg1,a=mg2,g=svgStart,c=sig;invert?(invert=!1,n=rplc(n,r,s),d=rplc(d,r,s),a=rplc(a,r,s),c=rplc(c,r,s),g=rplc(g,l,o)):(invert=!0,n=rplc(n,s,r),d=rplc(d,s,r),a=rplc(a,s,r),c=rplc(c,s,r),g=rplc(g,o,l)),svgStart=g,mg1=d,mg2=a,fg=n,sig=c,updateSVG()}});';
     string private htmlPart2 = '</script></body></html>';
 
+    event Reclaimed(address indexed sender, uint256 tokenId, uint256 ERC20Reclaimed);
+
     function _getGuardianStatus(address _address) internal view returns (bool) {
-        (uint8 pledgerStatus, uint256 PLEDGEBalance, uint256 pledgedPLEDGEBalance, , uint256 transferablePLEDGEThisWindow, ) = PLEDGE(PLEDGE_CONTRACT).getPledgerData(_address);
-        return pledgerStatus == 1 && pledgedPLEDGEBalance >= 1_000_000 * 10 * 18 && transferablePLEDGEThisWindow > 2 * BASE_PLEDGE_COST;
+        (uint8 pledgerStatus, uint256 PLEDGEBalance, uint256 pledgedPLEDGEBalance, , uint256 transferablePLEDGEThisWindow, ) = iPLEDGE(PLEDGE_CONTRACT).getPledgerData(_address);
+        return pledgerStatus == 1 && pledgedPLEDGEBalance >= 1_000_000 * 10**18 && transferablePLEDGEThisWindow > 2 * BASE_PLEDGE_COST;
     }
 
     /// @notice Mints tokens to an address
     /// @param _to The address to mint the token to
     function MINT(address _to) external {
-        require(_getGuardianStatus(_to), "SIGILS: Guardian status not met");
-        // check that proper payment has been made
+        require(_getGuardianStatus(_to), "Guardian status not met");
+        iERC20(PLEDGE_CONTRACT).transferFrom(msg.sender, address(this), BASE_PLEDGE_COST);
+        iERC20(PLEDGE_CONTRACT).transferFrom(msg.sender, artistAddress, BASE_PLEDGE_COST);
         _makeMagic(_nextTokenId);
         _safeMint(_to, _nextTokenId);
         _nextTokenId++;
     }
 
-    function BURN_AND_RECLAIM(uint256 _tokenId) external onlyOwner {
+    function BURN_AND_RECLAIM(uint256 _tokenId) external {
+        require(ownerOf(_tokenId) == msg.sender, "Only token owner can burn");
         _burn(_tokenId);
         // transfer base pledge to token burner
+        iERC20(ERC20).transfer(msg.sender, BASE_PLEDGE_COST);
+        emit Reclaimed(msg.sender, _tokenId, BASE_PLEDGE_COST);
     }
 
     function _makeMagic(uint256 _tokenId) internal {
-        tokenMagic[_tokenId] = uint256(keccak256(abi.encodePacked(_tokenId, block.timestamp, msg.sender))) % 1000000000;
+        tokenMagic[_tokenId] = uint256(keccak256(abi.encodePacked(_tokenId, block.timestamp, msg.sender, _tokenId))) % 1000000000;
     }
 
     /// @notice Assembles the HTML for a token
@@ -109,7 +123,8 @@ contract SIGILS is ERC721Royalty, Ownable(msg.sender) {
     /// index 5 etherStyle: 0 false 1 true
     /// index 6 distance: 0, 1, 2, 3, 4, 30, 60, 90
     /// index 6 index mappings: 0, 1, 2, 3, 4, -3, -6, -9
-
+    /// @param _tokenId The token ID to get the magic for
+    /// @return An array of uint8 values representing the magic
     function getTokenDataArray(uint256 _tokenId) public view returns (uint8[]) {
         uint8[] memory data = new uint8[](7);
         uint256 magic = tokenMagic[_tokenId];
@@ -168,7 +183,7 @@ contract SIGILS is ERC721Royalty, Ownable(msg.sender) {
         string memory attributes = attributesArray(data);
         string memory uri = string(
             abi.encodePacked(
-                '{"artist": "Matto", "name": "Sigils #',
+                '{"artist": "Matto", "name": "Guardian Sigil #',
                 _tokenId,
                 '", "description": "',
                 description,
@@ -231,6 +246,12 @@ contract SIGILS is ERC721Royalty, Ownable(msg.sender) {
     /// @notice Returns the total supply of tokens
     function totalSupply() external view returns (uint256) {
         return _nextTokenId;
+    }
+
+    /// @notice Allows owner to set the artist address
+    /// @param _artistAddress The new artist address to be set
+    function setArtistAddress(address _artistAddress) external onlyOwner {
+        artistAddress = _artistAddress;
     }
 
     /// @notice Allows owner to set the main description
