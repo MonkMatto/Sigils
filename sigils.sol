@@ -95,7 +95,7 @@ contract SIGILS is ERC721Royalty, Ownable(msg.sender) {
 
     /// @notice Assembles the HTML for a token
     /// @param _address The address of the token owner
-    /// @param dataArray The array of uint8 values representing the magic
+    /// @param traitsArray The array of uint8 values representing the magic
     function getHTML(
         address _address,
         uint8[] memory dataArray
@@ -105,7 +105,7 @@ contract SIGILS is ERC721Royalty, Ownable(msg.sender) {
                 htmlPart1,
                 'tokenData = {address: "',
                 Strings.toHexString(uint160(_address), 20),
-                '", data: [',
+                '", traits: [',
                 Strings.toString(dataArray[0]),
                 ',',
                 Strings.toString(dataArray[1]),
@@ -138,30 +138,30 @@ contract SIGILS is ERC721Royalty, Ownable(msg.sender) {
     /// index 6 index mappings: 0, 1, 2, 3, 4, -3, -6, -9
     /// @param _tokenId The token ID to get the magic for
     /// @return An array of uint8 values representing the magic
-    function getTokenDataArray(uint256 _tokenId) public view returns (uint8[] memory) {
-        uint8[] memory data = new uint8[](7);
+    function getTokenTraitsArray(uint256 _tokenId) public view returns (uint8[] memory) {
+        uint8[] memory traits = new uint8[](7);
         uint256 magic = tokenMagic[_tokenId];
-        data[0] = _getGuardianStatus(ownerOf(_tokenId)) ? 1 : 0;
-        data[1] = magic % 5 == 0 ? 1 : 0;
+        traits[0] = _getGuardianStatus(ownerOf(_tokenId)) ? 1 : 0;
+        traits[1] = magic % 5 == 0 ? 1 : 0;
         magic /= 10;
-        data[2] = magic % 7 == 0 ? 1 : 0;
+        traits[2] = magic % 7 == 0 ? 1 : 0;
         magic /= 10;
-        data[3] = magic % 6 == 0 ? 1 : 0;
+        traits[3] = magic % 6 == 0 ? 1 : 0;
         magic /= 10;
-        data[4] = magic % 10 == 0 ? 1 : 0;
+        traits[4] = magic % 10 == 0 ? 1 : 0;
         magic /= 10;
-        data[5] = magic % 3 == 0 ? 1 : 0;
+        traits[5] = magic % 3 == 0 ? 1 : 0;
         magic /= 10;
         uint8 test = uint8(magic % 4);
         magic /= 10;
         if (test == 2) {
-            data[6] = 0;
+            traits[6] = 0;
         } else if (test < 2) {
-            data[6] = uint8(magic % 4) + 1;
+            traits[6] = uint8(magic % 4) + 1;
         } else {
-            data[6] = (uint8(magic % 3) + 1) * 30;
+            traits[6] = (uint8(magic % 3) + 1) * 30;
         }
-        return data;
+        return traits;
     }
 
     /// @notice Token URI function for ERC721
@@ -173,7 +173,7 @@ contract SIGILS is ERC721Royalty, Ownable(msg.sender) {
             _tokenId < _nextTokenId,
             "ERC721Metadata: URI query for nonexistent token"
         );
-        uint8[] memory data = getTokenDataArray(_tokenId);
+        uint8[] memory traits = getTokenTraitsArray(_tokenId);
         string memory tokenImageSVG = string(
             abi.encodePacked(
                 tokenImagePt1,
@@ -190,10 +190,10 @@ contract SIGILS is ERC721Royalty, Ownable(msg.sender) {
         string memory base64HTML = string(
             abi.encodePacked(
                 "data:text/html;base64,",
-                Base64.encode(bytes(getHTML(ownerOf(_tokenId), data)))
+                Base64.encode(bytes(getHTML(ownerOf(_tokenId), traits)))
             )
         );
-        string memory attributes = attributesArray(data);
+        string memory attributes = attributesArray(traits);
         string memory uri = string(
             abi.encodePacked(
                 '{"artist": "Matto", "name": "Guardian Sigil #',
@@ -221,26 +221,26 @@ contract SIGILS is ERC721Royalty, Ownable(msg.sender) {
     }
 
     /// @notice Returns the attributes for a token
-    /// @param data The array of uint8 values representing the magic
-    function attributesArray(uint8[] memory data) public pure returns (string memory) {
-        string memory negativeSign = data[6] < 5 ? "" : "-";
-        uint8 distance = data[6] < 5 ? data[6] : data[6] / 10;
+    /// @param traits The array of uint8 values representing the magic
+    function attributesArray(uint8[] memory traits) public pure returns (string memory) {
+        string memory negativeSign = traits[6] < 5 ? "" : "-";
+        uint8 distance = traits[6] < 5 ? traits[6] : traits[6] / 10;
         string memory attributes = string(
             abi.encodePacked(
                 '[{"trait_type": "$PLEDGE VALUE", "value": "',
                 Strings.toString(BASE_PLEDGE_COST / 10**18),
                 '"}, {"trait_type": "Owned by Guardian", "value": "',
-                _trueFalse(data[0]),
+                _trueFalse(traits[0]),
                 '"}, {"trait_type": "Mono", "value": "',
-                _trueFalse(data[1]),
+                _trueFalse(traits[1]),
                 '"}, {"trait_type": "Invert", "value": "',
-                _trueFalse(data[2]),
+                _trueFalse(traits[2]),
                 '"}, {"trait_type": "Simplified", "value": "',
-                _trueFalse(data[3]),
+                _trueFalse(traits[3]),
                 '"}, {"trait_type": "Ghost", "value": "',
-                _trueFalse(data[4]),
+                _trueFalse(traits[4]),
                 '"}, {"trait_type": "EtherStyle", "value": "',
-                _trueFalse(data[5]),
+                _trueFalse(traits[5]),
                 '"}, {"trait_type": "Distance", "value": "',
                 negativeSign,
                 Strings.toString(distance),
