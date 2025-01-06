@@ -223,6 +223,8 @@ contract SIGILS is ERC721Royalty, Ownable(msg.sender) {
     /// @notice Returns the attributes for a token
     /// @param traits The array of uint8 values representing the magic
     function attributesArray(uint8[] memory traits) public pure returns (string memory) {
+        string[] memory rarity = ["Common", "Uncommon", "Rare", "Epic", "Legendary", "Mythic"];
+        uint8 rarityCounter = _calculateRarity(traits);
         string memory negativeSign = traits[6] < 5 ? "" : "-";
         uint8 distance = traits[6] < 5 ? traits[6] : traits[6] / 10;
         string memory attributes = string(
@@ -241,6 +243,8 @@ contract SIGILS is ERC721Royalty, Ownable(msg.sender) {
                 _trueFalse(traits[4]),
                 '"}, {"trait_type": "EtherStyle", "value": "',
                 _trueFalse(traits[5]),
+                '"}, {"trait_type": "Core Rarity", "value": "',
+                rarity[rarityCounter],
                 '"}, {"trait_type": "Distance", "value": "',
                 negativeSign,
                 Strings.toString(distance),
@@ -248,6 +252,15 @@ contract SIGILS is ERC721Royalty, Ownable(msg.sender) {
             )
         );
         return attributes;
+    }
+
+
+    function _calculateRarity(uint8[] memory traits) internal pure returns (uint8) {
+        uint8 rarityCounter = 0;
+        for (uint8 i = 1; i < 6; i++) {
+            rarityCounter += traits[i];
+        }
+        return rarityCounter;
     }
 
     function _trueFalse(uint8 _value) internal pure returns (string memory) {
