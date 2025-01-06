@@ -33,6 +33,7 @@ interface iERC20 {
 contract SIGILS is ERC721Royalty, Ownable(msg.sender) {
     constructor() ERC721("SIGILS", "SIGILS") {}
     uint256 private _nextTokenId;
+    uint256 private _tokenSupply;
     using Strings for string;
 
     address public constant PLEDGE_CONTRACT = 0x910812c44eD2a3B611E4b051d9D83A88d652E2DD;
@@ -75,6 +76,7 @@ contract SIGILS is ERC721Royalty, Ownable(msg.sender) {
         iERC20(PLEDGE_CONTRACT).transferFrom(msg.sender, artistAddress, BASE_PLEDGE_COST);
         _makeMagic(_nextTokenId);
         _safeMint(_to, _nextTokenId);
+        _tokenSupply++;
         _nextTokenId++;
     }
 
@@ -83,6 +85,7 @@ contract SIGILS is ERC721Royalty, Ownable(msg.sender) {
         _burn(_tokenId);
         // transfer base pledge to token burner
         iERC20(PLEDGE_CONTRACT).transfer(msg.sender, BASE_PLEDGE_COST);
+        _tokenSupply--;
         emit Reclaimed(msg.sender, _tokenId, BASE_PLEDGE_COST);
     }
 
@@ -253,7 +256,7 @@ contract SIGILS is ERC721Royalty, Ownable(msg.sender) {
 
     /// @notice Returns the total supply of tokens
     function totalSupply() external view returns (uint256) {
-        return _nextTokenId;
+        return _tokenSupply;
     }
 
     /// @notice Allows owner to set the artist address
