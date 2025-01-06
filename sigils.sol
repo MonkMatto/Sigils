@@ -105,7 +105,7 @@ contract SIGILS is ERC721Royalty, Ownable(msg.sender) {
                 htmlPart1,
                 'tokenData = {address: "',
                 Strings.toHexString(uint160(_address), 20),
-                '" data: [',
+                '", data: [',
                 Strings.toString(dataArray[0]),
                 ',',
                 Strings.toString(dataArray[1]),
