@@ -3,8 +3,38 @@ function makeAddress() {
   for (let i = 0; i < 40; i++) {
     a += Math.floor(Math.random() * 16).toString(16);
   }
+  console.log(a);
   return a;
 }
+
+function makeTraits() {
+  let magic = makeMagic();
+  console.log(magic);
+  let data = new Array(7);
+  data[0] = 1;
+  data[1] = magic % 5 == 0 ? 1 : 0;
+  magic = Math.floor(magic / 10);
+  data[2] = magic % 7 == 0 ? 1 : 0;
+  magic = Math.floor(magic / 10);
+  data[3] = magic % 6 == 0 ? 1 : 0;
+  magic = Math.floor(magic / 10);
+  data[4] = magic % 10 == 0 ? 1 : 0;
+  magic = Math.floor(magic / 10);
+  data[5] = magic % 3 == 0 ? 1 : 0;
+  magic = Math.floor(magic / 10);
+  let test = magic % 4;
+  magic = Math.floor(magic / 10);
+  if (test == 2) {
+      data[6] = 0;
+  } else if (test < 2) {
+      data[6] = (magic % 4) + 1;
+  } else {
+      data[6] = ((magic % 3) + 1) * 30;
+  }
+  console.log(data);
+  return data;
+}
+
 
 function makeMagic() {
   let m = "";
@@ -15,40 +45,37 @@ function makeMagic() {
   return parseInt(m);
 }
 
-const tokenData = {address: makeAddress(), guardian: false, magic: makeMagic()};
+const tokenData = {address: makeAddress(), traits: makeTraits()};
 
-let guardian = tokenData.guardian;
-let address  = tokenData.address;
-let magic = tokenData.magic;
-// let address = "0xF8d9056db2C2189155bc25A30269dc5dDeD15d46";
+// const tokenData = {
+//   address: "0xab8483f64d9c6d1ecf9b849ae677dd3315835cb2",
+//   traits: [1, 1, 0, 1, 0, 0, 3],
+// };
+console.log("#".repeat(40));
+
+
 
 const project = "Sigils";
 const version = "5.0";
 console.log(`${project} ${version} copyright Matto 2025`);
-// console.log(
-//   "URL PARAMETERS IN HTML MODE: address=0x...; bools: mono, simplify, signature, invert, ghost, ether-style, still; numbers: stroke-width, distance"
-// );
-console.log(`DEFAULT ADDRESS: ${address}`);
-let mono = magic % 5 == 0 ? true : false;
-magic = Math.floor(magic / 10);
-let invert = magic % 7 == 0 ? true : false;
-magic = Math.floor(magic / 10);
-let simplify = magic % 6 == 0 ? true : false;
-magic = Math.floor(magic / 10);
-let ghost = magic % 10 == 0 ? true : false;
-magic = Math.floor(magic / 10);
-let etherStyle = magic % 3 == 0 ? true : false;
-magic = Math.floor(magic / 10);
+console.log(
+    "URL PARAMETERS IN HTML MODE: address=0x...; bools: mono, simplified, signature, invert, ghost, ether-style, still; numbers: stroke-width, distance"
+  );
 
-let test = magic % 4; 
-magic = Math.floor(magic / 10);
-if (test == 2) {
-  distance = 0;
-} else if (test < 2) {
-  distance = magic % 4 + 1;
-} else {
-  distance = ((magic % 3) + 1) * -3;
+let address  = tokenData.address;
+let traits = tokenData.traits;
+let guardian = ToF(traits[0]);
+let mono = ToF(traits[1]);
+let invert = ToF(traits[2]);
+let simplified = ToF(traits[3]);
+let ghost = ToF(traits[4]);
+let etherStyle = ToF(traits[5]);
+let distance = traits[6];
+if (distance > 10 ) {
+  distance = - distance / 10;
 }
+
+// console.log(`DEFAULT ADDRESS: ${address}`);
 
 let strokeWidth;
 let customStroke = false;
@@ -63,7 +90,7 @@ if (urlAddress) {
   const regex = /^0x[0-9a-fA-F]{40}$/;
   if (regex.test(urlAddress)) {
     address = urlAddress;
-    console.log(`CUSTOM ADDRESS: ${address}`);
+    // console.log(`CUSTOM ADDRESS: ${address}`);
   }
 }
 
@@ -76,26 +103,26 @@ const urlGhost = urlParams.get("ghost");
 if (urlGhost == "true") {
   ghost = true;
 }
-console.log(`GHOST MODE: ${ghost}`);
+// console.log(`GHOST MODE: ${ghost}`);
 
 const urlMono = urlParams.get("mono");
 if (urlMono == "true") {
   mono = true;
 }
-console.log(`MONO MODE: ${mono}`);
+// console.log(`MONO MODE: ${mono}`);
 
 const urlEtherStyle = urlParams.get("ether-style");
 if (urlEtherStyle == "true") {
   etherStyle = true;
 }
-console.log(`ETHER STYLE: ${etherStyle}`);
+// console.log(`ETHER STYLE: ${etherStyle}`);
 
 const urlStrokeWidth = urlParams.get("stroke-width");
 if (urlStrokeWidth) {
   if (!isNaN(urlStrokeWidth)) {
     strokeWidth = urlStrokeWidth;
     customStroke = true;
-    console.log(`CUSTOM STROKE WIDTH: ${strokeWidth}`);
+    // console.log(`CUSTOM STROKE WIDTH: ${strokeWidth}`);
   }
 }
 
@@ -104,11 +131,11 @@ if (urlSignature == "true") {
   showSignature = true;
 }
 
-const urlSimplify = urlParams.get("simplify");
-if (urlSimplify == "true") {
-  simplify = true;
+const urlsimplified = urlParams.get("simplified");
+if (urlsimplified == "true") {
+  simplified = true;
 }
-console.log(`SIMPLIFY: ${simplify}`);
+// console.log(`SIMPLIFIED: ${simplified}`);
 
 const urlInvert = urlParams.get("invert");
 if (urlInvert == "true") {
@@ -116,7 +143,7 @@ if (urlInvert == "true") {
 } else if (urlInvert == "false") {
   invert = false;
 }
-console.log(`INVERT: ${invert}`);
+// console.log(`INVERT: ${invert}`);
 
 const urlDistance = urlParams.get("distance");
 if (urlDistance) {
@@ -124,19 +151,19 @@ if (urlDistance) {
     distance = parseInt(urlDistance);
   }
 }
-console.log(`DISTANCE: ${distance}`);
+// console.log(`DISTANCE: ${distance}`);
 
 let width = 1000;
 let height = 1000;
 let mid = width / 2;
 if (!customStroke) {
   strokeWidth = Math.round(10 * (1.1 - (distance / 10))) / 10;
-  console.log(`STROKE WIDTH: ${strokeWidth}`);
+  // console.log(`STROKE WIDTH: ${strokeWidth}`);
 }
 if (invert) {
   backgroundColor = "rgb(230,230,230)";
   strokeColor = "black";
-  console.log("INVERT MODE: true");
+  // console.log("INVERT MODE: true");
 } 
 let hashArray = address.slice(2).split("");
 let shapes = hashArray.length;
@@ -152,29 +179,22 @@ let fg = `<g id="foreground"><desc>Foreground shapes, stroke-width = 3x.</desc>`
 let svgAnima, svgStill;
 let shapeGroups = new Array(shapes);
 
+let ss = "stroke:";
+let sws = "stroke-width:";
+let sos = "stroke-opacity:";
+let fos = "fill-opacity:";
+
 let pens = [
-  `stroke:${strokeColor}; stroke-width:${
-    strokeWidth * 1
-  }px; stroke-opacity:0.1;`,
-  `stroke:${strokeColor}; stroke-width:${
-    strokeWidth * 2
-  }px; stroke-opacity:0.075;`,
-  `stroke:${strokeColor}; stroke-width:${
-    strokeWidth * 3
-  }px; stroke-opacity:1.0;`,
+  `${ss}${strokeColor}; ${sws}${strokeWidth * 1}px; ${sos}0.1;`,
+  `${ss}${strokeColor}; ${sws}${strokeWidth * 2}px; ${sos}0.075;`,
+  `${ss}${strokeColor}; ${sws}${strokeWidth * 3}px; ${sos}1.0;`,
 ];
 
 if (ghost) {
   pens = [
-    `stroke:${strokeColor}; stroke-width:${
-      strokeWidth * 1
-    }px; stroke-opacity:.5;`,
-    `stroke:${strokeColor}; stroke-width:${
-      strokeWidth * 2
-    }px; stroke-opacity:0.075;`,
-    `stroke:${strokeColor}; stroke-width:${
-      strokeWidth * 3
-    }px; stroke-opacity:0.1;`,
+    `${ss}${strokeColor}; ${sws}${strokeWidth * 1}px; ${sos}.5;`,
+    `${ss}${strokeColor}; ${sws}${strokeWidth * 2}px; ${sos}0.075;`,
+    `${ss}${strokeColor}; ${sws}${strokeWidth * 3}px; ${sos}0.1;`,
   ];
 }
 
@@ -185,7 +205,7 @@ let lightness = 50;
 let color;
 setColor(hue, saturation, lightness);
 
-let svgStart = `<?xml version="1.0" encoding="utf-8"?><svg id="${project}" viewBox="0 0 ${width} ${width}" style="background-color:${backgroundColor}; stroke:${strokeColor}; stroke-linecap:round; fill-opacity:0;" xmlns="http://www.w3.org/2000/svg">`;
+let svgStart = `<?xml version="1.0" encoding="utf-8"?><svg id="${project}" viewBox="0 0 ${width} ${width}" style="background-color:${backgroundColor}; ${ss}${strokeColor}; stroke-linecap:round; ${fos}0;" xmlns="http://www.w3.org/2000/svg">`;
 let sig = signature();
 
 function setColor(h, s, l) {
@@ -193,9 +213,7 @@ function setColor(h, s, l) {
 }
 
 function signature() {
-  let s = `<g id="signature" style="stroke:${strokeColor}; stroke-width:${
-    strokeWidth * 3
-  }px; stroke-opacity:1; stroke-linecap:round; fill-opacity:0;" ><desc>Signature, stroke-width = 3x.</desc>`;
+  let s = `<g id="signature" style="${ss}${strokeColor}; ${sws}${strokeWidth * 3}px; ${sos}1; stroke-linecap:round; ${fos}0;" ><desc>Signature, stroke-width = 3x.</desc>`;
   s += `<polyline points="924,956 920,956 920,860 940,872 960,860 960,956 956,956" />`;
   s += `<polyline points="928,902 940,872 952,902" stroke-linejoin="bevel" />`;
   s += L(934, 888, 946, 888);
@@ -240,7 +258,7 @@ for (let i = 0; i < shapes; i++) {
       for (let j = 0; j < sections; j++) {
         polygon += `${points[i][j].x},${points[i][j].y} `;
 
-        if (!simplify) {
+        if (!simplified) {
           // concentric circles at inscription points
           if (!etherStyle) {
             tempStr = CC(
@@ -306,7 +324,7 @@ for (let i = 0; i < shapes; i++) {
           shapeGroups[i] += tempStr;
         }
       }
-      tempStr = `${polygon}" style="stroke-opacity:0; fill-opacity:.075; fill:${color};" />`;
+      tempStr = `${polygon}" style="${sos}0; ${fos}.075; fill:${color};" />`;
       bg += tempStr;
       if (!mono) {
         shapeGroups[i] += tempStr;
@@ -323,14 +341,14 @@ for (let i = 0; i < shapes; i++) {
         points[i][j].x,
         points[i][j].y,
         dist,
-        `stroke-opacity:0; fill-opacity:.02; fill:${color};`
+        `${sos}0; ${fos}.02; fill:${color};`
       );
       if (!mono) {
         shapeGroups[i] += C(
           points[i][j].x,
           points[i][j].y,
           dist,
-          `stroke-opacity:0; fill-opacity:.02; fill:${color};`
+          `${sos}0; ${fos}.02; fill:${color};`
         );
       }
     }
@@ -436,6 +454,10 @@ function L(x0, y0, x1, y1, s = "") {
   let l = `<line x1="${x0}" y1="${y0}" x2="${x1}" y2="${y1}" `;
   s == "" ? (l += "/>") : (l += `style="${s}" />`);
   return l;
+}
+
+function ToF(value) {
+  return value == 1 ? true : false;
 }
 
 document.addEventListener("keydown", (event) => {
