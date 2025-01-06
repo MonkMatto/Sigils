@@ -228,7 +228,7 @@ contract SIGILS is ERC721Royalty, Ownable(msg.sender) {
         string memory attributes = string(
             abi.encodePacked(
                 '[{"trait_type": "$PLEDGE VALUE", "value": "',
-                Strings.toString(BASE_PLEDGE_COST),
+                Strings.toString(BASE_PLEDGE_COST / 10**18),
                 '"}, {"trait_type": "Owned by Guardian", "value": "',
                 _trueFalse(data[0]),
                 '"}, {"trait_type": "Mono", "value": "',
