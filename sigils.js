@@ -23,7 +23,7 @@ let magic = tokenData.magic;
 // let address = "0xF8d9056db2C2189155bc25A30269dc5dDeD15d46";
 
 const project = "Sigils";
-const version = "4.0";
+const version = "5.0";
 console.log(`${project} ${version} copyright Matto 2025`);
 // console.log(
 //   "URL PARAMETERS IN HTML MODE: address=0x...; bools: mono, simplify, signature, invert, ghost, ether-style, still; numbers: stroke-width, distance"
