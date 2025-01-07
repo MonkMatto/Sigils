@@ -29,7 +29,7 @@ interface iERC20 {
 
 /// @title GUARDIAN SIGILS
 /// @notice ERC-721 NFT contract for the GUARDIAN SIGILS collection
-/// @author Matto (AKA MonkMatto), 2024. More info: matto.xyz
+/// @author Matto-Shinkai (AKA MonkMatto), 2025. More info: matto.xyz
 contract GUARDIAN_SIGILS is ERC721Royalty, Ownable(msg.sender) {
     constructor() ERC721("SIGILS", "SIGILS") {}
     uint256 private _nextTokenId;
