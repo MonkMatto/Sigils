@@ -229,9 +229,7 @@ contract GUARDIAN_SIGILS is ERC721Royalty, Ownable(msg.sender) {
         uint8 distance = traits[6] < 5 ? traits[6] : traits[6] / 10;
         string memory attributes = string(
             abi.encodePacked(
-                '[{"trait_type": "$PLEDGE VALUE", "value": "',
-                Strings.toString(BASE_PLEDGE_COST / 10**18),
-                '"}, {"trait_type": "Owned by Guardian", "value": "',
+                '[{"trait_type": "Owned by Guardian", "value": "',
                 _trueFalse(traits[0]),
                 '"}, {"trait_type": "Mono", "value": "',
                 _trueFalse(traits[1]),
