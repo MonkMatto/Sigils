@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?><svg id="Guardian Sigils" viewBox="0 0 1000 1000" xmlns="http://www.w3.org/2000/svg"><defs><radialGradient id="gradient-bg" cx="50%" cy="50%" r="60%" fx="50%" fy="50%"><stop offset="0%" stop-color="hsl(
+200
+, 100%, 30%)" /><stop offset="100%" stop-color="hsl(
+200
+, 100%,10%)" /></radialGradient></defs><rect x="0" y="0" width="1000" height="1000" fill="url(#gradient-bg)" /><text x="50%" y="45%" dominant-baseline="middle" text-anchor="middle" font-family="Times New Roman, serif" font-size="120" font-style="italic" fill="white">Guardian Sigil</text><text x="50%" y="60%" dominant-baseline="middle" text-anchor="middle" font-family="Times New Roman, serif" font-size="90" font-style="italic" fill="white">#
+0000
+</text><g id="signature" style="stroke:white; stroke-width:3px; stroke-linecap:round; fill-opacity:0%"><polyline points="924,956 920,956 920,860 940,872 960,860 960,956 956,956" /><polyline points="928,902 940,872 952,902" stroke-linejoin="bevel" /><line x1="934" y1="888" x2="946" y2="888" /><line x1="920" y1="902" x2="960" y2="902" /><line x1="932" y1="902" x2="932" y2="927" /><line x1="948" y1="902" x2="948" y2="927" /><circle cx="940" cy="940" r="15" /></g></svg>
