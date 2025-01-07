@@ -44,8 +44,10 @@ contract GUARDIAN_SIGILS is ERC721Royalty, Ownable(msg.sender) {
     address public artistAddress;
     string public description;
     string public website;
-    string private tokenImagePt1 = '<?xml version="1.0" encoding="utf-8"?><svg id="Guardian Sigils" viewBox="0 0 1000 1000" style="background-color:rgb(0,0,0)" xmlns="http://www.w3.org/2000/svg"><text x="50%" y="45%" dominant-baseline="middle" text-anchor="middle" font-family="Times New Roman, serif" font-size="120" font-style="italic" fill="white">Guardian Sigil</text><text x="50%" y="60%" dominant-baseline="middle" text-anchor="middle" font-family="Times New Roman, serif" font-size="90" font-style="italic" fill="white">#';
-    string private tokenImagePt2 = '</text><g id="signature" style="stroke:white; stroke-width:3px; stroke-linecap:round;"><polyline points="924,956 920,956 920,860 940,872 960,860 960,956 956,956" /><polyline points="928,902 940,872 952,902" stroke-linejoin="bevel" /><line x1="934" y1="888" x2="946" y2="888" /><line x1="920" y1="902" x2="960" y2="902" /><line x1="932" y1="902" x2="932" y2="927" /><line x1="948" y1="902" x2="948" y2="927" /><circle cx="940" cy="940" r="15" /></g></svg>';
+    string private tokenImagePt1 = '<?xml version="1.0" encoding="utf-8"?><svg id="Guardian Sigils" viewBox="0 0 1000 1000" xmlns="http://www.w3.org/2000/svg"><defs><radialGradient id="gradient-bg" cx="50%" cy="50%" r="60%" fx="50%" fy="50%"><stop offset="0%" stop-color="hsl(';
+    string private tokenImagePt2 = ', 100%, 30%)" /><stop offset="100%" stop-color="hsl(';
+    string private tokenImagePt3 = ', 100%, 10%)" /></radialGradient></defs><rect x="0" y="0" width="1000" height="1000" fill="url(#gradient-bg)" /><text x="50%" y="45%" dominant-baseline="middle" text-anchor="middle" font-family="Times New Roman, serif" font-size="120" font-style="italic" fill="white">Guardian Sigil</text><text x="50%" y="60%" dominant-baseline="middle" text-anchor="middle" font-family="Times New Roman, serif" font-size="90" font-style="italic" fill="white">#';
+    string private tokenImagePt4 = '</text><g id="signature" style="stroke:white; stroke-width:3px; stroke-linecap:round; fill-opacity:0%"><polyline points="924,956 920,956 920,860 940,872 960,860 960,956 956,956" /><polyline points="928,902 940,872 952,902" stroke-linejoin="bevel" /><line x1="934" y1="888" x2="946" y2="888" /><line x1="920" y1="902" x2="960" y2="902" /><line x1="932" y1="902" x2="932" y2="927" /><line x1="948" y1="902" x2="948" y2="927" /><circle cx="940" cy="940" r="15" /></g></svg>';
     string private htmlPart1 = 
         '<!DOCTYPE html><html lang="en"><head><meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>Guardian Sigil</title><style type="text/css" id="Guardian Sigil Generator">body {margin: 0;padding: 0;}canvas {padding: 0;margin: auto;display: block;position: absolute;top: 0;bottom: 0;left: 0;right: 0;}</style></head><body><script>';
     string private script = 
@@ -54,12 +56,7 @@ contract GUARDIAN_SIGILS is ERC721Royalty, Ownable(msg.sender) {
 
     event Reclaimed(address indexed sender, uint256 tokenId, uint256 ERC20Reclaimed);
 
-    function _getGuardianStatus(address _address) internal view returns (bool) {
-        (uint8 pledgerStatus, , uint256 pledgedPLEDGEBalance, , , ) = iPLEDGE(PLEDGE_CONTRACT).getPledgerData(_address);
-        return pledgerStatus == 1 && pledgedPLEDGEBalance >= 1_000_000 * 10**18;
-    }
-
-
+    /// @notice Ensures that the paying address will not break the pledge with the mint
     modifier ensureNoPledgeBreak(address _address) {
         (uint8 pledgerStatus, , , , uint256 transferablePLEDGEThisWindow, ) = iPLEDGE(PLEDGE_CONTRACT).getPledgerData(_address);
         if (pledgerStatus == 1) {
@@ -69,6 +66,8 @@ contract GUARDIAN_SIGILS is ERC721Royalty, Ownable(msg.sender) {
     }
 
     /// @notice Mints tokens to an address
+    /// @dev Only addresses that meet the guardian status can receive a minted token
+    /// @dev Both tokenSupply is handled separately from nextTokenId because tokens can be burned
     /// @param _to The address to mint the token to
     function MINT(address _to) external ensureNoPledgeBreak(msg.sender) {
         require(_getGuardianStatus(_to), "Guardian status not met");
@@ -80,6 +79,9 @@ contract GUARDIAN_SIGILS is ERC721Royalty, Ownable(msg.sender) {
         _nextTokenId++;
     }
 
+    /// @notice Burns a token and reclaims the base pledge
+    /// @dev Only the token owner can burn a token
+    /// @param _tokenId The token ID to burn
     function BURN_AND_RECLAIM(uint256 _tokenId) external {
         require(ownerOf(_tokenId) == msg.sender, "Only token owner can burn");
         _burn(_tokenId);
@@ -87,10 +89,6 @@ contract GUARDIAN_SIGILS is ERC721Royalty, Ownable(msg.sender) {
         iERC20(PLEDGE_CONTRACT).transfer(msg.sender, BASE_PLEDGE_COST);
         _tokenSupply--;
         emit Reclaimed(msg.sender, _tokenId, BASE_PLEDGE_COST);
-    }
-
-    function _makeMagic(uint256 _tokenId) internal {
-        tokenMagic[_tokenId] = uint256(keccak256(abi.encodePacked(_tokenId, block.timestamp, msg.sender, _tokenId))) % 1000000000;
     }
 
     /// @notice Assembles the HTML for a token
@@ -127,15 +125,16 @@ contract GUARDIAN_SIGILS is ERC721Royalty, Ownable(msg.sender) {
         return html;
     }
 
-    /// @notice Generates the magic for a token
-    /// index 0 guardian: 0 false 1 true
-    /// index 1 mono: 0 false 1 true
-    /// index 2 invert: 0 false 1 true
-    /// index 3 simplified: 0 false 1 true
-    /// index 4 ghost: 0 false 1 true
-    /// index 5 etherStyle: 0 false 1 true
-    /// index 6 distance: 0, 1, 2, 3, 4, 30, 60, 90
-    /// index 6 index mappings: 0, 1, 2, 3, 4, -3, -6, -9
+    /// @notice Generates the traits for a token based on its magic value
+    /// @dev The traits are generated and assigned to the following indexes:
+    ///   index 0 guardian: 0 false 1 true
+    ///   index 1 mono: 0 false 1 true
+    ///   index 2 invert: 0 false 1 true
+    ///   index 3 simplified: 0 false 1 true
+    ///   index 4 ghost: 0 false 1 true
+    ///   index 5 etherStyle: 0 false 1 true
+    ///   index 6 distance: 0, 1, 2, 3, 4, 30, 60, 90
+    ///       (JS mappings: 0, 1, 2, 3, 4, -3, -6, -9)
     /// @param _tokenId The token ID to get the magic for
     /// @return An array of uint8 values representing the magic
     function getTokenTraitsArray(uint256 _tokenId) public view returns (uint8[] memory) {
@@ -166,6 +165,7 @@ contract GUARDIAN_SIGILS is ERC721Royalty, Ownable(msg.sender) {
 
     /// @notice Token URI function for ERC721
     /// @param _tokenId The token ID to get the URI for
+    /// @return The URI for the token
     function tokenURI(
         uint256 _tokenId
     ) public view override returns (string memory) {
@@ -173,12 +173,19 @@ contract GUARDIAN_SIGILS is ERC721Royalty, Ownable(msg.sender) {
             _tokenId < _nextTokenId,
             "ERC721Metadata: URI query for nonexistent token"
         );
+        address tokenOwner = ownerOf(_tokenId);
         uint8[] memory traits = getTokenTraitsArray(_tokenId);
+        string memory tokenID = Strings.toString(_tokenId);
+        string memory hue = _calculateHue(tokenOwner);
         string memory tokenImageSVG = string(
             abi.encodePacked(
                 tokenImagePt1,
-                Strings.toString(_tokenId),
-                tokenImagePt2
+                hue,
+                tokenImagePt2,
+                hue,
+                tokenImagePt3,
+                tokenID,
+                tokenImagePt4
             )
         );
         string memory base64Image = string(
@@ -190,14 +197,14 @@ contract GUARDIAN_SIGILS is ERC721Royalty, Ownable(msg.sender) {
         string memory base64HTML = string(
             abi.encodePacked(
                 "data:text/html;base64,",
-                Base64.encode(bytes(getHTML(ownerOf(_tokenId), traits)))
+                Base64.encode(bytes(getHTML(tokenOwner, traits)))
             )
         );
-        string memory attributes = attributesArray(traits);
+        string memory attributes = getAttributesString(traits);
         string memory uri = string(
             abi.encodePacked(
                 '{"artist": "Matto", "name": "Guardian Sigil #',
-                Strings.toString(_tokenId),
+                tokenID,
                 '", "description": "',
                 description,
                 '", "external_url": "',
@@ -222,7 +229,8 @@ contract GUARDIAN_SIGILS is ERC721Royalty, Ownable(msg.sender) {
 
     /// @notice Returns the attributes for a token
     /// @param traits The array of uint8 values representing the magic
-    function attributesArray(uint8[] memory traits) public pure returns (string memory) {
+    /// @return The attributes as a string representing the array
+    function getAttributesString(uint8[] memory traits) public pure returns (string memory) {
         string[6] memory rarity = ["Common", "Uncommon", "Rare", "Epic", "Legendary", "Mythic"];
         uint8 rarityCounter = _calculateRarity(traits);
         string memory negativeSign = traits[6] < 5 ? "" : "-";
@@ -250,19 +258,6 @@ contract GUARDIAN_SIGILS is ERC721Royalty, Ownable(msg.sender) {
             )
         );
         return attributes;
-    }
-
-
-    function _calculateRarity(uint8[] memory traits) internal pure returns (uint8) {
-        uint8 rarityCounter = 0;
-        for (uint8 i = 1; i < 6; i++) {
-            rarityCounter += traits[i];
-        }
-        return rarityCounter;
-    }
-
-    function _trueFalse(uint8 _value) internal pure returns (string memory) {
-        return _value == 1 ? "True" : "False";
     }
 
     /// @notice Returns the total supply of tokens
@@ -299,6 +294,18 @@ contract GUARDIAN_SIGILS is ERC721Royalty, Ownable(msg.sender) {
     function setTokenImagePt2(string calldata _tokenImagePt2) external onlyOwner {
         tokenImagePt2 = _tokenImagePt2;
     }
+    
+    /// @notice Allows owner to set the token image part 3
+    /// @param _tokenImagePt3 The new token image part 3 to be set
+    function setTokenImagePt3(string calldata _tokenImagePt3) external onlyOwner {
+        tokenImagePt3 = _tokenImagePt3;
+    }
+
+    /// @notice Allows owner to set the token image part 4
+    /// @param _tokenImagePt4 The new token image part 4 to be set
+    function setTokenImagePt4(string calldata _tokenImagePt4) external onlyOwner {
+        tokenImagePt4 = _tokenImagePt4;
+    }
 
     /// @notice Allows owner to set the HTML start
     /// @param _htmlPart1 The new HTML start to be set
@@ -324,6 +331,63 @@ contract GUARDIAN_SIGILS is ERC721Royalty, Ownable(msg.sender) {
         royaltyBPS = _royaltyBPS;
         royaltyReceiver = _royaltyReceiver;
         _setDefaultRoyalty(royaltyReceiver, royaltyBPS);
+    }
+
+    /// @notice creates and sets a magic number for a token to determine its traits
+    /// @param _tokenId The token ID to create magic for
+    function _makeMagic(uint256 _tokenId) internal {
+        tokenMagic[_tokenId] = uint256(keccak256(abi.encodePacked(_tokenId, block.timestamp, msg.sender, _tokenId))) % 1000000000;
+    }
+
+    /// @notice Checks if an address meets the guardian status
+    /// @param _address The address to check
+    /// @return A boolean indicating if the address meets the guardian status
+    function _getGuardianStatus(address _address) internal view returns (bool) {
+        (uint8 pledgerStatus, , uint256 pledgedPLEDGEBalance, , , ) = iPLEDGE(PLEDGE_CONTRACT).getPledgerData(_address);
+        return pledgerStatus == 1 && pledgedPLEDGEBalance >= 1_000_000 * 10**18;
+    }
+
+    /// @notice Calculates the 'Core Rarity' of a token
+    /// @param traits The array of uint8 values representing the traits
+    /// @return The 'Core Rarity' value of the token
+    function _calculateRarity(uint8[] memory traits) internal pure returns (uint8) {
+        uint8 rarityCounter = 0;
+        for (uint8 i = 1; i < 6; i++) {
+            rarityCounter += traits[i];
+        }
+        return rarityCounter;
+    }
+
+    /// @notice Converts a 0 or 1 value to a string representing True or False
+    /// @param _value The value to convert
+    /// @return The string representation of the value
+    function _trueFalse(uint8 _value) internal pure returns (string memory) {
+        return _value == 1 ? "True" : "False";
+    }
+
+    /// @notice Calculates the hue for a token's image based on the address
+    /// @param _address The address to calculate the hue for
+    /// @return The hue value as a string
+    function _calculateHue(address _address) internal pure returns (string memory) {
+        string memory addressString = Strings.toHexString(uint256(uint160(_address)), 20);
+        bytes memory addressBytes = bytes(addressString);
+        uint8 firstHexDigit = _hexCharToDecimal(addressBytes[2]);
+        return Strings.toString((firstHexDigit * 360) / 16);
+    }
+
+    /// @notice Converts a hexadecimal character to a decimal value
+    /// @param char The hexadecimal character to convert
+    /// @return The decimal value of the hexadecimal character
+    function _hexCharToDecimal(bytes1 char) internal pure returns (uint8) {
+        if (char >= "0" && char <= "9") {
+            return uint8(char) - uint8(bytes1("0"));
+        } else if (char >= "a" && char <= "f") {
+            return uint8(char) - uint8(bytes1("a")) + 10;
+        } else if (char >= "A" && char <= "F") {
+            return uint8(char) - uint8(bytes1("A")) + 10;
+        } else {
+            revert("Invalid hexadecimal character");
+        }
     }
 }
 
