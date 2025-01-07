@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>$LFG CoinTokens</title>
+    <meta name="description" content="LFG CoinTokens">
+    <link rel="apple-touch-icon" sizes="180x180" href="./src/images/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="./src/images/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="./src/images/favicon-16x16.png">
+    <link rel="manifest" href="./src/images/site.webmanifest">
+    <link rel="stylesheet" href="src/css/pico.min.css">
+    <script src="src/js/web3.min.js"></script>
+    <script src="src/js/detect-provider.min.js"></script>
+    <script src="src/js/web3handshake.js"></script>
+    <script src="src/js/CT_ABI.js"></script>
+    <script src="src/js/ERC20_ABI.js"></script>
+    <!--
+    Website by Matto
+    Matto.xyz
+    @MonkMatto
+    (C) Matto 2023
+    
+    THE SOFTWARE IS PROVIDED 'AS IS', WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, 
+    INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR 
+    PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, 
+    DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR 
+    IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+    -->
+  </head>
+
+  <body>
+    <!-- Header -->
+    <header class="container">
+      <hgroup>
+        <h1>$LFG CoinTokens!</h1>
+        <h5>By Matto.</h5>
+        <hr>
+        <br>
+        <div class="grid">
+          <div>
+          <h6>LINKS: <a href="https://opensea.io/collection/lfgcointokens" target="_blank">NFT Collection</a> | <a href="https://etherscan.io/address/0xe8387e8222f733142038fb362af3ad12f1170d16#code"
+              target="_blank">Contract</a> | <a href="https://discord.gg/KD2Uzan9Mh" target="_blank">LFG Discord</a> | <a href="https://github.com/MonkMatto/CoinTokens" target="_blank">Template</a></h6>
+          </div>
+          <div>
+            <div id="network-name"></div>
+            <div id="connect-button" style="display: none;">
+              <button type="button" onclick="ConnectWallet()">Connect</button>
+            </div>
+            <p style="text-align: center;"><em><span class="message" color="black">Please connect to MetaMask.</span></em></p>
+          </div>          
+        </div>
+        <hr>
+      </hgroup>
+      <br>
+      <image src="./src/images/OSDETAIL.jpg"></image>
+      <br><br><br>
+      <hr>
+      <br><br>
+      <div id="stats-update">
+        <button type="button" onclick="updateStats()">Refresh Statistics!</button>
+      </div>
+      <br>
+      <div id="stats" class="grid" style="text-align: center">
+        <div>
+          <h4>$LFG Value of LFGCoinTokens in Circulation:</h4>
+          <div id="circulation"><h6>???</h6></div>
+        </div>
+        <div>        
+          <h4>$LFG Value Forever Locked to the Contract:</h4>
+          <div id="locked"><h6>???</h6></div>
+        </div>
+      </div>
+      <br>
+      <hr>
+
+    </header><!-- ./ Header -->
+
+    <!-- Main -->
+    
+    <main class="container">
+      <div id="wtf">
+        <h1>WTF?</h1>
+        <p>A 'CoinTokens' contract (<a href="https://github.com/MonkMatto/CoinTokens" target="_blank">template</a> coded by Matto, implemented here for $LFG) allows back and forth exchange between an ERC-20 and ERC-1155 NFTs that represent integer denominations of that ERC-20. The contract template can be used for any ERC-20 token, and for user security, ERC-20 contract and ERC-1155 denomination parameters are locked at deployment. The contract has on-chain royalty functions for the ERC-1155s and does not implement any operator filters. Also, there is a customization option built in: it can return ERC-20 'change' leftover from denomination functions or it can lock it permanently to the contract. Any number of integer denominations are supported, always with a tokenID matching the denomination.</p>
+        <br>
+        <hr>
+      </div>
+
+      <!-- basic -->
+      <div id="basic-info">
+        <br>
+        <h3>LFGCoinToken Specifc Info</h3>
+        <br>
+        <div class="grid">
+          <div>
+            <p>This implementation includes 8 denominations that are exchangable for <a href="https://etherscan.io/token/0x441C3c2f4a92f1B90F916811514ebDDbBD3BFf4F" target="_blank">$LFG</a>, as seen in the following list.</p>
+            <p>These denominations are represented as ERC-1155 NFTs where the tokenID matches the denomination (eg. tokens with ID '69420' can be exhanged for exactly 69,420 $LFG).</p>
+            <p>Only these 8 denominations can be exchanged for $LFG, but note that there is another token with 0 value: tokenID 0. That token is a 1:1 burner token, received for burning/locking $LFG to the contract. It cannot be exchanged for $LFG.</p>
+          </div>
+          <div>
+            <br>
+            <ul>
+              <li>69</li>
+              <li>420</li>
+              <li>9,000</li>
+              <li>69,420</li>
+              <li>1,000,000</li>
+              <li>8,675,309</li>
+              <li>69,000,420</li>
+              <li>1,000,000,000</li>
+            </ul>
+          </div>
+        </div>
+        <p>There are no fees for exact exchanges between ERC-20 and ERC-1155 tokens (other than gas), but any ERC-20 overage amount used in Denominate functions is permanently locked to the contract.</p>
+        <br>
+        <hr>
+      </div>
+
+      <!-- coin tokens -->
+      <div id="coin-token-eg">
+        <br>
+        <h3>The LFG CoinTokens, in all their glory!</h3>
+        <br>
+        <div class="grid">
+          <div style="text-align: center;">
+            <image src="./src/images/0.jpg" alt="Token 0"></image>
+            <p>Burner (1:1 burned $LFG, 0 Value)</p>
+            <p><em>Theoretical Max: 69,000,000,000</em></p>
+          </div>
+          <div style="text-align: center;">
+            <image src="./src/images/69.jpg" alt="Token 69"></image>
+            <p>LFG! (69 $LFG)</p>
+            <p><em>Theoretical Max: 1,000,000,000</em></p>
+          </div>
+          <div style="text-align: center;">
+            <image src="./src/images/420.jpg" alt="Token 420"></image>
+            <p>Weed (420 $LFG)</p>
+            <p><em>Theoretical Max: 164,285,714</em></p>
+          </div>
+        </div>
+        <br>
+        <div class="grid">
+          <div style="text-align: center;">
+            <image src="./src/images/9000.jpg" alt="Token 9000"></image>
+            <p>lvl 9000! (9,000 $LFG)</p>
+            <p><em>Theoretical Max: 7,666,666</em></p>
+          </div>
+          <div style="text-align: center;">
+            <image src="./src/images/69420.jpg" alt="Token 69420"></image>
+            <p>Big Brain (69,420 $LFG)</p>
+            <p><em>Theoretical Max: 993,949</em></p>
+          </div>
+          <div style="text-align: center;">
+            <image src="./src/images/1000000.jpg" alt="Token 1000000"></image>
+            <p>LFG Rocket (1,000,000 $LFG)</p>
+            <p><em>Theoretical Max: 69,000</em></p>
+          </div>
+        </div>
+        <br>
+        <div class="grid">
+          <div style="text-align: center;">
+            <image src="./src/images/8675309.jpg" alt="Token 8675309"></image>
+            <p>Jenny? (8,675,309 $LFG)</p>
+            <p><em>Theoretical Max: 7,953</em></p>
+          </div>
+          <div style="text-align: center;">
+            <image src="./src/images/69000420.jpg" alt="Token 69000420"></image>
+            <p>Ser Leo (69,000,420 $LFG)</p>
+            <p><em>Theoretical Max: 999</em></p>
+          </div>
+          <div style="text-align: center;">
+            <image src="./src/images/1000000000.jpg" alt="Token 1000000000"></image>
+            <p>Crown of Crowns (1,000,000,000 $LFG)</p>
+            <p><em>Theoretical Max: 69</em></p>
+          </div>
+        </div>
+        <br>
+        <div style="text-align: center;">
+          <p>Theoretical Max = $LFG Total supply (69B) / Denomination Amount</p>
+          <p><em>Token circulation and locked coins will lower the theoretical max values.</em></p>
+        </div>
+        <br>
+        <hr>
+      </div>
+
+      <!-- Connect and Approve -->
+      <div id="connect-approve">
+        <br>
+        <h3>Connect and Approve $LFG</h3>
+        <br>
+        <form _lpchecked="1">
+          <div class="grid">
+            <div>
+              <p>For this CoinTokens contract to exchange your $LFG, you have to approve it on the LFG contract... Which you can do on <a
+                  href="https://etherscan.io/address/0x441C3c2f4a92f1B90F916811514ebDDbBD3BFf4F#writeContract" target="_blank">Etherscan</a> or here on this page (if you connected your account).</p>
+              <p>Enter an amount of $LFG (in whole units) you want the CoinToken contract to have access to, and click 'Approve'.</p>
+              <div id="allowance">
+                <p>Now, check the allowance...</p>
+              </div>
+            </div>
+            <div>
+              <!-- <div id="connect-button2" style="display: none;">
+                <button type="button" onclick="ConnectWallet()">Connect Wallet</button>
+              </div> -->
+              <br>
+              <div class="grid">
+                <input type="number" id="approved-amount" placeholder="Approval Amount" required>
+                <button type="submit" id="submit-button" class="btn btn-outline-dark btn-lg btn-round"
+                  onclick="approveButton(); return false">Approve</button>
+              </div>
+              <br>
+              <button type="submit" id="check-approval-button" class="btn btn-outline-dark btn-lg btn-round"
+                  onclick="checkAllowance(); return false">Check Allowance Amount</button>
+            </div>
+          </div>
+        </form>
+        <br>
+        <hr>
+      </div>
+
+      <!-- Denom Functions  -->
+      <div>
+        <br>
+        <h3>Denominate Functions ($LFG → LFGCoinToken NFTs)</h3>
+        <div class="grid">
+          <p><strong>Denominate All</strong> automatically denominates the submitted amount of $LFG into the largest possible denominations and allocates ERC-1155 tokens accordingly. Any leftover $LFG (any amount less than 69 - the smallest denomination), is locked to the contract and cannot be retrieved by anyone.</p>
+          <div>
+            <form _lpchecked="1">
+              <input type="number" id="denom-all-amount" placeholder="Amount to denominate" required>
+              <button type="submit" id="submit-button" class="btn btn-outline-dark btn-lg btn-round"
+              onclick="denomAllButton(); return false">Denominate All</button>
+            </form>
+          </div>
+        </div>
+          <br>
+          <br>
+          <div class="grid">
+            <p><strong>Denominate Into Token</strong> denominates the submitted amount of $LFG into the submitted denomination (if valid) and allocates ERC-1155 tokens accordingly. Any leftover $LFG (any amount less than the <strong><em>submitted denomination</em></strong>), is locked to the contract and cannot be retrieved by anyone (if you denominate into token 1000000, and send in 1,999,999 LFG, you lock 999,999 LFG to the contract, forever).</p>
+            <form _lpchecked="1">
+              <div class="grid">
+                <input type="number" id="denom-into-amount" placeholder="Amount to denominate" required>
+                <input type="number" id="denom-into-token" placeholder="Denomination" required>
+              </div>  
+              <button type="submit" id="submit-button" class="btn btn-outline-dark btn-lg btn-round"
+              onclick="denomIntoButton(); return false">Denominate Into Token</button>
+            </form>
+          </div>
+        </div>
+        <br>
+        <p style="text-align: center;">Did you try it? Check your NFT collection!</p>
+        <br>
+        <hr>
+      </div>
+
+      <!-- Liquidate Functions  -->
+      <div>
+        <br>
+        <h3>Liquidate Functions (LFGCoinToken NFTs → $LFG)</h3>
+        <div class="grid">
+          <p><strong>Liquidate All</strong> automatically liquifies (burns) ALL denominated LFGCoinTokens owned by the user and returns their value in $LFG.</p>
+          <form _lpchecked="1">
+              <button type="submit" id="submit-button" class="btn btn-outline-dark btn-lg btn-round"
+              onclick="liquidateAllButton(); return false">Liquidate All</button>
+          </form>
+        </div>
+        <br>
+        <br>
+        <div class="grid">
+          <p><strong>Liquidate From Token</strong> Liquifies a submitted amount of a submitted denomination of LFGCoinToken and returns their value in $LFG.</p>
+          <form _lpchecked="1">
+            <div class="grid">
+              <input type="number" id="liquidate-from-amount" placeholder="Amount to Liquidate" required>
+              <input type="number" id="liquidate-from-token" placeholder="Denomination to Liquidate" required>
+            </div>  
+            <button type="submit" id="submit-button" class="btn btn-outline-dark btn-lg btn-round"
+            onclick="liquidateFromButton(); return false">Liquidate From Token</button>
+          </form>
+        </div>
+        <br>
+        <p style="text-align: center;">Did you try it? Check your $LFG balance!</p>
+        <br>
+        <hr>
+      </div>
+    </main><!-- ./ Main -->
+    
+    <!-- Footer -->
+    <footer class="container">
+      <details>
+        <summary>
+          <h3>LFG CoinToken FAQ (click to expand)</h3>
+        </summary>
+        <h5><em>Can anyone withdraw $LFG held or 'locked' by the contract?</em></h5>
+        <p>The contract should only send $LFG to an account if LFGCoinTokens are liquidated from that account.</p>
+        <br>
+        <h5><em>Has this contract been audited?</em></h5>
+        <p>No. While I believe I coded it well to protect from hacks, please consider it a risky experiment with no warranties.</p>
+        <br>
+        <h5><em>Cost? Fees? Royalties?</em></h5>
+        <p>There is no cost besides gas, and there are no 'fees' charged on ERC-20/ERC-1155 exchanges... But for fun (and to reduce the available supply of $LFG by locking/burning coins) any $LFG overages submitted in denominate functions are locked to the contract. Oh, and the ERC-1155 tokens have 3% royalties payable to <code>artist.MonkMatto.eth</code>.</p>
+        <br>
+        <h5><em>Rarity? Bonding curve? Reason to FOMO??? (no x 3). Then, why?</em></h5>
+        <p>For fun and flex I suppose. Also, it's kinda cool to have truly liquid jpegs, isn't it? :P</p>
+        <br>
+        <h5><em>Where's the art from?</em></h5>
+        <p>Matto used Stable Diffusion with custom models to generate a few thousand outputs from dozens of prompts, then curated/tweaked/combined them to create the art. It's stored on Arweave.</p>
+        <br>
+        <h5><em>What's the license on the contract? Can I use it for another coin?</em></h5>
+        <p>The <a href="https://github.com/MonkMatto/CoinTokens" target="_blank">contract template</a> used here is MIT licensed, so you can go nuts with it. If you want to toss me a tiny bag of whatever ERC-20 you use the contract with, I won't be upset about it :D <code>MonkMatto.eth</code> pls!</p>
+        <br>
+        <h5><em>Will there be a secondary market for the tokens?</em></h5>
+        <p>Time will tell, but I'm sure bots will exist someday to bid/buy the tokens automatically as long as they can make a profit by converting the token to ERC-20 and selling it in a single block. So, for larger denominations, a market is likely to exist, yes. Maybe I'll even be paid some royalties - NOBODY KNOWS, hahahaaa!</p>
+        <br>
+        <h5><em>What can I do with the burner token?</em></h5>
+        <p>Normal token things (collect, hodl, sell, transfer, etc). Beyond that, I'm not sure yet, but I wouldn't burn them...</p>
+        <br>
+        <h5><em>I thought you were a serious artist, wtf are you messing around with shitcoins for?</em></h5>
+        <p>"If you're not having fun, you're doing it wrong." -Matto</p>
+        <br>
+      </details>
+      <small>Built by Matto. LINKS: <a href="https://matto.xyz/" target="_blank">Website</a> | <a href="https://twitter.com/MonkMatto" target="_blank">Twitter (@MonkMatto)</a> | <a href="https://discord.com/invite/AQDwjAa3g2" target="_blank">Discord</a> (Matto/Substratum).</small>
+    </footer><!-- ./ Footer -->
+
+</body>
+<script src="src/js/ct.js"></script>
+</html>
