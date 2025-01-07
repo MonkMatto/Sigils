@@ -1,8 +1,8 @@
 <!DOCTYPE html>
 <html lang="en" data-theme="dark"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>$LFG CoinTokens</title>
-    <meta name="description" content="LFG CoinTokens">
+    <title>Guardian Sigils</title>
+    <meta name="description" content="Guardian Sigils">
     <link rel="apple-touch-icon" sizes="180x180" href="./src/images/apple-touch-icon.png">
     <link rel="icon" type="image/png" sizes="32x32" href="./src/images/favicon-32x32.png">
     <link rel="icon" type="image/png" sizes="16x16" href="./src/images/favicon-16x16.png">
@@ -17,7 +17,7 @@
     Website by Matto
     Matto.xyz
     @MonkMatto
-    (C) Matto 2023
+    (C) Matto 2025
     
     THE SOFTWARE IS PROVIDED 'AS IS', WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, 
     INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR 
@@ -31,29 +31,28 @@
     <!-- Header -->
     <header class="container">
       <hgroup>
-        <h1>$LFG CoinTokens!</h1>
+        <h1>Guardian Sigils</h1>
         <h5>By Matto.</h5>
         <hr>
         <br>
         <div class="grid">
           <div>
-          <h6>LINKS: <a href="https://opensea.io/collection/lfgcointokens" target="_blank">NFT Collection</a> | <a href="https://etherscan.io/address/0xe8387e8222f733142038fb362af3ad12f1170d16#code"
-              target="_blank">Contract</a> | <a href="https://discord.gg/KD2Uzan9Mh" target="_blank">LFG Discord</a> | <a href="https://github.com/MonkMatto/CoinTokens" target="_blank">Template</a></h6>
+          <h6>LINKS: <a href="https://opensea.io/collection/guardian-sigils" target="_blank">NFT Collection</a> | <a href="https://etherscan.io/address/<address>#code"
+              target="_blank">Contract</a> | <a href="https://discord.gg/sCmu4Xt6Cx" target="_blank">Discord</a> | <a href="https://github.com/MonkMatto/Sigils" target="_blank">Github</a></h6>
           </div>
           <div>
             <div id="network-name"></div>
-            <div id="connect-button" style="display: none;">
+            <div id="connect-button" style="display: block;">
               <button type="button" onclick="ConnectWallet()">Connect</button>
             </div>
             <p style="text-align: center;"><em><span class="message" color="black">Please connect to MetaMask.</span></em></p>
           </div>          
         </div>
-        <hr>
       </hgroup>
       <br>
       <image src="./src/images/OSDETAIL.jpg"></image>
       <br><br><br>
-      <hr>
+
       <br><br>
       <div id="stats-update">
         <button type="button" onclick="updateStats()">Refresh Statistics!</button>
@@ -61,15 +60,14 @@
       <br>
       <div id="stats" class="grid" style="text-align: center">
         <div>
-          <h4>$LFG Value of LFGCoinTokens in Circulation:</h4>
-          <div id="circulation"><h6>???</h6></div>
+          <h4>Guardian Sigils in Circulation:</h4>
+          <div id="circulation"><h6>(connect wallet)</h6></div>
         </div>
         <div>        
-          <h4>$LFG Value Forever Locked to the Contract:</h4>
-          <div id="locked"><h6>???</h6></div>
+          <h4>$PLEDGE Locked in Sigil Tokens:</h4>
+          <div id="locked"><h6>(connect wallet)</h6></div>
         </div>
       </div>
-      <br>
       <hr>
 
     </header><!-- ./ Header -->
@@ -78,105 +76,78 @@
     
     <main class="container">
       <div id="wtf">
-        <h1>WTF?</h1>
-        <p>A 'CoinTokens' contract (<a href="https://github.com/MonkMatto/CoinTokens" target="_blank">template</a> coded by Matto, implemented here for $LFG) allows back and forth exchange between an ERC-20 and ERC-1155 NFTs that represent integer denominations of that ERC-20. The contract template can be used for any ERC-20 token, and for user security, ERC-20 contract and ERC-1155 denomination parameters are locked at deployment. The contract has on-chain royalty functions for the ERC-1155s and does not implement any operator filters. Also, there is a customization option built in: it can return ERC-20 'change' leftover from denomination functions or it can lock it permanently to the contract. Any number of integer denominations are supported, always with a tokenID matching the denomination.</p>
-        <br>
+        <h1>ABOUT</h1>
+        <p>Guardian Sigils are a 100% onchain generative and responsive art collection, with all traits and artwork code generated onchain. The smart contract generates image assets and HTML that any modern browser can use to render the art - but the <strong>Guardian Sigil</strong> art only renders if the account holding the NFT is a $PLEDGE Guardian (has an active pledge of 1M tokens).</p>
+        <p>If the token is held by an account that is not a $PLEDGE Guardian, then the background will render but not a sigil. Trading the token with a Guardian or becoming one will reveal the Guardian Sigil!</p>
+        <p>Tokens can have different traits and rarities that never change, but every account's sigil will be constant across all tokens it owns. Guardian Sigil tokens are dynamic, and they will always update themselves to draw their owner's sigil (if they're a Guardian).</p>
+        <p>Each Guardian Sigil NFT holds half the mint cost in $PLEDGE inside it (2500 $PLEDGE). At any time, a token owner can use the <code>BURN_AND_RECLAIM</code> function on the contract or on this site to burn the token and reclaim the $PLEDGE to their account.</p>
         <hr>
       </div>
 
       <!-- basic -->
       <div id="basic-info">
         <br>
-        <h3>LFGCoinToken Specifc Info</h3>
+        <h3>Guardian Sigil Traits Info</h3>
+        <p>Some popular generative art projects & platforms have traits calculated off-chain with the help of APIs, but Guardian Sigil traits are calculated directly by the contract. There are 5 'Core' traits, 1 rarity score based on those traits, and a 'Viewing Distance' trait.</p>
+        <h5>Core Traits:</h5>
+        <ul>
+          <li><strong>Mono</strong>: If true, a black and white image is generated</li>
+          <li><strong>Invert</strong>: If true, the image brightness is inverted</li>
+          <li><strong>Simplified</strong>: If true, the Sigil is drawn without node indicators and vector lines</li>
+          <li><strong>Ghost</strong>: If true, the Sigil shapes are transparent</li>
+          <li><strong>EtherStyle</strong>: If true, node indicators are rendered as 'Ethereum Diamonds'</li>
+        </ul>
+        <h5>Other Traits:</h5>
+        <ul>
+          <li><strong>Core Rarity</strong>: determined solely by the number of Core Traits present</li>
+          <li><strong>Viewing Distance</strong>: essentially a zoom level. By default, these range from -9 to 5</li>
+        </ul>
         <br>
-        <div class="grid">
-          <div>
-            <p>This implementation includes 8 denominations that are exchangable for <a href="https://etherscan.io/token/0x441C3c2f4a92f1B90F916811514ebDDbBD3BFf4F" target="_blank">$LFG</a>, as seen in the following list.</p>
-            <p>These denominations are represented as ERC-1155 NFTs where the tokenID matches the denomination (eg. tokens with ID '69420' can be exhanged for exactly 69,420 $LFG).</p>
-            <p>Only these 8 denominations can be exchanged for $LFG, but note that there is another token with 0 value: tokenID 0. That token is a 1:1 burner token, received for burning/locking $LFG to the contract. It cannot be exchanged for $LFG.</p>
-          </div>
-          <div>
-            <br>
-            <ul>
-              <li>69</li>
-              <li>420</li>
-              <li>9,000</li>
-              <li>69,420</li>
-              <li>1,000,000</li>
-              <li>8,675,309</li>
-              <li>69,000,420</li>
-              <li>1,000,000,000</li>
-            </ul>
-          </div>
-        </div>
-        <p>There are no fees for exact exchanges between ERC-20 and ERC-1155 tokens (other than gas), but any ERC-20 overage amount used in Denominate functions is permanently locked to the contract.</p>
-        <br>
+        <p><em>Every token is HTML, and the code includes URL parameter interactivity to override or alter the default settings for temporary view...</em></p>
         <hr>
       </div>
 
-      <!-- coin tokens -->
-      <div id="coin-token-eg">
+      <!-- interactivity -->
+      <div id="interactivity-info">
         <br>
-        <h3>The LFG CoinTokens, in all their glory!</h3>
+        <h3>Interactivity</h3>
+        <p>The HTML generated onchain has various interactive features. Marketplaces and DApps may disable this JavaScript interactivity, but by downloading the HTML or using the viewer here (COMING SOON) you can interact directly with the generator's code.</p>
+        <p>To use URL parameters, add <code>?</code> to the URL and then the parameters set to a value, eg. <code>?still=true</code>. You can string multiple parameters by using <code>&</code> between them, eg. <code>?still=true&ghost=true&distance=5</code></p>
+        <h5>URL Parameters:</h5>
+        <ul>
+          <li><strong>address=<code>0x...</code></strong>: renders an address's Sigil</li>
+          <li><strong>still=true</strong>: renders in still image mode</li>
+          <li><strong>mono=true</strong>: engages mono mode</li>
+          <li><strong>invert=true</strong>: engages inverted mode.</li>
+          <li><strong>simplified=true</strong>: engages simplified mode..</li>
+          <li><strong>ghost=true</strong>: engages ghost mode...</li>
+          <li><strong>ether-style=true</strong>: engages Ethereum node indicators</li>
+          <li><strong>distance=<code>integer</code></strong>: sets the viewing distance ('working' range is -50 to 9)</li>
+          <li><strong>stroke-width=<code>integer</code></strong>: sets the line thickness</li>
+        </ul>
+        <h5>Keystroke Interaction:</h5>
+        <ul>
+          <li><strong>a</strong>: downloads the default, animated SVG</li>
+          <li><strong>s</strong>: downloads a still version of the Sigil as a SVG with layers grouped for plotting or software customization</li>
+          <li><strong>p</strong>: downloads a still version of the Sigil as a PNG image</li>
+          <li><strong>h</strong>: reveals Matto signature</li>
+        </ul>
         <br>
-        <div class="grid">
-          <div style="text-align: center;">
-            <image src="./src/images/0.jpg" alt="Token 0"></image>
-            <p>Burner (1:1 burned $LFG, 0 Value)</p>
-            <p><em>Theoretical Max: 69,000,000,000</em></p>
-          </div>
-          <div style="text-align: center;">
-            <image src="./src/images/69.jpg" alt="Token 69"></image>
-            <p>LFG! (69 $LFG)</p>
-            <p><em>Theoretical Max: 1,000,000,000</em></p>
-          </div>
-          <div style="text-align: center;">
-            <image src="./src/images/420.jpg" alt="Token 420"></image>
-            <p>Weed (420 $LFG)</p>
-            <p><em>Theoretical Max: 164,285,714</em></p>
-          </div>
-        </div>
+        <hr>
+      </div>
+    
+      <!-- Mint Info -->
+      <div id="mint-info">
         <br>
-        <div class="grid">
-          <div style="text-align: center;">
-            <image src="./src/images/9000.jpg" alt="Token 9000"></image>
-            <p>lvl 9000! (9,000 $LFG)</p>
-            <p><em>Theoretical Max: 7,666,666</em></p>
-          </div>
-          <div style="text-align: center;">
-            <image src="./src/images/69420.jpg" alt="Token 69420"></image>
-            <p>Big Brain (69,420 $LFG)</p>
-            <p><em>Theoretical Max: 993,949</em></p>
-          </div>
-          <div style="text-align: center;">
-            <image src="./src/images/1000000.jpg" alt="Token 1000000"></image>
-            <p>LFG Rocket (1,000,000 $LFG)</p>
-            <p><em>Theoretical Max: 69,000</em></p>
-          </div>
-        </div>
-        <br>
-        <div class="grid">
-          <div style="text-align: center;">
-            <image src="./src/images/8675309.jpg" alt="Token 8675309"></image>
-            <p>Jenny? (8,675,309 $LFG)</p>
-            <p><em>Theoretical Max: 7,953</em></p>
-          </div>
-          <div style="text-align: center;">
-            <image src="./src/images/69000420.jpg" alt="Token 69000420"></image>
-            <p>Ser Leo (69,000,420 $LFG)</p>
-            <p><em>Theoretical Max: 999</em></p>
-          </div>
-          <div style="text-align: center;">
-            <image src="./src/images/1000000000.jpg" alt="Token 1000000000"></image>
-            <p>Crown of Crowns (1,000,000,000 $LFG)</p>
-            <p><em>Theoretical Max: 69</em></p>
-          </div>
-        </div>
-        <br>
-        <div style="text-align: center;">
-          <p>Theoretical Max = $LFG Total supply (69B) / Denomination Amount</p>
-          <p><em>Token circulation and locked coins will lower the theoretical max values.</em></p>
-        </div>
+        <h3>Mint and Tokenomix Deets</h3>
+        <p>This ain't your daddy's genart.</p>
+        <ul>
+          <li><strong>Cost: 5k $PLEDGE.</strong>: 2.5k $PLEDGE go to the artist and 2.5k $PLEDGE are locked into the token</li>
+          <li><strong>Mint-Cap: NONE</strong> There's no mint-cap on the project, because tokens can be destroyed to unlock their stored $PLEDGE</li>
+          <li><strong>Allow-List: SORTA</strong>: the token recipient address must be a guardian. It doesn't matter the status of the minting account. Once minted, tokens can transfer like any other ERC-721.</li>
+          <li><strong>Pledge-Safeties: ENGAGED</strong>: the smart contract should forbid minting if doing so would break the minter's pledge (1% $PLEDGE per month). Best practice is to verify this for yourself ahead of time!</li>
+        </ul>
+        <p>Each token is given a magic number at mint, and that number is used to calculate its traits. These traits, plus the owner's address and Guardian-ship status, are used to create the artwork.</p>
         <br>
         <hr>
       </div>
@@ -184,16 +155,18 @@
       <!-- Connect and Approve -->
       <div id="connect-approve">
         <br>
-        <h3>Connect and Approve $LFG</h3>
+        <h3>Connect and Approve $PLEDGE</h3>
         <br>
         <form _lpchecked="1">
           <div class="grid">
             <div>
-              <p>For this CoinTokens contract to exchange your $LFG, you have to approve it on the LFG contract... Which you can do on <a
-                  href="https://etherscan.io/address/0x441C3c2f4a92f1B90F916811514ebDDbBD3BFf4F#writeContract" target="_blank">Etherscan</a> or here on this page (if you connected your account).</p>
-              <p>Enter an amount of $LFG (in whole units) you want the CoinToken contract to have access to, and click 'Approve'.</p>
+              <p>Guardian Sigils are minted for 5k $PLEDGE each. To allow the Guardian Sigils contract to transfer your $PLEDGE, you have to approve it on the $PLEDGE contract... Which you can do on <a
+                  href="https://etherscan.io/address/address#writeContract" target="_blank">Etherscan</a> or here on this page (if you connected).</p>
+              <p>To authorize, use the default value of 10k or edit it and click 'Approve'.</p>
               <div id="allowance">
                 <p>Now, check the allowance...</p>
+                   <button type="submit" id="check-approval-button" class="btn btn-outline-dark btn-lg btn-round"
+                  onclick="checkAllowance(); return false">Check Allowance Amount</button>
               </div>
             </div>
             <div>
@@ -202,13 +175,11 @@
               </div> -->
               <br>
               <div class="grid">
-                <input type="number" id="approved-amount" placeholder="Approval Amount" required>
+                <input type="number" id="approved-amount" value="10000" required>
                 <button type="submit" id="submit-button" class="btn btn-outline-dark btn-lg btn-round"
                   onclick="approveButton(); return false">Approve</button>
               </div>
               <br>
-              <button type="submit" id="check-approval-button" class="btn btn-outline-dark btn-lg btn-round"
-                  onclick="checkAllowance(); return false">Check Allowance Amount</button>
             </div>
           </div>
         </form>
@@ -216,10 +187,10 @@
         <hr>
       </div>
 
-      <!-- Denom Functions  -->
+      <!-- MINT Functions  -->
       <div>
         <br>
-        <h3>Denominate Functions ($LFG → LFGCoinToken NFTs)</h3>
+        <h3>MINT!</h3>
         <div class="grid">
           <p><strong>Denominate All</strong> automatically denominates the submitted amount of $LFG into the largest possible denominations and allocates ERC-1155 tokens accordingly. Any leftover $LFG (any amount less than 69 - the smallest denomination), is locked to the contract and cannot be retrieved by anyone.</p>
           <div>
@@ -253,7 +224,7 @@
       <!-- Liquidate Functions  -->
       <div>
         <br>
-        <h3>Liquidate Functions (LFGCoinToken NFTs → $LFG)</h3>
+        <h3>BURN AND RECLAIM</h3>
         <div class="grid">
           <p><strong>Liquidate All</strong> automatically liquifies (burns) ALL denominated LFGCoinTokens owned by the user and returns their value in $LFG.</p>
           <form _lpchecked="1">
