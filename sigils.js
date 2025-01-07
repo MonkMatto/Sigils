@@ -55,7 +55,12 @@ console.log("#".repeat(40));
 
 
 
-const project = "Sigils";
+
+
+
+
+////////////////////////////////////////////////////////////////////////////////
+const project = "Guardian Sigils";
 const version = "5.0";
 console.log(`${project} ${version} copyright Matto 2025`);
 console.log(
@@ -370,7 +375,7 @@ mg1 += "</g>";
 mg2 += "</g>";
 fg += "</g>";
 updateSVG();
-// }
+
 
 function updateSVG() {
   const existingSVG = document.getElementById(project);
