@@ -63,7 +63,7 @@ contract SIGILS is ERC721Royalty, Ownable(msg.sender) {
     modifier ensureNoPledgeBreak(address _address) {
         (uint8 pledgerStatus, , , , uint256 transferablePLEDGEThisWindow, ) = iPLEDGE(PLEDGE_CONTRACT).getPledgerData(_address);
         if (pledgerStatus == 1) {
-            require(transferablePLEDGEThisWindow > 2 * BASE_PLEDGE_COST, "Pledge break detected");
+            require(transferablePLEDGEThisWindow >= 2 * BASE_PLEDGE_COST, "Pledge break detected");
         }
         _;
     }
