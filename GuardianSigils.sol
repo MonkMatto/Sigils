@@ -65,11 +65,11 @@ contract GUARDIAN_SIGILS is ERC721Royalty, Ownable(msg.sender) {
         _;
     }
 
-    /// @notice Mints tokens to an address
+    /// @notice Summons (mints) a token to an address
     /// @dev Only addresses that meet the guardian status can receive a minted token
-    /// @dev Both tokenSupply is handled separately from nextTokenId because tokens can be burned
+    /// @dev tokenSupply is handled separately from nextTokenId because tokens can be burned
     /// @param _to The address to mint the token to
-    function MINT(address _to) external ensureNoPledgeBreak(msg.sender) {
+    function SUMMON(address _to) external ensureNoPledgeBreak(msg.sender) {
         require(_getGuardianStatus(_to), "Guardian status not met");
         iERC20(PLEDGE_CONTRACT).transferFrom(msg.sender, address(this), BASE_PLEDGE_COST);
         iERC20(PLEDGE_CONTRACT).transferFrom(msg.sender, artistAddress, BASE_PLEDGE_COST);
@@ -79,13 +79,12 @@ contract GUARDIAN_SIGILS is ERC721Royalty, Ownable(msg.sender) {
         _nextTokenId++;
     }
 
-    /// @notice Burns a token and reclaims the base pledge
-    /// @dev Only the token owner can burn a token
-    /// @param _tokenId The token ID to burn
-    function BURN_AND_RECLAIM(uint256 _tokenId) external {
+    /// @notice Sacrifices (burns) a token and reclaims the locked $PLEDGE
+    /// @dev Only the token owner can sacrifice a token
+    /// @param _tokenId The token ID to sacrifice
+    function SACRIFICE(uint256 _tokenId) external {
         require(ownerOf(_tokenId) == msg.sender, "Only token owner can burn");
         _burn(_tokenId);
-        // transfer base pledge to token burner
         iERC20(PLEDGE_CONTRACT).transfer(msg.sender, BASE_PLEDGE_COST);
         _tokenSupply--;
         emit Reclaimed(msg.sender, _tokenId, BASE_PLEDGE_COST);
