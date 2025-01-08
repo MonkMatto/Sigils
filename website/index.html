@@ -11,8 +11,8 @@
     <script src="src/js/web3.min.js"></script>
     <script src="src/js/detect-provider.min.js"></script>
     <script src="src/js/web3handshake.js"></script>
-    <script src="src/js/CT_ABI.js"></script>
-    <script src="src/js/ERC20_ABI.js"></script>
+    <script src="src/js/SIGILS_ABI.js"></script>
+    <script src="src/js/PLEDGE_ABI.js"></script>
     <!--
     Website by Matto
     Matto.xyz
@@ -32,7 +32,7 @@
     <header class="container">
       <hgroup>
         <h1>Guardian Sigils</h1>
-        <h5>By Matto.</h5>
+        <h5>By Matto</h5>
         <hr>
         <br>
         <div class="grid">
@@ -45,12 +45,15 @@
             <div id="connect-button" style="display: block;">
               <button type="button" onclick="ConnectWallet()">Connect</button>
             </div>
-            <p style="text-align: center;"><em><span class="message" color="black">Please connect to MetaMask.</span></em></p>
+            <!-- <p style="text-align: center;"><em><span class="message" color="black">Please connect to MetaMask.</span></em></p> -->
+             <p style="text-align: center;"><em><span class="message" color="black"></span></em></p>
           </div>          
         </div>
       </hgroup>
       <br>
-      <image src="./src/images/OSDETAIL.jpg"></image>
+      <!-- <image src="./src/images/OSDETAIL.jpg"></image> -->
+      <image src="./src/images/pledge_sigil_anima.svg" alt="Sigil of the $PLEDGE Contract"></image>
+      <p style="text-align: center;"><em>Sigil of the $PLEDGE Contract</em></p>
       <br><br><br>
 
       <br><br>
@@ -76,11 +79,11 @@
     
     <main class="container">
       <div id="wtf">
-        <h1>ABOUT</h1>
-        <p>Guardian Sigils are a 100% onchain generative and responsive art collection, with all traits and artwork code generated onchain. The smart contract generates image assets and HTML that any modern browser can use to render the art - but the <strong>Guardian Sigil</strong> art only renders if the account holding the NFT is a $PLEDGE Guardian (has an active pledge of 1M tokens).</p>
+        <h1 style="text-align: center;">ABOUT</h1>
+        <p>Guardian Sigils are a 100% onchain, dynamic, animated, and interactive generative art collection, with all traits and artwork code generated onchain by a single smart contract. The contract generates image assets and HTML that any modern browser can use to render the art - but the <strong>Guardian Sigil</strong> art only renders if the account holding the NFT is a $PLEDGE Guardian (has an active pledge of 1M tokens). Learn more at <a href="https://www.thepledge.meme/" target="_blank">https://www.thepledge.meme/</a></p>
         <p>If the token is held by an account that is not a $PLEDGE Guardian, then the background will render but not a sigil. Trading the token with a Guardian or becoming one will reveal the Guardian Sigil!</p>
         <p>Tokens can have different traits and rarities that never change, but every account's sigil will be constant across all tokens it owns. Guardian Sigil tokens are dynamic, and they will always update themselves to draw their owner's sigil (if they're a Guardian).</p>
-        <p>Each Guardian Sigil NFT is summoned at a cost of 5k $PLEDGE. 2.5k of this $PLEDGE go to the artist as a tribute, and the other 2.5k $PLEDGE are locked into the token, powering its magic. At any time, a token owner can use the <code>SACRIFICE</code> function on the contract or on this site to perform the ritual to destroy the token and reclaim its $PLEDGE to their account.</p>
+        <p>Each Guardian Sigil NFT is summoned at a cost of 5k $PLEDGE. 2.5k of this $PLEDGE go to the artist as a tribute, and the other 2.5k $PLEDGE are locked into the token, powering its magic. At any time, a token owner can use the <code>SACRIFICE</code> function on the contract (or on this site) to perform the ritual to destroy the token and reclaim its $PLEDGE to their account.</p>
         <hr>
       </div>
 
@@ -111,7 +114,7 @@
       <div id="interactivity-info">
         <br>
         <h3>Interactivity</h3>
-        <p>The HTML generated onchain has various interactive features. Marketplaces and DApps may disable this JavaScript interactivity, but by downloading the HTML or using the viewer here (COMING SOON) you can interact directly with the generator's code.</p>
+        <p>The HTML generated onchain has various interactive features. Marketplaces and DApps may disable this JavaScript interactivity, but by downloading the HTML or using the viewer here (COMING SOON) you can interact directly with the generator's code that was created onchain.</p>
         <p>To use URL parameters, add <code>?</code> to the URL and then the parameters set to a value, eg. <code>?still=true</code>. You can string multiple parameters by using <code>&</code> between them, eg. <code>?still=true&ghost=true&distance=5</code></p>
         <h5>URL Parameters:</h5>
         <ul>
@@ -121,8 +124,8 @@
           <li><strong>invert=true</strong>: engages inverted mode.</li>
           <li><strong>simplified=true</strong>: engages simplified mode..</li>
           <li><strong>ghost=true</strong>: engages ghost mode...</li>
-          <li><strong>ether-style=true</strong>: engages Ethereum node indicators</li>
-          <li><strong>distance=<code>integer</code></strong>: sets the viewing distance ('working' range is -50 to 9)</li>
+          <li><strong>ether-style=true</strong>: engages Ethereum Diamond node indicators</li>
+          <li><strong>distance=<code>integer</code></strong>: sets the viewing distance (max is 9, zoom with negative ints)</li>
           <li><strong>stroke-width=<code>integer</code></strong>: sets the line thickness</li>
         </ul>
         <h5>Keystroke Interaction:</h5>
@@ -142,7 +145,7 @@
         <h3>Summoning Ritual (Mint)</h3>
         <p>This ain't your daddy's genart.</p>
         <ul>
-          <li><strong>Cost: 5k $PLEDGE.</strong>: 2.5k $PLEDGE go to the artist as tribute, and 2.5k $PLEDGE are locked into the token, powering its epic magic</li>
+          <li><strong>Cost: 5k $PLEDGE.</strong>: 2.5k $PLEDGE go to the artist as tribute, and 2.5k $PLEDGE are locked into the token, powering its magic</li>
           <li><strong>Mint-Cap: NONE</strong> There's no mint-cap on the project, because tokens can be destroyed to unlock their stored $PLEDGE</li>
           <li><strong>Allow-List: SORTA</strong>: the intial token recipient address must be a guardian. It doesn't matter the status of the summoning (minting) account. Once summoned, tokens can transfer like any other ERC-721.</li>
           <li><strong>Pledge-Safeties: ENGAGED</strong>: the smart contract should forbid summoning if doing so would break the minter's pledge (1% $PLEDGE per month). Best practice is to verify this for yourself ahead of time!</li>
@@ -155,18 +158,21 @@
       <!-- Connect and Approve -->
       <div id="connect-approve">
         <br>
-        <h3>Connect and Approve $PLEDGE</h3>
+        <br>
+        <h1 style="text-align: center;">PREPARE FOR SIGIL MAGIC!</h1>
+        <br>
+        <h3>Step 1: Connect and Approve $PLEDGE</h3>
         <br>
         <form _lpchecked="1">
           <div class="grid">
             <div>
               <p>Guardian Sigils are summoned at a cost of 5k $PLEDGE. To allow the Guardian Sigils contract to transfer your $PLEDGE, you have to approve it on the $PLEDGE contract... Which you can do on <a
-                  href="https://etherscan.io/address/address#writeContract" target="_blank">Etherscan</a> or here on this page (if you connected).</p>
-              <p>To authorize, use the default value of 10k or edit it and click 'Approve'.</p>
+                  href="https://etherscan.io/address/0x910812c44eD2a3B611E4b051d9D83A88d652E2DD#writeContract" target="_blank">Etherscan</a> or here on this page (if you connected).</p>
+              <p>To authorize, use the default value of 10k (enough for 2 Summonings) or edit it and click 'Approve'. Note that in metamask, it may show you're approving 10k (or whatever) with 18-zeros - huge surprise but web3 UI/UX kinda sucks - it's showing you the 18 decimal places of $PLEDGE.</p>
               <div id="allowance">
-                <p>Now, check the allowance...</p>
+                <p>Once that's done, check the allowance...</p>
                    <button type="submit" id="check-approval-button" class="btn btn-outline-dark btn-lg btn-round"
-                  onclick="checkAllowance(); return false">Check Allowance Amount</button>
+                  onclick="checkAllowance(); return false">Check Guardian Sigils Contract Allowance</button>
               </div>
             </div>
             <div>
@@ -177,7 +183,7 @@
               <div class="grid">
                 <input type="number" id="approved-amount" value="10000" required>
                 <button type="submit" id="submit-button" class="btn btn-outline-dark btn-lg btn-round"
-                  onclick="approveButton(); return false">Approve</button>
+                  onclick="approve(); return false">Approve</button>
               </div>
               <br>
             </div>
@@ -190,9 +196,9 @@
       <!-- MINT Functions  -->
       <div>
         <br>
-        <h3>SUMMON!</h3>
+        <h3>Step 2: SUMMON!</h3>
         <div class="grid">
-          <p>Guardian Sigils can only be summoned (minted) to a provided account, and that account (recipient) must be a Guardian with a pledge of at least 1M tokens. Additionally, if the summoning account is a pledger, they (the paying account) must have enough $PLEDGE available to not break the pledge (minting contract checks!).</p>
+          <p>Guardian Sigils can only be summoned (minted) to a provided account, and that account (recipient) must be a Guardian with a pledge of at least 1M tokens. Additionally, if the summoning account is a pledger (but it doesn't have to be), they (the paying account) must have enough $PLEDGE available in the current window to not break the pledge (minting contract checks!). If not a pledger, no problem here.</p>
           <div>
             <form _lpchecked="1">
               <input type="number" id="token-recipient" placeholder="Guardian Sigil Recipient 0x address" required>
@@ -212,7 +218,7 @@
       <!-- Liquidate Functions  -->
       <div>
         <br>
-        <h3>SACRIFICE!</h3>
+        <h3>Optional Step 3: SACRIFICE!</h3>
         <div class="grid">
           <p>To reclaim 2.5k $PLEDGE from a token, it must be destroyed by its owner through special sacrificial rites. Enter the tokenID of a Guardian Sigil in your wallet that you're willing to sacrifice, but be warned: there is no revival of the tokenID or guarantee of duplicate token traits after this ritual is complete!</p>
           <form _lpchecked="1">
@@ -237,10 +243,10 @@
           <h3>Guardian Sigils FAQ (click to expand)</h3>
         </summary>
         <h5><em>What is $PLEDGE?</em></h5>
-        <p>$PLEDGE is a unique ERC-20 token on Mainnet Ethereum incorporating a social experiment: holders are encouraged to pledge onchain to only sell/transfer a maximum of 1% of their holdings per month. Learn more at thepledgememe.com</p>
+        <p>$PLEDGE is a unique ERC-20 token on Mainnet Ethereum incorporating a social experiment: holders are encouraged to pledge onchain to only sell/transfer a maximum of 1% of their holdings per month and to post once per month that they're upholding the pledge. Learn more at <a href="https://www.thepledge.meme/" target="_blank">https://www.thepledge.meme/</a></p>
         <br>
         <h5><em>Who can reclaim the $PLEDGE locked in tokens?</em></h5>
-        <p>Only the token's owner can reclaim $PLEDGE by using a specific function on the contract - sending a token to the burn address will not reclaim $PLEDGE! This inherent value may create secondary market arbitrage... We'll see what happens!</p>
+        <p>Only the token's owner can reclaim $PLEDGE by using a specific function on the contract - sending a token to the burn address will not reclaim $PLEDGE! This inherent value in every token may create secondary market arbitrage... We'll see what happens!</p>
         <br>
         <h5><em>Has this contract been audited?</em></h5>
         <p>No. While I believe I coded it well to protect from hacks, please consider it a risky experiment with no warranties.</p>
@@ -249,15 +255,15 @@
         <p>Minting a Guardian Sigil token costs 5k $PLEDGE as well as the gas required to process the transaction. 1/2 the $PLEDGE (2.5k) is locked to the token and can be reclaimed later. Secondary sales of the ERC-721 tokens have 2.5% royalties payable to <code>artist.MonkMatto.eth</code>.</p>
         <br>
         <h5><em>Why is there no mint-cap?</em></h5>
-        <p>The project is for Guardians to enjoy - not to create ultra-scarce art objects. Because each token can be destroyed to reclaim 1/2 the mint cost, there's a built in colletion reduction pressure... We'll see what happens!!</p>
+        <p>The project is for Guardians to enjoy - not to create ultra-scarce art objects. Because each token can be destroyed to reclaim 1/2 the mint cost, there's built in collection reduction pressure... We'll see what happens!!</p>
         <br>
         <h5><em>Where's the art from?</em></h5>
         <p>Matto coded the art in vanilla JavaScript.</p>
         <br>
       </details>
-      <small>Built by Matto. LINKS: <a href="https://matto.xyz/" target="_blank">Website</a> | <a href="https://twitter.com/MonkMatto" target="_blank">Twitter (@MonkMatto)</a> | <a href="https://discord.com/invite/AQDwjAa3g2" target="_blank">Discord</a> (Matto/Substratum).</small>
+      <small>Built by Matto / @MonkMatto: <a href="https://matto.xyz/" target="_blank">Website</a> | <a href="https://instagram.com/MonkMatto" target="_blank">Instagram</a> | <a href="https://warpcast.com/monkmatto" target="_blank">Warpcast</a> | <a href="https://bsky.app/profile/matto.bsky.social" target="_blank">Bluesky (@Matto)</a> | <a href="https://www.threads.net/@monkmatto" target="_blank">Threads</a> | <a href="https://twitter.com/MonkMatto" target="_blank">Twitter</a> | <a href="https://discord.com/invite/AQDwjAa3g2" target="_blank">Discord</a></small>
     </footer><!-- ./ Footer -->
 
 </body>
-<script src="src/js/ct.js"></script>
+<script src="src/js/SIGILS.js"></script>
 </html>

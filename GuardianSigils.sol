@@ -5,6 +5,7 @@ import "@openzeppelin/contracts/token/ERC721/extensions/ERC721Royalty.sol";
 import "@openzeppelin/contracts/utils/Strings.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/utils/ReentrancyGuard.sol";
+// import "@openzeppelin/contracts/security/ReentrancyGuard.sol";
 
 /// @notice This interface is needed to interact with the PLEDGE contract.
 /// @dev the getPledgerData function returns the following values in this order: 
@@ -37,7 +38,8 @@ contract GUARDIAN_SIGILS is ERC721Royalty, ReentrancyGuard, Ownable(msg.sender) 
     uint256 private _tokenSupply;
     using Strings for string;
 
-    address public constant PLEDGE_CONTRACT = 0x910812c44eD2a3B611E4b051d9D83A88d652E2DD;
+    address public constant PLEDGE_CONTRACT = 0x37538D1201486e11f5A06779168a30bA9D683a12; // Testnet
+    // address public constant PLEDGE_CONTRACT = 0x910812c44eD2a3B611E4b051d9D83A88d652E2DD; // Mainnet
     uint256 public constant BASE_PLEDGE_COST = 2_500 * 10**18;
     mapping(uint256 => uint256) public tokenMagic;
     uint96 public royaltyBPS;

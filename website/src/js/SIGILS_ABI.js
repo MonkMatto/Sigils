@@ -1,0 +1,1 @@
+const SIGILS_ABI = ;
