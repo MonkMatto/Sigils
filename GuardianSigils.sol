@@ -4,6 +4,7 @@ pragma solidity ^0.8.20;
 import "@openzeppelin/contracts/token/ERC721/extensions/ERC721Royalty.sol";
 import "@openzeppelin/contracts/utils/Strings.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
+import "@openzeppelin/contracts/utils/ReentrancyGuard.sol";
 
 /// @notice This interface is needed to interact with the PLEDGE contract.
 /// @dev the getPledgerData function returns the following values in this order: 
@@ -30,7 +31,7 @@ interface iERC20 {
 /// @title GUARDIAN SIGILS
 /// @notice ERC-721 NFT contract for the GUARDIAN SIGILS collection
 /// @author Matto-Shinkai (AKA MonkMatto), 2025. More info: matto.xyz
-contract GUARDIAN_SIGILS is ERC721Royalty, Ownable(msg.sender) {
+contract GUARDIAN_SIGILS is ERC721Royalty, ReentrancyGuard, Ownable(msg.sender) {
     constructor() ERC721("Guaridian Sigils", "SIGILS") {}
     uint256 private _nextTokenId;
     uint256 private _tokenSupply;
@@ -69,7 +70,7 @@ contract GUARDIAN_SIGILS is ERC721Royalty, Ownable(msg.sender) {
     /// @dev Only addresses that meet the guardian status can receive a minted token
     /// @dev tokenSupply is handled separately from nextTokenId because tokens can be burned
     /// @param _to The address to mint the token to
-    function SUMMON(address _to) external ensureNoPledgeBreak(msg.sender) {
+    function SUMMON(address _to) external ensureNoPledgeBreak(msg.sender) nonReentrant {
         require(_getGuardianStatus(_to), "Guardian status not met");
         iERC20(PLEDGE_CONTRACT).transferFrom(msg.sender, address(this), BASE_PLEDGE_COST);
         iERC20(PLEDGE_CONTRACT).transferFrom(msg.sender, artistAddress, BASE_PLEDGE_COST);
@@ -82,11 +83,11 @@ contract GUARDIAN_SIGILS is ERC721Royalty, Ownable(msg.sender) {
     /// @notice Sacrifices (burns) a token and reclaims the locked $PLEDGE
     /// @dev Only the token owner can sacrifice a token
     /// @param _tokenId The token ID to sacrifice
-    function SACRIFICE(uint256 _tokenId) external {
+    function SACRIFICE(uint256 _tokenId) external nonReentrant {
         require(ownerOf(_tokenId) == msg.sender, "Only token owner can burn");
         _burn(_tokenId);
-        iERC20(PLEDGE_CONTRACT).transfer(msg.sender, BASE_PLEDGE_COST);
         _tokenSupply--;
+        iERC20(PLEDGE_CONTRACT).transfer(msg.sender, BASE_PLEDGE_COST);
         emit Reclaimed(msg.sender, _tokenId, BASE_PLEDGE_COST);
     }
 
