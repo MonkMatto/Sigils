@@ -80,7 +80,7 @@
         <p>Guardian Sigils are a 100% onchain generative and responsive art collection, with all traits and artwork code generated onchain. The smart contract generates image assets and HTML that any modern browser can use to render the art - but the <strong>Guardian Sigil</strong> art only renders if the account holding the NFT is a $PLEDGE Guardian (has an active pledge of 1M tokens).</p>
         <p>If the token is held by an account that is not a $PLEDGE Guardian, then the background will render but not a sigil. Trading the token with a Guardian or becoming one will reveal the Guardian Sigil!</p>
         <p>Tokens can have different traits and rarities that never change, but every account's sigil will be constant across all tokens it owns. Guardian Sigil tokens are dynamic, and they will always update themselves to draw their owner's sigil (if they're a Guardian).</p>
-        <p>Each Guardian Sigil NFT holds half the mint cost in $PLEDGE inside it (2500 $PLEDGE). At any time, a token owner can use the <code>BURN_AND_RECLAIM</code> function on the contract or on this site to burn the token and reclaim the $PLEDGE to their account.</p>
+        <p>Each Guardian Sigil NFT is summoned at a cost of 5k $PLEDGE. 2.5k of this $PLEDGE go to the artist as a tribute, and the other 2.5k $PLEDGE are locked into the token, powering its magic. At any time, a token owner can use the <code>SACRIFICE</code> function on the contract or on this site to perform the ritual to destroy the token and reclaim its $PLEDGE to their account.</p>
         <hr>
       </div>
 
@@ -88,7 +88,7 @@
       <div id="basic-info">
         <br>
         <h3>Guardian Sigil Traits Info</h3>
-        <p>Some popular generative art projects & platforms have traits calculated off-chain with the help of APIs, but Guardian Sigil traits are calculated directly by the contract. There are 5 'Core' traits, 1 rarity score based on those traits, and a 'Viewing Distance' trait.</p>
+        <p>Some popular generative art projects & platforms have traits calculated off-chain with the help of APIs, but Guardian Sigils are extra magical and all traits are calculated directly by the contract. There are 5 'Core' traits, 1 rarity score based on those traits, and a 'Viewing Distance' trait.</p>
         <h5>Core Traits:</h5>
         <ul>
           <li><strong>Mono</strong>: If true, a black and white image is generated</li>
@@ -139,15 +139,15 @@
       <!-- Mint Info -->
       <div id="mint-info">
         <br>
-        <h3>Mint and Tokenomix Deets</h3>
+        <h3>Summoning Ritual (Mint)</h3>
         <p>This ain't your daddy's genart.</p>
         <ul>
-          <li><strong>Cost: 5k $PLEDGE.</strong>: 2.5k $PLEDGE go to the artist and 2.5k $PLEDGE are locked into the token</li>
+          <li><strong>Cost: 5k $PLEDGE.</strong>: 2.5k $PLEDGE go to the artist as tribute, and 2.5k $PLEDGE are locked into the token, powering its epic magic</li>
           <li><strong>Mint-Cap: NONE</strong> There's no mint-cap on the project, because tokens can be destroyed to unlock their stored $PLEDGE</li>
-          <li><strong>Allow-List: SORTA</strong>: the token recipient address must be a guardian. It doesn't matter the status of the minting account. Once minted, tokens can transfer like any other ERC-721.</li>
-          <li><strong>Pledge-Safeties: ENGAGED</strong>: the smart contract should forbid minting if doing so would break the minter's pledge (1% $PLEDGE per month). Best practice is to verify this for yourself ahead of time!</li>
+          <li><strong>Allow-List: SORTA</strong>: the intial token recipient address must be a guardian. It doesn't matter the status of the summoning (minting) account. Once summoned, tokens can transfer like any other ERC-721.</li>
+          <li><strong>Pledge-Safeties: ENGAGED</strong>: the smart contract should forbid summoning if doing so would break the minter's pledge (1% $PLEDGE per month). Best practice is to verify this for yourself ahead of time!</li>
         </ul>
-        <p>Each token is given a magic number at mint, and that number is used to calculate its traits. These traits, plus the owner's address and Guardian-ship status, are used to create the artwork.</p>
+        <p>Each token is given a magic number at summoning, and that number is used to calculate its traits. These traits, plus the owner's address and Guardian-ship status, are used to create the artwork.</p>
         <br>
         <hr>
       </div>
@@ -160,7 +160,7 @@
         <form _lpchecked="1">
           <div class="grid">
             <div>
-              <p>Guardian Sigils are minted for 5k $PLEDGE each. To allow the Guardian Sigils contract to transfer your $PLEDGE, you have to approve it on the $PLEDGE contract... Which you can do on <a
+              <p>Guardian Sigils are summoned at a cost of 5k $PLEDGE. To allow the Guardian Sigils contract to transfer your $PLEDGE, you have to approve it on the $PLEDGE contract... Which you can do on <a
                   href="https://etherscan.io/address/address#writeContract" target="_blank">Etherscan</a> or here on this page (if you connected).</p>
               <p>To authorize, use the default value of 10k or edit it and click 'Approve'.</p>
               <div id="allowance">
@@ -190,33 +190,21 @@
       <!-- MINT Functions  -->
       <div>
         <br>
-        <h3>MINT!</h3>
+        <h3>SUMMON!</h3>
         <div class="grid">
-          <p><strong>Denominate All</strong> automatically denominates the submitted amount of $LFG into the largest possible denominations and allocates ERC-1155 tokens accordingly. Any leftover $LFG (any amount less than 69 - the smallest denomination), is locked to the contract and cannot be retrieved by anyone.</p>
+          <p>Guardian Sigils can only be summoned (minted) to a provided account, and that account (recipient) must be a Guardian with a pledge of at least 1M tokens. Additionally, if the summoning account is a pledger, they (the paying account) must have enough $PLEDGE available to not break the pledge (minting contract checks!).</p>
           <div>
             <form _lpchecked="1">
-              <input type="number" id="denom-all-amount" placeholder="Amount to denominate" required>
+              <input type="number" id="token-recipient" placeholder="Guardian Sigil Recipient 0x address" required>
               <button type="submit" id="submit-button" class="btn btn-outline-dark btn-lg btn-round"
-              onclick="denomAllButton(); return false">Denominate All</button>
+              onclick="SUMMON(); return false">Summon for 5k $PLEDGE</button>
             </form>
           </div>
         </div>
-          <br>
-          <br>
-          <div class="grid">
-            <p><strong>Denominate Into Token</strong> denominates the submitted amount of $LFG into the submitted denomination (if valid) and allocates ERC-1155 tokens accordingly. Any leftover $LFG (any amount less than the <strong><em>submitted denomination</em></strong>), is locked to the contract and cannot be retrieved by anyone (if you denominate into token 1000000, and send in 1,999,999 LFG, you lock 999,999 LFG to the contract, forever).</p>
-            <form _lpchecked="1">
-              <div class="grid">
-                <input type="number" id="denom-into-amount" placeholder="Amount to denominate" required>
-                <input type="number" id="denom-into-token" placeholder="Denomination" required>
-              </div>  
-              <button type="submit" id="submit-button" class="btn btn-outline-dark btn-lg btn-round"
-              onclick="denomIntoButton(); return false">Denominate Into Token</button>
-            </form>
-          </div>
-        </div>
+        <!-- <br>
         <br>
-        <p style="text-align: center;">Did you try it? Check your NFT collection!</p>
+        <br> -->
+        <!-- <p style="text-align: center;">Check your Guardian Sigil token in your wallet!</p> -->
         <br>
         <hr>
       </div>
@@ -224,29 +212,19 @@
       <!-- Liquidate Functions  -->
       <div>
         <br>
-        <h3>BURN AND RECLAIM</h3>
+        <h3>SACRIFICE!</h3>
         <div class="grid">
-          <p><strong>Liquidate All</strong> automatically liquifies (burns) ALL denominated LFGCoinTokens owned by the user and returns their value in $LFG.</p>
+          <p>To reclaim 2.5k $PLEDGE from a token, it must be destroyed by its owner through special sacrificial rites. Enter the tokenID of a Guardian Sigil in your wallet that you're willing to sacrifice, but be warned: there is no revival of the tokenID or guarantee of duplicate token traits after this ritual is complete!</p>
           <form _lpchecked="1">
+              <input type="number" id="token-to-sacrifice" placeholder="TokenID to Sacrifice" required>
               <button type="submit" id="submit-button" class="btn btn-outline-dark btn-lg btn-round"
-              onclick="liquidateAllButton(); return false">Liquidate All</button>
+              onclick="SACRIFICE(); return false">Sacrafice and Reclaim 2.5k $PLEDGE</button>
           </form>
         </div>
+        <!-- <br>
         <br>
-        <br>
-        <div class="grid">
-          <p><strong>Liquidate From Token</strong> Liquifies a submitted amount of a submitted denomination of LFGCoinToken and returns their value in $LFG.</p>
-          <form _lpchecked="1">
-            <div class="grid">
-              <input type="number" id="liquidate-from-amount" placeholder="Amount to Liquidate" required>
-              <input type="number" id="liquidate-from-token" placeholder="Denomination to Liquidate" required>
-            </div>  
-            <button type="submit" id="submit-button" class="btn btn-outline-dark btn-lg btn-round"
-            onclick="liquidateFromButton(); return false">Liquidate From Token</button>
-          </form>
-        </div>
-        <br>
-        <p style="text-align: center;">Did you try it? Check your $LFG balance!</p>
+        <br> -->
+        <!-- <p style="text-align: center;">Check the $PLEDGE balance in your wallet!</p> -->
         <br>
         <hr>
       </div>
@@ -256,34 +234,25 @@
     <footer class="container">
       <details>
         <summary>
-          <h3>LFG CoinToken FAQ (click to expand)</h3>
+          <h3>Guardian Sigils FAQ (click to expand)</h3>
         </summary>
-        <h5><em>Can anyone withdraw $LFG held or 'locked' by the contract?</em></h5>
-        <p>The contract should only send $LFG to an account if LFGCoinTokens are liquidated from that account.</p>
+        <h5><em>What is $PLEDGE?</em></h5>
+        <p>$PLEDGE is a unique ERC-20 token on Mainnet Ethereum incorporating a social experiment: holders are encouraged to pledge onchain to only sell/transfer a maximum of 1% of their holdings per month. Learn more at thepledgememe.com</p>
+        <br>
+        <h5><em>Who can reclaim the $PLEDGE locked in tokens?</em></h5>
+        <p>Only the token's owner can reclaim $PLEDGE by using a specific function on the contract - sending a token to the burn address will not reclaim $PLEDGE! This inherent value may create secondary market arbitrage... We'll see what happens!</p>
         <br>
         <h5><em>Has this contract been audited?</em></h5>
         <p>No. While I believe I coded it well to protect from hacks, please consider it a risky experiment with no warranties.</p>
         <br>
         <h5><em>Cost? Fees? Royalties?</em></h5>
-        <p>There is no cost besides gas, and there are no 'fees' charged on ERC-20/ERC-1155 exchanges... But for fun (and to reduce the available supply of $LFG by locking/burning coins) any $LFG overages submitted in denominate functions are locked to the contract. Oh, and the ERC-1155 tokens have 3% royalties payable to <code>artist.MonkMatto.eth</code>.</p>
+        <p>Minting a Guardian Sigil token costs 5k $PLEDGE as well as the gas required to process the transaction. 1/2 the $PLEDGE (2.5k) is locked to the token and can be reclaimed later. Secondary sales of the ERC-721 tokens have 2.5% royalties payable to <code>artist.MonkMatto.eth</code>.</p>
         <br>
-        <h5><em>Rarity? Bonding curve? Reason to FOMO??? (no x 3). Then, why?</em></h5>
-        <p>For fun and flex I suppose. Also, it's kinda cool to have truly liquid jpegs, isn't it? :P</p>
+        <h5><em>Why is there no mint-cap?</em></h5>
+        <p>The project is for Guardians to enjoy - not to create ultra-scarce art objects. Because each token can be destroyed to reclaim 1/2 the mint cost, there's a built in colletion reduction pressure... We'll see what happens!!</p>
         <br>
         <h5><em>Where's the art from?</em></h5>
-        <p>Matto used Stable Diffusion with custom models to generate a few thousand outputs from dozens of prompts, then curated/tweaked/combined them to create the art. It's stored on Arweave.</p>
-        <br>
-        <h5><em>What's the license on the contract? Can I use it for another coin?</em></h5>
-        <p>The <a href="https://github.com/MonkMatto/CoinTokens" target="_blank">contract template</a> used here is MIT licensed, so you can go nuts with it. If you want to toss me a tiny bag of whatever ERC-20 you use the contract with, I won't be upset about it :D <code>MonkMatto.eth</code> pls!</p>
-        <br>
-        <h5><em>Will there be a secondary market for the tokens?</em></h5>
-        <p>Time will tell, but I'm sure bots will exist someday to bid/buy the tokens automatically as long as they can make a profit by converting the token to ERC-20 and selling it in a single block. So, for larger denominations, a market is likely to exist, yes. Maybe I'll even be paid some royalties - NOBODY KNOWS, hahahaaa!</p>
-        <br>
-        <h5><em>What can I do with the burner token?</em></h5>
-        <p>Normal token things (collect, hodl, sell, transfer, etc). Beyond that, I'm not sure yet, but I wouldn't burn them...</p>
-        <br>
-        <h5><em>I thought you were a serious artist, wtf are you messing around with shitcoins for?</em></h5>
-        <p>"If you're not having fun, you're doing it wrong." -Matto</p>
+        <p>Matto coded the art in vanilla JavaScript.</p>
         <br>
       </details>
       <small>Built by Matto. LINKS: <a href="https://matto.xyz/" target="_blank">Website</a> | <a href="https://twitter.com/MonkMatto" target="_blank">Twitter (@MonkMatto)</a> | <a href="https://discord.com/invite/AQDwjAa3g2" target="_blank">Discord</a> (Matto/Substratum).</small>
