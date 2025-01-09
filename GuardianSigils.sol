@@ -34,15 +34,15 @@ interface iERC20 {
 /// @author Matto-Shinkai (AKA MonkMatto), 2025. More info: matto.xyz
 contract GUARDIAN_SIGILS is ERC721Royalty, ReentrancyGuard, Ownable(msg.sender) {
     constructor() ERC721("Guaridian Sigils", "SIGILS") {}
+    using Strings for string;
+    bool public riftOpen;
+    uint96 public royaltyBPS;
     uint256 private _nextTokenId;
     uint256 private _tokenSupply;
-    using Strings for string;
-
+    uint256 public constant HALF_SUMMONING_COST = 2_500 * 10**18;
+    mapping(uint256 => uint256) public tokenMagic;
     address public constant PLEDGE_CONTRACT = 0x37538D1201486e11f5A06779168a30bA9D683a12; // Testnet
     // address public constant PLEDGE_CONTRACT = 0x910812c44eD2a3B611E4b051d9D83A88d652E2DD; // Mainnet
-    uint256 public constant BASE_PLEDGE_COST = 2_500 * 10**18;
-    mapping(uint256 => uint256) public tokenMagic;
-    uint96 public royaltyBPS;
     address public royaltyReceiver;
     address public artistAddress;
     string public description;
@@ -63,7 +63,7 @@ contract GUARDIAN_SIGILS is ERC721Royalty, ReentrancyGuard, Ownable(msg.sender) 
     modifier ensureNoPledgeBreak(address _address) {
         (uint8 pledgerStatus, , , , uint256 transferablePLEDGEThisWindow, ) = iPLEDGE(PLEDGE_CONTRACT).getPledgerData(_address);
         if (pledgerStatus == 1) {
-            require(transferablePLEDGEThisWindow >= 2 * BASE_PLEDGE_COST, "Pledge break detected");
+            require(transferablePLEDGEThisWindow >= 2 * HALF_SUMMONING_COST, "Pledge break detected");
         }
         _;
     }
@@ -72,10 +72,11 @@ contract GUARDIAN_SIGILS is ERC721Royalty, ReentrancyGuard, Ownable(msg.sender) 
     /// @dev Only addresses that meet the guardian status can receive a minted token
     /// @dev tokenSupply is handled separately from nextTokenId because tokens can be burned
     /// @param _to The address to mint the token to
-    function SUMMON(address _to) external ensureNoPledgeBreak(msg.sender) nonReentrant {
+    function SUMMON(address _to) public ensureNoPledgeBreak(msg.sender) nonReentrant {
+        require(riftOpen, "Cannot Summon: Rift is Closed");
         require(_getGuardianStatus(_to), "Guardian status not met");
-        iERC20(PLEDGE_CONTRACT).transferFrom(msg.sender, address(this), BASE_PLEDGE_COST);
-        iERC20(PLEDGE_CONTRACT).transferFrom(msg.sender, artistAddress, BASE_PLEDGE_COST);
+        iERC20(PLEDGE_CONTRACT).transferFrom(msg.sender, address(this), HALF_SUMMONING_COST);
+        iERC20(PLEDGE_CONTRACT).transferFrom(msg.sender, artistAddress, HALF_SUMMONING_COST);
         _makeMagic(_nextTokenId);
         _safeMint(_to, _nextTokenId);
         _tokenSupply++;
@@ -89,8 +90,13 @@ contract GUARDIAN_SIGILS is ERC721Royalty, ReentrancyGuard, Ownable(msg.sender) 
         require(ownerOf(_tokenId) == msg.sender, "Only token owner can burn");
         _burn(_tokenId);
         _tokenSupply--;
-        iERC20(PLEDGE_CONTRACT).transfer(msg.sender, BASE_PLEDGE_COST);
-        emit Reclaimed(msg.sender, _tokenId, BASE_PLEDGE_COST);
+        iERC20(PLEDGE_CONTRACT).transfer(msg.sender, HALF_SUMMONING_COST);
+        emit Reclaimed(msg.sender, _tokenId, HALF_SUMMONING_COST);
+    }
+
+    /// @notice Returns the total supply of tokens
+    function totalSupply() external view returns (uint256) {
+        return _tokenSupply;
     }
 
     /// @notice Assembles the HTML for a token
@@ -202,7 +208,7 @@ contract GUARDIAN_SIGILS is ERC721Royalty, ReentrancyGuard, Ownable(msg.sender) 
                 Base64.encode(bytes(getHTML(tokenOwner, traits)))
             )
         );
-        string memory attributes = getAttributesString(traits);
+        string memory attributes = _getAttributesString(traits);
         string memory uri = string(
             abi.encodePacked(
                 '{"artist": "Matto", "name": "Guardian Sigil #',
@@ -229,42 +235,11 @@ contract GUARDIAN_SIGILS is ERC721Royalty, ReentrancyGuard, Ownable(msg.sender) 
             );
     }
 
-    /// @notice Returns the attributes for a token
-    /// @param traits The array of uint8 values representing the magic
-    /// @return The attributes as a string representing the array
-    function getAttributesString(uint8[] memory traits) public pure returns (string memory) {
-        string[6] memory rarity = ["Common", "Uncommon", "Rare", "Epic", "Legendary", "Mythic"];
-        uint8 rarityCounter = _calculateRarity(traits);
-        string memory negativeSign = traits[6] < 5 ? "" : "-";
-        uint8 distance = traits[6] < 5 ? traits[6] : traits[6] / 10;
-        string memory attributes = string(
-            abi.encodePacked(
-                '[{"trait_type": "Owned by Guardian", "value": "',
-                _trueFalse(traits[0]),
-                '"}, {"trait_type": "Mono", "value": "',
-                _trueFalse(traits[1]),
-                '"}, {"trait_type": "Invert", "value": "',
-                _trueFalse(traits[2]),
-                '"}, {"trait_type": "Simplified", "value": "',
-                _trueFalse(traits[3]),
-                '"}, {"trait_type": "Ghost", "value": "',
-                _trueFalse(traits[4]),
-                '"}, {"trait_type": "EtherStyle", "value": "',
-                _trueFalse(traits[5]),
-                '"}, {"trait_type": "Core Rarity", "value": "',
-                rarity[rarityCounter],
-                '"}, {"trait_type": "Viewing Distance", "value": "',
-                negativeSign,
-                Strings.toString(distance),
-                '"}]'
-            )
-        );
-        return attributes;
-    }
-
-    /// @notice Returns the total supply of tokens
-    function totalSupply() external view returns (uint256) {
-        return _tokenSupply;
+    function toggleRift() external onlyOwner {
+        riftOpen = !riftOpen;
+        if (riftOpen && _nextTokenId == 0) {
+            SUMMON(artistAddress);
+        }
     }
 
     /// @notice Allows owner to set the artist address
@@ -358,6 +333,39 @@ contract GUARDIAN_SIGILS is ERC721Royalty, ReentrancyGuard, Ownable(msg.sender) 
             rarityCounter += traits[i];
         }
         return rarityCounter;
+    }
+
+    /// @notice Returns the attributes for a token
+    /// @param traits The array of uint8 values representing the magic
+    /// @return The attributes as a string representing the array
+    function _getAttributesString(uint8[] memory traits) internal pure returns (string memory) {
+        string[6] memory rarity = ["Common", "Uncommon", "Rare", "Epic", "Legendary", "Mythic"];
+        uint8 rarityCounter = _calculateRarity(traits);
+        string memory negativeSign = traits[6] < 5 ? "" : "-";
+        uint8 distance = traits[6] < 5 ? traits[6] : traits[6] / 10;
+        string memory attributes = string(
+            abi.encodePacked(
+                '[{"trait_type": "Owned by Guardian", "value": "',
+                _trueFalse(traits[0]),
+                '"}, {"trait_type": "Mono", "value": "',
+                _trueFalse(traits[1]),
+                '"}, {"trait_type": "Invert", "value": "',
+                _trueFalse(traits[2]),
+                '"}, {"trait_type": "Simplified", "value": "',
+                _trueFalse(traits[3]),
+                '"}, {"trait_type": "Ghost", "value": "',
+                _trueFalse(traits[4]),
+                '"}, {"trait_type": "EtherStyle", "value": "',
+                _trueFalse(traits[5]),
+                '"}, {"trait_type": "Core Rarity", "value": "',
+                rarity[rarityCounter],
+                '"}, {"trait_type": "Viewing Distance", "value": "',
+                negativeSign,
+                Strings.toString(distance),
+                '"}]'
+            )
+        );
+        return attributes;
     }
 
     /// @notice Converts a 0 or 1 value to a string representing True or False
