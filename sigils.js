@@ -35,7 +35,6 @@ function makeTraits() {
   return data;
 }
 
-
 function makeMagic() {
   let m = "";
   for (let i = 0; i < 10; i++) {
@@ -52,12 +51,6 @@ const tokenData = {address: makeAddress(), traits: makeTraits()};
 //   traits: [1, 1, 0, 1, 0, 0, 3],
 // };
 console.log("#".repeat(40));
-
-
-
-
-
-
 
 ////////////////////////////////////////////////////////////////////////////////
 const project = "Guardian Sigils";
@@ -79,8 +72,6 @@ let distance = traits[6];
 if (distance > 10 ) {
   distance = - distance / 10;
 }
-
-// console.log(`DEFAULT ADDRESS: ${address}`);
 
 let strokeWidth;
 let customStroke = false;
@@ -376,7 +367,6 @@ mg2 += "</g>";
 fg += "</g>";
 updateSVG();
 
-
 function updateSVG() {
   const existingSVG = document.getElementById(project);
   if (existingSVG) {
@@ -511,7 +501,6 @@ function saveStrings(content, name, extension) {
   link.download = `${name}.${extension}`;
   link.click();
 }
-
 
 // p5
 // function keyPressed() {
