@@ -5,7 +5,6 @@ import "@openzeppelin/contracts/token/ERC721/extensions/ERC721Royalty.sol";
 import "@openzeppelin/contracts/utils/Strings.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/utils/ReentrancyGuard.sol";
-// import "@openzeppelin/contracts/security/ReentrancyGuard.sol";
 
 /// @notice This interface is needed to interact with the PLEDGE contract.
 /// @dev the getPledgerData function returns the following values in this order: 
@@ -22,18 +21,19 @@ interface iPLEDGE {
         returns (uint8, uint256, uint256, uint256, uint256, uint256);
 }
 
+/// @notice This interface is needed to interact with ERC20 tokens.
+/// @dev The transfer and transferFrom functions are needed to handle the $PLEDGE token.
+/// @dev These could have been included in the iPLEDGE interface, but they're separate for clarity.
 interface iERC20 {
-  function balanceOf(address owner) external view returns (uint256);
-  function decimals() external view returns (uint8);
-  function transfer(address to, uint value) external returns (bool);
-  function transferFrom(address from, address to, uint value) external returns (bool); 
+    function transfer(address to, uint value) external returns (bool);
+    function transferFrom(address from, address to, uint value) external returns (bool); 
 }
 
 /// @title GUARDIAN SIGILS
 /// @notice ERC-721 NFT contract for the GUARDIAN SIGILS collection
 /// @author Matto-Shinkai (AKA MonkMatto), 2025. More info: matto.xyz
 contract GUARDIAN_SIGILS is ERC721Royalty, ReentrancyGuard, Ownable(msg.sender) {
-    constructor() ERC721("Guaridian Sigils", "SIGILS") {}
+    constructor() ERC721("Guardian Sigils", "SIGILS") {}
     using Strings for string;
     bool public riftOpen;
     uint96 public royaltyBPS;
@@ -235,11 +235,19 @@ contract GUARDIAN_SIGILS is ERC721Royalty, ReentrancyGuard, Ownable(msg.sender) 
             );
     }
 
-    function toggleRift() external onlyOwner {
-        riftOpen = !riftOpen;
-        if (riftOpen && _nextTokenId == 0) {
-            SUMMON(artistAddress);
+    /// @notice Allows owner to open the rift and summon the first token
+    /// @param _to The address to summon the first token to
+    function openRift(address _to) external onlyOwner {
+        riftOpen = true;
+        if (_nextTokenId == 0) {
+            SUMMON(_to);
         }
+    }
+
+    /// @notice Allows owner to toggle Summonings
+    function pause() external onlyOwner {
+        require (_nextTokenId > 0, "Cannot pause before the first token is minted");
+        riftOpen = !riftOpen;
     }
 
     /// @notice Allows owner to set the artist address
