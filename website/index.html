@@ -41,10 +41,10 @@
               target="_blank">Contract</a> | <a href="https://discord.gg/sCmu4Xt6Cx" target="_blank">Discord</a> | <a href="https://github.com/MonkMatto/Sigils" target="_blank">Github</a></h6>
           </div>
           <div>
-            <div id="network-name"></div>
             <div id="connect-button" style="display: block;">
-              <button type="button" onclick="ConnectWallet()">Connect</button>
+              <button type="button" onclick="ConnectWallet()"><span class="message" color="black"></span></button>
             </div>
+            <div id="network-name"></div>
             <!-- <p style="text-align: center;"><em><span class="message" color="black">Please connect to MetaMask.</span></em></p> -->
              <p style="text-align: center;"><em><span class="message" color="black"></span></em></p>
           </div>          
@@ -201,7 +201,7 @@
           <p>Guardian Sigils can only be summoned (minted) to a provided account, and that account (recipient) must be a Guardian with a pledge of at least 1M tokens. Additionally, if the summoning account is a pledger (but it doesn't have to be), they (the paying account) must have enough $PLEDGE available in the current window to not break the pledge (minting contract checks!). If not a pledger, no problem here.</p>
           <div>
             <form _lpchecked="1">
-              <input type="number" id="token-recipient" placeholder="Guardian Sigil Recipient 0x address" required>
+              <input type="text" id="token-recipient" placeholder="Guardian Sigil Recipient 0x address" required>
               <button type="submit" id="submit-button" class="btn btn-outline-dark btn-lg btn-round"
               onclick="SUMMON(); return false">Summon for 5k $PLEDGE</button>
             </form>

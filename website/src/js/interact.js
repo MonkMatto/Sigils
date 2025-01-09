@@ -5,7 +5,7 @@ if (mainnet) {
   SIGILS_ADDRESS = "";
 } else { // sepolia
   PLEDGE_ADDRESS = "0x37538D1201486e11f5A06779168a30bA9D683a12";
-  SIGILS_ADDRESS = "";
+  SIGILS_ADDRESS = "0xA9e444856DbDbd05c2fbe50f95824168040e0486"; // v2, typo!
 }
 const PLEDGEcontract = new web3.eth.Contract(PLEDGE_ABI, PLEDGE_ADDRESS);
 const SIGILScontract = new web3.eth.Contract(SIGILS_ABI, SIGILS_ADDRESS);
@@ -59,11 +59,10 @@ async function updateStats() {
     circulation = Number(circulation).toLocaleString()
     console.log("Circulation: " + circulation);
     document.getElementById("circulation").innerHTML = `<h6>${circulation}</h6>`;
+    locked = circulation * 2500;
+    console.log("Locked: " + locked);
+    document.getElementById("locked").innerHTML = `<h6>${locked}</h6>`;
   }
-
-  locked = circulation * 2500;
-  console.log("Locked: " + locked);
-  document.getElementById("locked").innerHTML = `<h6>${locked}</h6>`;
 }
 
 async function approve() {
