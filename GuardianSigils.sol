@@ -153,15 +153,15 @@ contract GUARDIAN_SIGILS is ERC721Royalty, ReentrancyGuard, Ownable(msg.sender) 
         uint8[] memory traits = new uint8[](7);
         uint256 magic = tokenMagic[_tokenId];
         traits[0] = _getGuardianStatus(ownerOf(_tokenId)) ? 1 : 0;
-        traits[1] = magic % 5 == 0 ? 1 : 0;
+        traits[1] = magic % 4 == 0 ? 1 : 0;
         magic /= 10;
-        traits[2] = magic % 7 == 0 ? 1 : 0;
+        traits[2] = magic % 4 == 0 ? 1 : 0;
         magic /= 10;
-        traits[3] = magic % 6 == 0 ? 1 : 0;
+        traits[3] = magic % 3 == 0 ? 1 : 0;
         magic /= 10;
-        traits[4] = magic % 10 == 0 ? 1 : 0;
+        traits[4] = magic % 5 == 0 ? 1 : 0;
         magic /= 10;
-        traits[5] = magic % 3 == 0 ? 1 : 0;
+        traits[5] = magic % 2 == 0 ? 1 : 0;
         magic /= 10;
         uint8 test = uint8(magic % 4);
         magic /= 10;
@@ -328,7 +328,8 @@ contract GUARDIAN_SIGILS is ERC721Royalty, ReentrancyGuard, Ownable(msg.sender) 
     /// @param traits The array of uint8 values representing the magic
     /// @return The attributes as a string representing the array
     function _getAttributesString(uint8[] memory traits) internal pure returns (string memory) {
-        string[6] memory rarity = ["Common", "Uncommon", "Rare", "Epic", "Legendary", "Mythic"];
+        // string[6] memory rarity = ["Common", "Uncommon", "Rare", "Epic", "Legendary", "Mythic"];
+        string[6] memory rarity = ["Essential", "Distinctive", "Elite", "Legendary", "Mythic", "Ascendant"];
         uint8 rarityCounter = _calculateRarity(traits);
         string memory negativeSign = traits[6] < 5 ? "" : "-";
         uint8 distance = traits[6] < 5 ? traits[6] : traits[6] / 10;
