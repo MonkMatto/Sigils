@@ -19,14 +19,8 @@ interface iPLEDGE {
         external 
         view 
         returns (uint8, uint256, uint256, uint256, uint256, uint256);
-}
-
-/// @notice This interface is needed to interact with ERC20 tokens.
-/// @dev The transfer and transferFrom functions are needed to handle the $PLEDGE token.
-/// @dev These could have been included in the iPLEDGE interface, but they're separate for clarity.
-interface iERC20 {
     function transfer(address to, uint value) external returns (bool);
-    function transferFrom(address from, address to, uint value) external returns (bool); 
+    function transferFrom(address from, address to, uint value) external returns (bool);         
 }
 
 /// @title GUARDIAN SIGILS
@@ -36,17 +30,16 @@ contract GUARDIAN_SIGILS is ERC721Royalty, ReentrancyGuard, Ownable(msg.sender) 
     constructor() ERC721("Guardian Sigils", "SIGILS") {}
     using Strings for string;
     bool public riftOpen;
-    uint16 private maxSigils = 777;
-    uint96 public royaltyBPS;
+    uint96 private royaltyBPS;
     uint256 private _nextTokenId;
     uint256 private _tokenSupply;
-    uint256 public constant HALF_SUMMONING_COST = 2_500 * 10**18;
+    uint256 private constant HALF_SUMMONING_COST = 2_500 * 10**18;
     mapping(uint256 => uint256) public tokenMagic;
     address private constant PLEDGE_CONTRACT = 0x37538D1201486e11f5A06779168a30bA9D683a12; // Testnet
     // address private constant PLEDGE_CONTRACT = 0x910812c44eD2a3B611E4b051d9D83A88d652E2DD; // Mainnet
-    address public royaltyReceiver;
+    address private royaltyReceiver;
     address public artistAddress = 0xfc1e361711328f105F314f48C49D8c0eb0C6610E;
-    string public description;
+    string public description = "Guardian Sigils are magical emblems, powered by $PLEDGE, that are unique to each Guardian. Summoning a sigil carries a cost, but each one fortifies a Guardian's resolve to uphold their vow. Sacrificing a sigil releases the $PLEDGE stored within back to the owner, but at a steep price: it permanently reduces the available supply of Guardian Sigils.";
     string public website = 'https://matto.xyz';
     string private tokenImagePt1 = '<?xml version="1.0" encoding="utf-8"?><svg id="Guardian Sigils" viewBox="0 0 1000 1000" xmlns="http://www.w3.org/2000/svg"><defs><radialGradient id="gradient-bg" cx="50%" cy="50%" r="60%" fx="50%" fy="50%"><stop offset="0%" stop-color="hsl(';
     string private tokenImagePt2 = ', 100%, 30%)" /><stop offset="100%" stop-color="hsl(';
@@ -76,13 +69,13 @@ contract GUARDIAN_SIGILS is ERC721Royalty, ReentrancyGuard, Ownable(msg.sender) 
     function SUMMON(address _to) public ensureNoPledgeBreak(msg.sender) nonReentrant {
         require(riftOpen, "Rift Closed");
         require(_getGuardianStatus(_to), "Not Auth");
-        iERC20(PLEDGE_CONTRACT).transferFrom(msg.sender, address(this), HALF_SUMMONING_COST);
-        iERC20(PLEDGE_CONTRACT).transferFrom(msg.sender, artistAddress, HALF_SUMMONING_COST);
+        iPLEDGE(PLEDGE_CONTRACT).transferFrom(msg.sender, address(this), HALF_SUMMONING_COST);
+        iPLEDGE(PLEDGE_CONTRACT).transferFrom(msg.sender, artistAddress, HALF_SUMMONING_COST);
         _makeMagic(_nextTokenId);
         _safeMint(_to, _nextTokenId);
         _tokenSupply++;
         _nextTokenId++;
-        if (_nextTokenId == maxSigils) {
+        if (_nextTokenId == 777) {
             riftOpen = false;
         }
     }
@@ -95,7 +88,7 @@ contract GUARDIAN_SIGILS is ERC721Royalty, ReentrancyGuard, Ownable(msg.sender) 
         require(ownerOf(_tokenId) == msg.sender, "Not Auth");
         _burn(_tokenId);
         _tokenSupply--;
-        iERC20(PLEDGE_CONTRACT).transfer(msg.sender, HALF_SUMMONING_COST);
+        iPLEDGE(PLEDGE_CONTRACT).transfer(msg.sender, HALF_SUMMONING_COST);
         emit Reclaimed(msg.sender, _tokenId, HALF_SUMMONING_COST);
     }
 
