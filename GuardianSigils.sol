@@ -46,7 +46,7 @@ contract GUARDIAN_SIGILS is ERC721Royalty, ReentrancyGuard, Ownable(msg.sender) 
     // address public constant PLEDGE_CONTRACT = 0x910812c44eD2a3B611E4b051d9D83A88d652E2DD; // Mainnet
     address public royaltyReceiver;
     address public artistAddress = 0xfc1e361711328f105F314f48C49D8c0eb0C6610E;
-    string public description = "Guardian Sigils are magical emblems, powered by $PLEDGE, that are unique to each Guardian. Summoning a sigil carries a cost, but each one fortifies a Guardian's resolve to uphold their vow. Sacrificing a sigil releases the $PLEDGE stored within back to the owner, but at a steep price: it permanently reduces the available supply of Guardian Sigils.";
+    string public description;
     string public website = "https://matto.xyz";
     string private tokenImagePt1 = '<?xml version="1.0" encoding="utf-8"?><svg id="Guardian Sigils" viewBox="0 0 1000 1000" xmlns="http://www.w3.org/2000/svg"><defs><radialGradient id="gradient-bg" cx="50%" cy="50%" r="60%" fx="50%" fy="50%"><stop offset="0%" stop-color="hsl(';
     string private tokenImagePt2 = ', 100%, 30%)" /><stop offset="100%" stop-color="hsl(';
@@ -74,8 +74,8 @@ contract GUARDIAN_SIGILS is ERC721Royalty, ReentrancyGuard, Ownable(msg.sender) 
     /// @dev tokenSupply is handled separately from nextTokenId because tokens can be burned
     /// @param _to The address to mint the token to
     function SUMMON(address _to) public ensureNoPledgeBreak(msg.sender) nonReentrant {
-        require(riftOpen, "Cannot Summon: Rift is Closed");
-        require(_getGuardianStatus(_to), "Guardian status not met");
+        require(riftOpen, "Rift Closed");
+        require(_getGuardianStatus(_to), "Not Auth");
         iERC20(PLEDGE_CONTRACT).transferFrom(msg.sender, address(this), HALF_SUMMONING_COST);
         iERC20(PLEDGE_CONTRACT).transferFrom(msg.sender, artistAddress, HALF_SUMMONING_COST);
         _makeMagic(_nextTokenId);
@@ -91,8 +91,8 @@ contract GUARDIAN_SIGILS is ERC721Royalty, ReentrancyGuard, Ownable(msg.sender) 
     /// @dev Only the token owner can sacrifice a token
     /// @param _tokenId The token ID to sacrifice
     function SACRIFICE(uint256 _tokenId) external nonReentrant {
-        require(riftOpen == false, "Cannot Sacrifice: Rift is Open");
-        require(ownerOf(_tokenId) == msg.sender, "Only token owner can burn");
+        require(riftOpen == false, "Rift Open");
+        require(ownerOf(_tokenId) == msg.sender, "Not Auth");
         _burn(_tokenId);
         _tokenSupply--;
         iERC20(PLEDGE_CONTRACT).transfer(msg.sender, HALF_SUMMONING_COST);
@@ -184,7 +184,7 @@ contract GUARDIAN_SIGILS is ERC721Royalty, ReentrancyGuard, Ownable(msg.sender) 
     ) public view override returns (string memory) {
         require(
             _tokenId < _nextTokenId,
-            "ERC721Metadata: URI query for nonexistent token"
+            "Nonexistent"
         );
         address tokenOwner = ownerOf(_tokenId);
         uint8[] memory traits = getTokenTraitsArray(_tokenId);
@@ -251,7 +251,7 @@ contract GUARDIAN_SIGILS is ERC721Royalty, ReentrancyGuard, Ownable(msg.sender) 
 
     /// @notice Allows owner to toggle Summonings
     function pause() external onlyOwner {
-        require (_nextTokenId > 0, "Cannot pause before the first token is minted");
+        require (_nextTokenId > 0, "Not Auth");
         riftOpen = !riftOpen;
     }
 
@@ -409,7 +409,7 @@ contract GUARDIAN_SIGILS is ERC721Royalty, ReentrancyGuard, Ownable(msg.sender) 
         } else if (char >= "A" && char <= "F") {
             return uint8(char) - uint8(bytes1("A")) + 10;
         } else {
-            revert("Invalid hexadecimal character");
+            revert("Invalid Character");
         }
     }
 }
