@@ -31,6 +31,8 @@ contract GUARDIAN_SIGILS is ERC721Royalty, ReentrancyGuard, Ownable(msg.sender) 
     using Strings for string;
     bool public riftOpen;
     uint96 private royaltyBPS;
+    uint256 public slowmoStartTime;
+    mapping(address => bool) public hasBeenSummonedTo;
     uint256 private _nextTokenId;
     uint256 private _tokenSupply;
     uint256 private constant HALF_SUMMONING_COST = 2_500 * 10**18;
@@ -69,8 +71,12 @@ contract GUARDIAN_SIGILS is ERC721Royalty, ReentrancyGuard, Ownable(msg.sender) 
     function SUMMON(address _to) public ensureNoPledgeBreak(msg.sender) nonReentrant {
         require(riftOpen, "Rift Closed");
         require(_getGuardianStatus(_to), "Not Auth");
+        if (block.timestamp < slowmoStartTime + 7 days) {
+            require(!hasBeenSummonedTo[_to], "Not Auth");
+        }
         iPLEDGE(PLEDGE_CONTRACT).transferFrom(msg.sender, address(this), HALF_SUMMONING_COST);
         iPLEDGE(PLEDGE_CONTRACT).transferFrom(msg.sender, artistAddress, HALF_SUMMONING_COST);
+        hasBeenSummonedTo[_to] = true;
         _makeMagic(_nextTokenId);
         _safeMint(_to, _nextTokenId);
         _tokenSupply++;
@@ -233,19 +239,14 @@ contract GUARDIAN_SIGILS is ERC721Royalty, ReentrancyGuard, Ownable(msg.sender) 
             );
     }
 
-    /// @notice Allows owner to open the rift and summon the first token
-    /// @param _to The address to summon the first token to
-    function openRift(address _to) external onlyOwner {
-        riftOpen = true;
-        if (_nextTokenId == 0) {
-            SUMMON(_to);
-        }
-    }
-
-    /// @notice Allows owner to toggle Summonings
-    function pause() external onlyOwner {
-        require (_nextTokenId > 0, "Not Auth");
-        riftOpen = !riftOpen;
+    function openRift(bool _openRift) external onlyOwner {
+      riftOpen = _openRift;
+      if (_openRift && _nextTokenId == 0) {
+          if (slowmoStartTime == 0) {
+              slowmoStartTime = block.timestamp;
+          }
+          SUMMON(artistAddress);
+      }
     }
 
     /// @notice Allows owner to set the artist address
@@ -254,20 +255,22 @@ contract GUARDIAN_SIGILS is ERC721Royalty, ReentrancyGuard, Ownable(msg.sender) 
         artistAddress = _artistAddress;
     }
 
-    /// @notice Allows owner to set the main description
-    /// @param _description The new description to be set
-    function setDescription(string calldata _description) external onlyOwner {
-        description = _description;
+    function setWebsiteOrDescription(bool _setWebsite, string calldata _websiteOrDescription) external onlyOwner {
+        if (_setWebsite) {
+            website = _websiteOrDescription;
+        } else {
+            description = _websiteOrDescription;
+        }
     }
 
-    /// @notice Allows owner to set the website
-    /// @param _website The new website to be set
-    function setWebsite(string calldata _website) external onlyOwner {
-        website = _website;
+    /// @notice Allows owner to set the script
+    /// @param _script The new script to be set
+    function setScript(string calldata _script) external onlyOwner {
+        script = _script;
     }
 
-    function setSVGorHTMLbyPart(bool _svg, uint8 _part, string calldata _SVGorHTML) external onlyOwner {
-        if (_svg) {
+    function setSVGorHTMLbyPart(bool _setSVG, uint8 _part, string calldata _SVGorHTML) external onlyOwner {
+        if (_setSVG) {
             require(_part > 0 && _part < 5, "Invalid Part");
             if (_part == 1) {
                 tokenImagePt1 = _SVGorHTML;
@@ -286,12 +289,6 @@ contract GUARDIAN_SIGILS is ERC721Royalty, ReentrancyGuard, Ownable(msg.sender) 
                 htmlPart2 = _SVGorHTML;
             }
         }
-    }
-
-    /// @notice Allows owner to set the script
-    /// @param _script The new script to be set
-    function setScript(string calldata _script) external onlyOwner {
-        script = _script;
     }
 
     /// @notice Allows owner to set the royalty
