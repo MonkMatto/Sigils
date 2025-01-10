@@ -36,6 +36,7 @@ contract GUARDIAN_SIGILS is ERC721Royalty, ReentrancyGuard, Ownable(msg.sender) 
     constructor() ERC721("Guardian Sigils", "SIGILS") {}
     using Strings for string;
     bool public riftOpen;
+    uint16 public maxSigils = 777;
     uint96 public royaltyBPS;
     uint256 private _nextTokenId;
     uint256 private _tokenSupply;
@@ -44,9 +45,9 @@ contract GUARDIAN_SIGILS is ERC721Royalty, ReentrancyGuard, Ownable(msg.sender) 
     address public constant PLEDGE_CONTRACT = 0x37538D1201486e11f5A06779168a30bA9D683a12; // Testnet
     // address public constant PLEDGE_CONTRACT = 0x910812c44eD2a3B611E4b051d9D83A88d652E2DD; // Mainnet
     address public royaltyReceiver;
-    address public artistAddress;
-    string public description;
-    string public website;
+    address public artistAddress = 0xfc1e361711328f105F314f48C49D8c0eb0C6610E;
+    string public description = "Guardian Sigils are magical emblems, powered by $PLEDGE, that are unique to each Guardian. Summoning a sigil carries a cost, but each one fortifies a Guardian's resolve to uphold their vow. Sacrificing a sigil releases the $PLEDGE stored within back to the owner, but at a steep price: it permanently reduces the available supply of Guardian Sigils.";
+    string public website = "https://matto.xyz";
     string private tokenImagePt1 = '<?xml version="1.0" encoding="utf-8"?><svg id="Guardian Sigils" viewBox="0 0 1000 1000" xmlns="http://www.w3.org/2000/svg"><defs><radialGradient id="gradient-bg" cx="50%" cy="50%" r="60%" fx="50%" fy="50%"><stop offset="0%" stop-color="hsl(';
     string private tokenImagePt2 = ', 100%, 30%)" /><stop offset="100%" stop-color="hsl(';
     string private tokenImagePt3 = ', 100%, 10%)" /></radialGradient></defs><rect x="0" y="0" width="1000" height="1000" fill="url(#gradient-bg)" /><text x="50%" y="45%" dominant-baseline="middle" text-anchor="middle" font-family="Times New Roman, serif" font-size="120" font-style="italic" fill="white">Guardian Sigil</text><text x="50%" y="60%" dominant-baseline="middle" text-anchor="middle" font-family="Times New Roman, serif" font-size="90" font-style="italic" fill="white">#';
@@ -81,12 +82,16 @@ contract GUARDIAN_SIGILS is ERC721Royalty, ReentrancyGuard, Ownable(msg.sender) 
         _safeMint(_to, _nextTokenId);
         _tokenSupply++;
         _nextTokenId++;
+        if (_nextTokenId == maxSigils) {
+            riftOpen = false;
+        }
     }
 
     /// @notice Sacrifices (burns) a token and reclaims the locked $PLEDGE
     /// @dev Only the token owner can sacrifice a token
     /// @param _tokenId The token ID to sacrifice
     function SACRIFICE(uint256 _tokenId) external nonReentrant {
+        require(riftOpen == false, "Cannot Sacrifice: Rift is Open");
         require(ownerOf(_tokenId) == msg.sender, "Only token owner can burn");
         _burn(_tokenId);
         _tokenSupply--;
