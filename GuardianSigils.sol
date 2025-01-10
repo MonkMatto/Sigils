@@ -273,40 +273,26 @@ contract GUARDIAN_SIGILS is ERC721Royalty, ReentrancyGuard, Ownable(msg.sender) 
         website = _website;
     }
 
-    /// @notice Allows owner to set the token image part 1
-    /// @param _tokenImagePt1 The new token image part 1 to be set
-    function setTokenImagePt1(string calldata _tokenImagePt1) external onlyOwner {
-        tokenImagePt1 = _tokenImagePt1;
-    }
-
-    /// @notice Allows owner to set the token image part 2
-    /// @param _tokenImagePt2 The new token image part 2 to be set
-    function setTokenImagePt2(string calldata _tokenImagePt2) external onlyOwner {
-        tokenImagePt2 = _tokenImagePt2;
-    }
-    
-    /// @notice Allows owner to set the token image part 3
-    /// @param _tokenImagePt3 The new token image part 3 to be set
-    function setTokenImagePt3(string calldata _tokenImagePt3) external onlyOwner {
-        tokenImagePt3 = _tokenImagePt3;
-    }
-
-    /// @notice Allows owner to set the token image part 4
-    /// @param _tokenImagePt4 The new token image part 4 to be set
-    function setTokenImagePt4(string calldata _tokenImagePt4) external onlyOwner {
-        tokenImagePt4 = _tokenImagePt4;
-    }
-
-    /// @notice Allows owner to set the HTML start
-    /// @param _htmlPart1 The new HTML start to be set
-    function setHtmlPart1(string calldata _htmlPart1) external onlyOwner {
-        htmlPart1 = _htmlPart1;
-    }
-
-    /// @notice Allows owner to set the HTML end
-    /// @param _htmlPart2 The new HTML end to be set
-    function setHtmlPart2(string calldata _htmlPart2) external onlyOwner {
-        htmlPart2 = _htmlPart2;
+    function setSVGorHTMLbyPart(bool _svg, uint8 _part, string calldata _SVGorHTML) external onlyOwner {
+        if (_svg) {
+            require(_part > 0 && _part < 5, "Invalid Part");
+            if (_part == 1) {
+                tokenImagePt1 = _SVGorHTML;
+            } else if (_part == 2) {
+                tokenImagePt2 = _SVGorHTML;
+            } else if (_part == 3) {
+                tokenImagePt3 = _SVGorHTML;
+            } else {
+                tokenImagePt4 = _SVGorHTML;
+            }
+        } else {
+            require(_part > 0 && _part < 3, "Invalid Part");
+            if (_part == 1) {
+                htmlPart1 = _SVGorHTML;
+            } else {
+                htmlPart2 = _SVGorHTML;
+            }
+        }
     }
 
     /// @notice Allows owner to set the script
