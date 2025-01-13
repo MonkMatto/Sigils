@@ -239,6 +239,9 @@ contract GUARDIAN_SIGILS is ERC721Royalty, ReentrancyGuard, Ownable(msg.sender) 
             );
     }
 
+    /// @notice Allows owner to open or close the rift
+    /// @dev This function also sets the slowmo start time (the first time) and mints the first token to the artist
+    /// @param _openRift A boolean indicating if the rift should be opened or closed
     function openRift(bool _openRift) external onlyOwner {
       riftOpen = _openRift;
       if (_openRift && _nextTokenId == 0) {
@@ -255,6 +258,10 @@ contract GUARDIAN_SIGILS is ERC721Royalty, ReentrancyGuard, Ownable(msg.sender) 
         artistAddress = _artistAddress;
     }
 
+    /// @notice Allows owner to set the website or description
+    /// @dev These functions are combined to reduce contract size
+    /// @param _setWebsite A boolean indicating if the website should be set
+    /// @param _websiteOrDescription The new website or description to be set
     function setWebsiteOrDescription(bool _setWebsite, string calldata _websiteOrDescription) external onlyOwner {
         if (_setWebsite) {
             website = _websiteOrDescription;
@@ -269,6 +276,11 @@ contract GUARDIAN_SIGILS is ERC721Royalty, ReentrancyGuard, Ownable(msg.sender) 
         script = _script;
     }
 
+    /// @notice Allows owner to set the SVG or HTML by part
+    /// @dev These functions are combined to reduce contract size
+    /// @param _setSVG A boolean indicating if the SVG should be set
+    /// @param _part The part to set the SVG or HTML for
+    /// @param _SVGorHTML The new SVG or HTML part to be set
     function setSVGorHTMLbyPart(bool _setSVG, uint8 _part, string calldata _SVGorHTML) external onlyOwner {
         if (_setSVG) {
             require(_part > 0 && _part < 5, "Invalid Part");
