@@ -1,5 +1,32 @@
-// SPDX-License-Identifier: No License
+// SPDX-License-Identifier: MIT
+// Contract code is licensed under the MIT License.
+// Art-generating script embedded within the contract is © Matto 2025. All rights reserved.
+// Redistribution or reproduction of the art-generating script in whole or in part is prohibited without explicit permission from the copyright owner.
+
 pragma solidity ^0.8.20;
+/*
+
+  _______           _______  _______  ______  _________ _______  _       
+ (  ____ \|\     /|(  ___  )(  ____ )(  __  \ \__   __/(  ___  )( (    /| 
+ | (    \/| )   ( || (   ) || (    )|| (  \  )   ) (   | (   ) ||  \  ( | 
+ | |      | |   | || (___) || (____)|| |   ) |   | |   | (___) ||   \ | | 
+ | | ____ | |   | ||  ___  ||     __)| |   | |   | |   |  ___  || (\ \) | 
+ | | \_  )| |   | || (   ) || (\ (   | |   ) |   | |   | (   ) || | \   | 
+ | (___) || (___) || )   ( || ) \ \__| (__/  )___) (___| )   ( || )  \  | 
+ (_______)(_______)|/     \||/   \__/(______/ \_______/|/     \||/    )_) 
+                                                                          
+            _______ _________ _______ _________ _        _______          
+           (  ____ \\__   __/(  ____ \\__   __/( \      (  ____ \         
+           | (    \/   ) (   | (    \/   ) (   | (      | (    \/         
+           | (_____    | |   | |         | |   | |      | (_____          
+           (_____  )   | |   | | ____    | |   | |      (_____  )         
+                 ) |   | |   | | \_  )   | |   | |            ) |         
+           /\____) |___) (___| (___) |___) (___| (____/\/\____) |         
+           \_______)\_______/(_______)\_______/(_______/\_______)         
+                                                                          
+                                                                 by Matto 
+
+*/
 
 import "@openzeppelin/contracts/token/ERC721/extensions/ERC721Royalty.sol";
 import "@openzeppelin/contracts/utils/Strings.sol";
@@ -14,6 +41,8 @@ import "@openzeppelin/contracts/utils/ReentrancyGuard.sol";
 ///       $PLEDGE transferred this window, 
 ///       transferable $PLEDGE this window, 
 ///       time remaining in the current window.
+/// @dev the transfer and transferFrom functions are used to transfer $PLEDGE to and from the contract.
+/// @param _address The address to get the pledger data for
 interface iPLEDGE {
     function getPledgerData(address _address) 
         external 
