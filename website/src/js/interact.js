@@ -1,15 +1,20 @@
-let mainnet = false;
-let PLEDGE_ADDRESS, SIGILS_ADDRESS;
-if (mainnet) {
-  PLEDGE_ADDRESS = "0x910812c44eD2a3B611E4b051d9D83A88d652E2DD";
-  SIGILS_ADDRESS = "";
-} else { // sepolia
-  PLEDGE_ADDRESS = "0x37538D1201486e11f5A06779168a30bA9D683a12";
-  SIGILS_ADDRESS = "0xA9e444856DbDbd05c2fbe50f95824168040e0486"; // v2, typo!
-}
 const PLEDGEcontract = new web3.eth.Contract(PLEDGE_ABI, PLEDGE_ADDRESS);
 const SIGILScontract = new web3.eth.Contract(SIGILS_ABI, SIGILS_ADDRESS);
 let error, circulation, locked, amount, denomination;
+
+// update contract link in html header
+let explorerDomain = mainnet ? "etherscan.io" : "sepolia.etherscan.io";
+document.getElementById(
+  "sigils-contract-link"
+).innerHTML = `<a href="https://${explorerDomain}/address/${SIGILS_ADDRESS}#code" target="_blank">Contract</a>`;
+
+document.getElementById("pledge-contract-link").innerHTML = `<a
+  href="https://${explorerDomain}/address/${PLEDGE_ADDRESS}#writeContract"
+  target="_blank"
+>Etherscan</a>`;
+
+
+;
 
 // Call the function to check the network and if a wallet is connected
 checkNetworkAndWallet();
