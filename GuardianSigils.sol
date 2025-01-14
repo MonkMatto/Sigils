@@ -54,6 +54,10 @@ interface iPLEDGE {
 
 /// @title GUARDIAN SIGILS
 /// @notice ERC-721 NFT contract for the GUARDIAN SIGILS collection
+/// @dev Guardian Sigils are onchain erc-721 generative art NFTs that have unique aspects and tokenomics.
+/// @dev The art is generated using SVG, HTML, and JS code that is embedded within the contract.
+/// @dev The art only reveals itself if the token owner has an active pledge of at least 1M $PLEDGE.
+/// @dev Each token holds 2500 $PLEDGE, which can be reclaimed by calling the SACRIFICE function to destroy the token.
 /// @author Matto-Shinkai (AKA MonkMatto), 2025. More info: matto.xyz
 contract GUARDIAN_SIGILS is ERC721Royalty, ReentrancyGuard, Ownable(msg.sender) {
     constructor() ERC721("Guardian Sigils", "SIGILS") {}
