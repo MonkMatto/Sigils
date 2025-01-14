@@ -33,25 +33,28 @@
     <header class="container">
       <hgroup>
         <h1>Guardian Sigils</h1>
-        <h5>By Matto</h5>
+        <h5>By Matto  -  <em>The rift to summon Guardian Sigils opens on 1/17/24!</em></h5>
         <hr>
         <br>
         <div class="grid">
           <div>
             <h6>LINKS: <a href="https://opensea.io/collection/guardian-sigils" target="_blank">NFT Collection</a> | <span id="sigils-contract-link"></span> | <a href="https://discord.gg/sCmu4Xt6Cx" target="_blank">Discord</a> | <a href="https://github.com/MonkMatto/Sigils" target="_blank">Github</a></h6>
-            </div>
-            <div>
-              <div id="connect-button" style="display: block;">
-                <button type="button" onclick="ConnectWallet()"><span class="message" color="black"></span></button>
-              </div>
-              <div id="network-name"></div>
-              <!-- <p style="text-align: center;"><em><span class="message" color="black">Please connect to MetaMask.</span></em></p> -->
-              <p style="text-align: center;"><em><span class="message" color="black"></span></em></p>
-            </div>          
           </div>
-          <h3  style="text-align: center;"><em>NOTE: YOU CAN MINT FROM ANY WALLET AS LONG AS THE RECEIVING WALLET IS A GUARDIAN IN GOOD STANDING</em></h2>
+          <div>
+            <div id="connect-button" style="display: block;">
+              <button type="button" onclick="ConnectWallet()"><span class="message" color="black"></span></button>
+            </div>
+            <div id="network-name"></div>
+            <!-- <p style="text-align: center;"><em><span class="message" color="black">Please connect to MetaMask.</span></em></p> -->
+            <p style="text-align: center;"><em><span class="message" color="white"></span></em></p>
+            <div id="connect-approve-anchor-reveal" style ="display:none; text-align:center;">
+              <a href="#contract-interaction-area">Jump to Summoning Ritual</a>
+            </div>
+          </div>          
+        </div>
+        <br>
+        <h3  style="text-align: center;"><em>NOTE: YOU CAN MINT FROM ANY WALLET AS LONG AS THE RECEIVING WALLET IS A GUARDIAN IN GOOD STANDING</em></h2>
       </hgroup>
-      <br>
       <br>
       <!-- <image src="./src/images/OSDETAIL.jpg"></image> -->
       <image src="./src/images/pledge_sigil_anima.svg" alt="Sigil of the $PLEDGE Contract"></image>
@@ -162,82 +165,93 @@
       </div>
 
       <!-- Connect and Approve -->
-      <div id="connect-approve">
-        <br>
-        <br>
-        <h1 style="text-align: center;">PREPARE FOR SIGIL MAGIC!</h1>
-        <br>
-        <h3>Step 1: Connect and Approve $PLEDGE</h3>
-        <br>
-        <form _lpchecked="1">
-          <div class="grid">
-            <div>
-              <p>Guardian Sigils are summoned at a cost of 5k $PLEDGE each. To allow the Guardian Sigils contract to transfer your $PLEDGE, you have to approve it on the $PLEDGE contract... Which you can do on <span id="pledge-contract-link"></span> or here on this page (if you connected).</p>
-              <p>To authorize, use the default value of 10k (enough for 2 Summonings) or edit it and click 'Approve'.</p>
-              <div id="allowance">
-                <p>Once that's done, check the allowance...</p>
-                   <button type="submit" id="check-approval-button" class="btn btn-outline-dark btn-lg btn-round"
-                  onclick="checkAllowance(); return false">Check Guardian Sigils Contract Allowance</button>
-              </div>
-            </div>
-            <div>
-              <!-- <div id="connect-button2" style="display: none;">
-                <button type="button" onclick="ConnectWallet()">Connect Wallet</button>
-              </div> -->
-              <br>
-              <div class="grid">
-                <input type="number" id="approved-amount" value="10000" required>
-                <button type="submit" id="submit-button" class="btn btn-outline-dark btn-lg btn-round"
-                  onclick="approve(); return false">Approve</button>
-              </div>
-              <br>
-            </div>
-          </div>
-        </form>
-        <br>
-        <hr>
-      </div>
+      <div id="contract-interaction-area">
+        <div id="contract-interaction-placeholder">
+          <br>
+          <h3>Mint is not yet active!</h3>
+          <p>Stay tuned for updates in the $PLEDGE discord or twitter, or Matto's discord or twitter. When minting begins, refresh this page to unlock the magic.</p>
+        </div>
 
-      <!-- MINT Functions  -->
-      <div>
-        <br>
-        <h3>Step 2: SUMMON!</h3>
-        <div class="grid">
-          <p>Guardian Sigils can only be summoned (minted) to a provided account, and that account (recipient) must be a Guardian with a pledge of at least 1M tokens. Additionally, if the summoning account is a pledger (note: it doesn't have to be), they (the paying account) must have enough $PLEDGE available in the current window to not break the pledge (minting contract checks!). If not a pledger, no problem here.</p>
-          <div>
+        <div id="contract-interactions" style="display:none">
+          <div id="connect-approve">
+            <br>
+            <br>
+            <h1 style="text-align: center;">PREPARE FOR SIGIL MAGIC!</h1>
+            <br>
+            <h3>Step 1: Connect and Approve $PLEDGE</h3>
+            <br>
             <form _lpchecked="1">
-              <input type="text" id="token-recipient" placeholder="Guardian Sigil Recipient 0x address" required>
-              <button type="submit" id="submit-button" class="btn btn-outline-dark btn-lg btn-round"
-              onclick="SUMMON(); return false">Summon for 5k $PLEDGE</button>
+              <div class="grid">
+                <div>
+                  <p>Guardian Sigils are summoned at a cost of 5k $PLEDGE each. To allow the Guardian Sigils contract to transfer your $PLEDGE, you have to approve it on the $PLEDGE contract... Which you can do on <span id="pledge-contract-link"></span> or here on this page (if you connected).</p>
+                  <p>To authorize, use the default value of 10k (enough for 2 Summonings) or edit it and click 'Approve'.</p>
+                  <div id="allowance">
+                    <p>Once that's done, check the allowance...</p>
+                      <button type="submit" id="check-approval-button" class="btn btn-outline-dark btn-lg btn-round"
+                      onclick="checkAllowance(); return false">Check Guardian Sigils Contract Allowance</button>
+                  </div>
+                </div>
+                <div>
+                  <!-- <div id="connect-button2" style="display: none;">
+                    <button type="button" onclick="ConnectWallet()">Connect Wallet</button>
+                  </div> -->
+                  <br>
+                  <div class="grid">
+                    <input type="number" id="approved-amount" value="10000" required>
+                    <button type="submit" id="submit-button" class="btn btn-outline-dark btn-lg btn-round"
+                      onclick="approve(); return false">Approve</button>
+                  </div>
+                  <br>
+                </div>
+              </div>
             </form>
+            <br>
+            <hr>
+          </div>
+
+          <!-- MINT Functions  -->
+          <div>
+            <br>
+            <h3>Step 2: SUMMON!</h3>
+            <h4><em>Note: 7 Day A.L. is active - Guardian addresses can only be summoned to once.</em></h4>
+            <div class="grid">
+              <p>Guardian Sigils can only be summoned (minted) to a provided account, and that account (recipient) must be a Guardian with a pledge of at least 1M tokens. Additionally, if the summoning account is a pledger (note: it doesn't have to be), they (the paying account) must have enough $PLEDGE available in the current window to not break the pledge (minting contract checks!). If not a pledger, no problem here.</p>
+              <div>
+                <form _lpchecked="1">
+                  <input type="text" id="token-recipient" placeholder="Guardian Sigil Recipient 0x address" required>
+                  <button type="submit" id="submit-button" class="btn btn-outline-dark btn-lg btn-round"
+                  onclick="SUMMON(); return false">Summon for 5k $PLEDGE</button>
+                </form>
+              </div>
+            </div>
+            <!-- <br>
+            <br>
+            <br> -->
+            <!-- <p style="text-align: center;">Check your Guardian Sigil token in your wallet!</p> -->
+            <br>
+            <hr>
+          </div>
+
+          <!-- Liquidate Functions  -->
+          <div>
+            <br>
+            <h3>Optional Step 3: SACRIFICE!</h3>
+            <div class="grid">
+              <p>To reclaim 2.5k $PLEDGE from a token, it must be destroyed by its owner through special sacrificial rites. Enter the tokenID of a Guardian Sigil in your wallet that you're willing to sacrifice, but be warned: there is no going back!</p>
+              <form _lpchecked="1">
+                  <input type="number" id="token-to-sacrifice" placeholder="TokenID to Sacrifice" required>
+                  <button type="submit" id="submit-button" class="btn btn-outline-dark btn-lg btn-round"
+                  onclick="SACRIFICE(); return false">Sacrifice and Reclaim 2.5k $PLEDGE</button>
+              </form>
+            </div>
+            <!-- <br>
+            <br>
+            <br> -->
+            <!-- <p style="text-align: center;">Check the $PLEDGE balance in your wallet!</p> -->
+            <br>
+            <hr>
           </div>
         </div>
-        <!-- <br>
-        <br>
-        <br> -->
-        <!-- <p style="text-align: center;">Check your Guardian Sigil token in your wallet!</p> -->
-        <br>
-        <hr>
-      </div>
-
-      <!-- Liquidate Functions  -->
-      <div>
-        <br>
-        <h3>Optional Step 3: SACRIFICE!</h3>
-        <div class="grid">
-          <p>To reclaim 2.5k $PLEDGE from a token, it must be destroyed by its owner through special sacrificial rites. Enter the tokenID of a Guardian Sigil in your wallet that you're willing to sacrifice, but be warned: there is no going back!</p>
-          <form _lpchecked="1">
-              <input type="number" id="token-to-sacrifice" placeholder="TokenID to Sacrifice" required>
-              <button type="submit" id="submit-button" class="btn btn-outline-dark btn-lg btn-round"
-              onclick="SACRIFICE(); return false">Sacrifice and Reclaim 2.5k $PLEDGE</button>
-          </form>
-        </div>
-        <!-- <br>
-        <br>
-        <br> -->
-        <!-- <p style="text-align: center;">Check the $PLEDGE balance in your wallet!</p> -->
-        <br>
-        <hr>
       </div>
     </main><!-- ./ Main -->
     

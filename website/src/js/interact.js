@@ -28,15 +28,19 @@ async function checkNetworkAndWallet() {
       const accounts = await web3.eth.getAccounts();
       const networkType = await web3.eth.net.getNetworkType();
       if (networkType != 'main') {
-        document.getElementById('network-name').innerHTML = `<p style="text-align:center"><em>Please switch to Main network.</em></p>`;
+        document.getElementById('network-name').innerHTML = `<p style="text-align:center"><em>Please switch to Main network</em></p>`;
+      } 
+      // document.getElementById('network-name').innerHTML = `<p style="text-align:center">Current network: Main.</p>`;
+      if (accounts.length > 0) {
+        document.getElementById('connect-button').style.display = "none";
+        document.getElementById('connect-approve-anchor-reveal').style.display = "block";
       } else {
-        // document.getElementById('network-name').innerHTML = `<p style="text-align:center">Current network: Main.</p>`;
-        if (accounts.length > 0) {
-          document.getElementById('connect-button').style.display = "none";
-        } else {
-          document.getElementById('connect-button').style.display = "block";
-        }
+        document.getElementById('connect-button').style.display = "block";
+        document.getElementById(
+          "connect-approve-anchor-reveal"
+        ).style.display = "none";
       }
+      
     } catch (error) {
       console.error("Error getting accounts or network type:", error);
     }
