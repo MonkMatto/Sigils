@@ -88,6 +88,7 @@ contract GUARDIAN_SIGILS is ERC721Royalty, ReentrancyGuard, Ownable(msg.sender) 
     event Reclaimed(address indexed sender, uint256 tokenId, uint256 ERC20Reclaimed);
 
     /// @notice Ensures that the paying address will not break the pledge with the mint
+    /// @dev This modifier checks if the address would experience a pledge break, which happens if the transferablePledgeThisWindow is less than 2 * HALF_SUMMONING_COST
     modifier ensureNoPledgeBreak(address _address) {
         (uint8 pledgerStatus, , , , uint256 transferablePLEDGEThisWindow, ) = iPLEDGE(PLEDGE_CONTRACT).getPledgerData(_address);
         if (pledgerStatus == 1) {
@@ -350,7 +351,7 @@ contract GUARDIAN_SIGILS is ERC721Royalty, ReentrancyGuard, Ownable(msg.sender) 
         tokenMagic[_tokenId] = uint256(keccak256(abi.encodePacked(_tokenId, block.timestamp, msg.sender, _tokenId))) % 1000000000;
     }
 
-    /// @notice Checks if an address meets the guardian status
+    /// @notice Checks if an address meets the guardian status, which requires a pledged amount of at least 1M $PLEDGE
     /// @param _address The address to check
     /// @return A boolean indicating if the address meets the guardian status
     function _getGuardianStatus(address _address) internal view returns (bool) {
@@ -360,7 +361,7 @@ contract GUARDIAN_SIGILS is ERC721Royalty, ReentrancyGuard, Ownable(msg.sender) 
 
     /// @notice Calculates the 'Core Rarity' of a token
     /// @param traits The array of uint8 values representing the traits
-    /// @return The 'Core Rarity' value of the token
+    /// @return The 'Core Rarity' value of the token, which is the sum of the traits at indexes 1-5
     function _calculateRarity(uint8[] memory traits) internal pure returns (uint8) {
         uint8 rarityCounter = 0;
         for (uint8 i = 1; i < 6; i++) {
