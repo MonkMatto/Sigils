@@ -63,17 +63,21 @@
 
       <br><br>
       <div id="stats-update">
-        <button type="button" onclick="updateStats()">Refresh Statistics!</button>
+        <button type="button" onclick="updateStats()">Touch the Rift</button>
       </div>
       <br>
       <div id="stats" class="grid" style="text-align: center">
         <div>
+          <h4><em>You approach the rift, and...</em></h4>
+          <div id="rift-status"><h6>(connect wallet & Touch the Rift)</h6></div>
+        </div>
+        <div>
           <h4>Guardian Sigils in Circulation:</h4>
-          <div id="circulation"><h6>(connect wallet)</h6></div>
+          <div id="circulation"><h6>(connect wallet & Touch the Rift)</h6></div>
         </div>
         <div>        
-          <h4>$PLEDGE Locked in Sigil Tokens:</h4>
-          <div id="locked"><h6>(connect wallet)</h6></div>
+          <h4>$PLEDGE Locked in Sigils:</h4>
+          <div id="locked"><h6>(connect wallet & Touch the Rift)</h6></div>
         </div>
       </div>
       <hr>
@@ -166,7 +170,7 @@
 
       <!-- Connect and Approve -->
       <div id="contract-interaction-area">
-        <div id="contract-interaction-placeholder">
+        <div id="contract-interaction-placeholder" style="display:block">
           <br>
           <h3>Mint is not yet active!</h3>
           <p>Stay tuned for updates in the $PLEDGE discord or twitter, or Matto's discord or twitter. When minting begins, refresh this page to unlock the magic.</p>

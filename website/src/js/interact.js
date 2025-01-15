@@ -13,9 +13,6 @@ document.getElementById("pledge-contract-link").innerHTML = `<a
   target="_blank"
 >Etherscan</a>`;
 
-
-;
-
 // Call the function to check the network and if a wallet is connected
 checkNetworkAndWallet();
 
@@ -71,6 +68,13 @@ async function updateStats() {
     locked = circulation * 2500;
     console.log("Locked: " + locked);
     document.getElementById("locked").innerHTML = `<h6>${locked}</h6>`;
+    if (circulation > 0) {
+      document.getElementById(
+        "contract-interaction-placeholder"
+      ).style.display = "none";
+      document.getElementById("contract-interactions").style.display = "block";
+      document.getElementById("rift-status").innerHTML = `<p>The rift pulses with magical energy!</p>`;
+    }
   }
 }
 
