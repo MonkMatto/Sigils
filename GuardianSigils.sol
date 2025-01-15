@@ -42,7 +42,6 @@ import "@openzeppelin/contracts/utils/ReentrancyGuard.sol";
 ///       transferable $PLEDGE this window, 
 ///       time remaining in the current window.
 /// @dev the transfer and transferFrom functions are used to transfer $PLEDGE to and from the contract.
-/// @param _address The address to get the pledger data for
 interface iPLEDGE {
     function getPledgerData(address _address) 
         external 
@@ -276,6 +275,7 @@ contract GUARDIAN_SIGILS is ERC721Royalty, ReentrancyGuard, Ownable(msg.sender) 
     /// @dev This function also sets the slowmo start time (the first time) and mints the first token to the artist
     /// @param _openRift A boolean indicating if the rift should be opened or closed
     function openRift(bool _openRift) external onlyOwner {
+      require(_nextTokenId < 777);
       riftOpen = _openRift;
       if (_openRift && _nextTokenId == 0) {
           if (slowmoStartTime == 0) {
