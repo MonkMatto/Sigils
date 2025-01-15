@@ -59,7 +59,7 @@ interface iPLEDGE {
 /// @dev Each token holds 2500 $PLEDGE, which can be reclaimed by calling the SACRIFICE function to destroy the token.
 /// @author Matto-Shinkai (AKA MonkMatto), 2025. More info: matto.xyz
 contract GUARDIAN_SIGILS is ERC721Royalty, ReentrancyGuard, Ownable(msg.sender) {
-    constructor() ERC721("Guardian Sigils", "SIGILS") {}
+    constructor() ERC721("Guardian Sigils", "GS") {}
     using Strings for string;
     bool public riftOpen;
     uint96 private royaltyBPS;
@@ -72,9 +72,9 @@ contract GUARDIAN_SIGILS is ERC721Royalty, ReentrancyGuard, Ownable(msg.sender) 
     address private constant PLEDGE_CONTRACT = 0x37538D1201486e11f5A06779168a30bA9D683a12; // Testnet
     // address private constant PLEDGE_CONTRACT = 0x910812c44eD2a3B611E4b051d9D83A88d652E2DD; // Mainnet
     address private royaltyReceiver;
-    address public artistAddress = 0xfc1e361711328f105F314f48C49D8c0eb0C6610E;
+    address public artistAddress = 0xfc1e361711328f105F314f48C49D8c0eb0C6610E; // Matto's $PLEDGE Guardian Account.
     string public description = "Guardian Sigils are magical emblems, powered by $PLEDGE, that are unique to each Guardian. Summoning a sigil carries a cost, but each one fortifies a Guardian's resolve to uphold their vow. Sacrificing a sigil releases the $PLEDGE stored within back to the owner, but at a steep price: it permanently reduces the available supply of Guardian Sigils.";
-    string public website = 'https://matto.xyz';
+    string public website = 'https://sigils.matto.xyz';
     string private tokenImagePt1 = '<?xml version="1.0" encoding="utf-8"?><svg id="Guardian Sigils" viewBox="0 0 1000 1000" xmlns="http://www.w3.org/2000/svg"><defs><radialGradient id="gradient-bg" cx="50%" cy="50%" r="60%" fx="50%" fy="50%"><stop offset="0%" stop-color="hsl(';
     string private tokenImagePt2 = ', 100%, 30%)" /><stop offset="100%" stop-color="hsl(';
     string private tokenImagePt3 = ', 100%, 10%)" /></radialGradient></defs><rect x="0" y="0" width="1000" height="1000" fill="url(#gradient-bg)" /><text x="50%" y="45%" dominant-baseline="middle" text-anchor="middle" font-family="Times New Roman, serif" font-size="120" font-style="italic" fill="white">Guardian Sigil</text><text x="50%" y="60%" dominant-baseline="middle" text-anchor="middle" font-family="Times New Roman, serif" font-size="100" fill="white"># ';
