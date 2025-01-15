@@ -334,32 +334,6 @@ const SIGILS_ABI = [
     type: "event",
   },
   {
-    inputs: [],
-    name: "HALF_SUMMONING_COST",
-    outputs: [
-      {
-        internalType: "uint256",
-        name: "",
-        type: "uint256",
-      },
-    ],
-    stateMutability: "view",
-    type: "function",
-  },
-  {
-    inputs: [],
-    name: "PLEDGE_CONTRACT",
-    outputs: [
-      {
-        internalType: "address",
-        name: "",
-        type: "address",
-      },
-    ],
-    stateMutability: "view",
-    type: "function",
-  },
-  {
     inputs: [
       {
         internalType: "uint256",
@@ -514,6 +488,25 @@ const SIGILS_ABI = [
     inputs: [
       {
         internalType: "address",
+        name: "",
+        type: "address",
+      },
+    ],
+    name: "hasBeenSummonedTo",
+    outputs: [
+      {
+        internalType: "bool",
+        name: "",
+        type: "bool",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "address",
         name: "owner",
         type: "address",
       },
@@ -550,9 +543,9 @@ const SIGILS_ABI = [
   {
     inputs: [
       {
-        internalType: "address",
-        name: "_to",
-        type: "address",
+        internalType: "bool",
+        name: "_openRift",
+        type: "bool",
       },
     ],
     name: "openRift",
@@ -594,13 +587,6 @@ const SIGILS_ABI = [
   },
   {
     inputs: [],
-    name: "pause",
-    outputs: [],
-    stateMutability: "nonpayable",
-    type: "function",
-  },
-  {
-    inputs: [],
     name: "renounceOwnership",
     outputs: [],
     stateMutability: "nonpayable",
@@ -614,19 +600,6 @@ const SIGILS_ABI = [
         internalType: "bool",
         name: "",
         type: "bool",
-      },
-    ],
-    stateMutability: "view",
-    type: "function",
-  },
-  {
-    inputs: [],
-    name: "royaltyBPS",
-    outputs: [
-      {
-        internalType: "uint96",
-        name: "",
-        type: "uint96",
       },
     ],
     stateMutability: "view",
@@ -656,19 +629,6 @@ const SIGILS_ABI = [
         internalType: "uint256",
         name: "amount",
         type: "uint256",
-      },
-    ],
-    stateMutability: "view",
-    type: "function",
-  },
-  {
-    inputs: [],
-    name: "royaltyReceiver",
-    outputs: [
-      {
-        internalType: "address",
-        name: "",
-        type: "address",
       },
     ],
     stateMutability: "view",
@@ -759,45 +719,6 @@ const SIGILS_ABI = [
   {
     inputs: [
       {
-        internalType: "string",
-        name: "_description",
-        type: "string",
-      },
-    ],
-    name: "setDescription",
-    outputs: [],
-    stateMutability: "nonpayable",
-    type: "function",
-  },
-  {
-    inputs: [
-      {
-        internalType: "string",
-        name: "_htmlPart1",
-        type: "string",
-      },
-    ],
-    name: "setHtmlPart1",
-    outputs: [],
-    stateMutability: "nonpayable",
-    type: "function",
-  },
-  {
-    inputs: [
-      {
-        internalType: "string",
-        name: "_htmlPart2",
-        type: "string",
-      },
-    ],
-    name: "setHtmlPart2",
-    outputs: [],
-    stateMutability: "nonpayable",
-    type: "function",
-  },
-  {
-    inputs: [
-      {
         internalType: "uint96",
         name: "_royaltyBPS",
         type: "uint96",
@@ -809,6 +730,29 @@ const SIGILS_ABI = [
       },
     ],
     name: "setRoyalty",
+    outputs: [],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "bool",
+        name: "_setSVG",
+        type: "bool",
+      },
+      {
+        internalType: "uint8",
+        name: "_part",
+        type: "uint8",
+      },
+      {
+        internalType: "string",
+        name: "_SVGorHTML",
+        type: "string",
+      },
+    ],
+    name: "setSVGorHTMLbyPart",
     outputs: [],
     stateMutability: "nonpayable",
     type: "function",
@@ -829,66 +773,32 @@ const SIGILS_ABI = [
   {
     inputs: [
       {
+        internalType: "bool",
+        name: "_setWebsite",
+        type: "bool",
+      },
+      {
         internalType: "string",
-        name: "_tokenImagePt1",
+        name: "_websiteOrDescription",
         type: "string",
       },
     ],
-    name: "setTokenImagePt1",
+    name: "setWebsiteOrDescription",
     outputs: [],
     stateMutability: "nonpayable",
     type: "function",
   },
   {
-    inputs: [
+    inputs: [],
+    name: "slowmoStartTime",
+    outputs: [
       {
-        internalType: "string",
-        name: "_tokenImagePt2",
-        type: "string",
+        internalType: "uint256",
+        name: "",
+        type: "uint256",
       },
     ],
-    name: "setTokenImagePt2",
-    outputs: [],
-    stateMutability: "nonpayable",
-    type: "function",
-  },
-  {
-    inputs: [
-      {
-        internalType: "string",
-        name: "_tokenImagePt3",
-        type: "string",
-      },
-    ],
-    name: "setTokenImagePt3",
-    outputs: [],
-    stateMutability: "nonpayable",
-    type: "function",
-  },
-  {
-    inputs: [
-      {
-        internalType: "string",
-        name: "_tokenImagePt4",
-        type: "string",
-      },
-    ],
-    name: "setTokenImagePt4",
-    outputs: [],
-    stateMutability: "nonpayable",
-    type: "function",
-  },
-  {
-    inputs: [
-      {
-        internalType: "string",
-        name: "_website",
-        type: "string",
-      },
-    ],
-    name: "setWebsite",
-    outputs: [],
-    stateMutability: "nonpayable",
+    stateMutability: "view",
     type: "function",
   },
   {
