@@ -47,9 +47,6 @@
             <div id="network-name"></div>
             <!-- <p style="text-align: center;"><em><span class="message" color="black">Please connect to MetaMask.</span></em></p> -->
             <p style="text-align: center;"><em><span class="message" color="white"></span></em></p>
-            <div id="connect-approve-anchor-reveal" style ="display:none; text-align:center;">
-              <a href="#contract-interaction-area">Jump to Summoning Ritual</a>
-            </div>
           </div>          
         </div>
         <br>
@@ -62,17 +59,19 @@
       <br><br><br>
 
       <br><br>
+      <h4 style="text-align: center;"><em>On your journey, you find yourself standing in front of a great rift.</em></h4>
+      <h4 style="text-align: center;"><em>With caution, you extend your hand toward it...</em></h4>
       <div id="stats-update">
         <button type="button" onclick="updateStats()">Touch the Rift</button>
       </div>
       <br>
       <div id="stats" class="grid" style="text-align: center">
         <div>
-          <h4><em>You approach the rift, and...</em></h4>
+          <h4><em>In response...</em></h4>
           <div id="rift-status"><h6>(connect wallet & Touch the Rift)</h6></div>
         </div>
         <div>
-          <h4>Guardian Sigils in Circulation:</h4>
+          <h4>Summoned Sigils:</h4>
           <div id="circulation"><h6>(connect wallet & Touch the Rift)</h6></div>
         </div>
         <div>        
@@ -80,6 +79,11 @@
           <div id="locked"><h6>(connect wallet & Touch the Rift)</h6></div>
         </div>
       </div>
+      <br>
+      <div id="connect-approve-anchor-reveal" style ="display:none; text-align:center;">
+        <h3><a href="#contract-interaction-area">Jump to the Summoning Ritual!</a></h3>
+      </div>
+      <br>
       <hr>
 
     </header><!-- ./ Header -->
@@ -172,7 +176,7 @@
       <div id="contract-interaction-area">
         <div id="contract-interaction-placeholder" style="display:block">
           <br>
-          <h3>Mint is not yet active!</h3>
+          <h3>Have you touched the rift? It may not be ready yet...</h3>
           <p>Stay tuned for updates in the $PLEDGE discord or twitter, or Matto's discord or twitter. When minting begins, refresh this page to unlock the magic.</p>
         </div>
 
@@ -181,8 +185,10 @@
             <br>
             <br>
             <h1 style="text-align: center;">PREPARE FOR SIGIL MAGIC!</h1>
+            <h3 style="text-align: center;">Please read through the steps so you fully understand them.</h3>
             <br>
-            <h3>Step 1: Connect and Approve $PLEDGE</h3>
+            <h4>Step 1: Connect and Approve $PLEDGE from Paying Wallet</h4>
+            <h4><em>Note: You have to be connected to this site with your paying wallet.</em></h4>
             <br>
             <form _lpchecked="1">
               <div class="grid">
@@ -216,15 +222,19 @@
           <!-- MINT Functions  -->
           <div>
             <br>
-            <h3>Step 2: SUMMON!</h3>
-            <h4><em>Note: 7 Day A.L. is active - Guardian addresses can only be summoned to once.</em></h4>
+            <h4>Step 2: SUMMON!</h4>
+            <h4><em>Note: Safety controls are active - for 7 days, Guardian addresses can only be summoned to once.</em></h4>
             <div class="grid">
-              <p>Guardian Sigils can only be summoned (minted) to a provided account, and that account (recipient) must be a Guardian with a pledge of at least 1M tokens. Additionally, if the summoning account is a pledger (note: it doesn't have to be), they (the paying account) must have enough $PLEDGE available in the current window to not break the pledge (minting contract checks!). If not a pledger, no problem here.</p>
+              <div>
+                <p>Guardian Sigils can only be summoned (minted) to a provided account, and that account (the recipient) must be a Guardian with a pledge of at least 1M tokens.</p>
+                <p>Additionally, if the summoning account (the paying account) is a pledger (note: it doesn't have to be), they must have enough $PLEDGE available in the current window to not break the pledge. If the paying account is not a pledger, then there's no pledge to break, and summoning is allowed.</p>
+              </div>
               <div>
                 <form _lpchecked="1">
                   <input type="text" id="token-recipient" placeholder="Guardian Sigil Recipient 0x address" required>
                   <button type="submit" id="submit-button" class="btn btn-outline-dark btn-lg btn-round"
                   onclick="SUMMON(); return false">Summon for 5k $PLEDGE</button>
+                  <p style="text-align: center;"><em>If your wallet shows the transaction will fail, cancel.</em></p>
                 </form>
               </div>
             </div>
@@ -239,7 +249,8 @@
           <!-- Liquidate Functions  -->
           <div>
             <br>
-            <h3>Optional Step 3: SACRIFICE!</h3>
+            <h4>Optional Step 3: SACRIFICE!</h4>
+            <h4><em>Note: Sacrificial rites are only allowed once all 777 tokens have been summoned.</em></h4>
             <div class="grid">
               <p>To reclaim 2.5k $PLEDGE from a token, it must be destroyed by its owner through special sacrificial rites. Enter the tokenID of a Guardian Sigil in your wallet that you're willing to sacrifice, but be warned: there is no going back!</p>
               <form _lpchecked="1">

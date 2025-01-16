@@ -13,7 +13,6 @@ document.getElementById("pledge-contract-link").innerHTML = `<a
   target="_blank"
 >Etherscan</a>`;
 
-// Call the function to check the network and if a wallet is connected
 checkNetworkAndWallet();
 
 async function checkNetworkAndWallet() {
@@ -27,15 +26,10 @@ async function checkNetworkAndWallet() {
       if (networkType != 'main') {
         document.getElementById('network-name').innerHTML = `<p style="text-align:center"><em>Please switch to Main network</em></p>`;
       } 
-      // document.getElementById('network-name').innerHTML = `<p style="text-align:center">Current network: Main.</p>`;
       if (accounts.length > 0) {
         document.getElementById('connect-button').style.display = "none";
-        document.getElementById('connect-approve-anchor-reveal').style.display = "block";
       } else {
         document.getElementById('connect-button').style.display = "block";
-        document.getElementById(
-          "connect-approve-anchor-reveal"
-        ).style.display = "none";
       }
       
     } catch (error) {
@@ -64,7 +58,7 @@ async function updateStats() {
   } else {
     circulation = Number(circulation).toLocaleString()
     console.log("Circulation: " + circulation);
-    document.getElementById("circulation").innerHTML = `<h6>${circulation}</h6>`;
+    document.getElementById("circulation").innerHTML = `<h6>${circulation} / 777</h6>`;
     locked = circulation * 2500;
     console.log("Locked: " + locked);
     document.getElementById("locked").innerHTML = `<h6>${locked}</h6>`;
@@ -73,7 +67,12 @@ async function updateStats() {
         "contract-interaction-placeholder"
       ).style.display = "none";
       document.getElementById("contract-interactions").style.display = "block";
-      document.getElementById("rift-status").innerHTML = `<p>The rift pulses with magical energy!</p>`;
+      document.getElementById("rift-status").innerHTML = `<h6>The rift pulses with magical energy!</h6>`;
+      document.getElementById("connect-approve-anchor-reveal").style.display =
+        "block";
+    } else {
+      document.getElementById("rift-status").innerHTML = `<h6>The rift fades back into the ether.</h6>`;
+      document.getElementById("connect-approve-anchor-reveal").style.display = "none";
     }
   }
 }
@@ -127,49 +126,123 @@ async function checkAllowance() {
 
 async function SUMMON() {
   console.log("Attempting to Summon a Guardian Sigil");
-  tokenRecipient = document.getElementById('token-recipient').value;
+
+  const tokenRecipient = document.getElementById("token-recipient").value;
   console.log(`Summoning to: ${tokenRecipient}`);
+
   try {
-    await SIGILScontract.methods.SUMMON(tokenRecipient).send({
-        from: currentAccount
-    }, function(err, res) {
-      if (err) {
-        console.log(err);
-        return
-      }
-    });
-  } catch (errorMessage) {
-    error = true;
-  }
-  if (error) {
-    console.log("Summoning was not successfull");
-  } else {
-    console.log("Summoning Successful");
+    // Check if already summoned
+    const alreadySummoned = await SIGILScontract.methods
+      .hasBeenSummonedTo(tokenRecipient)
+      .call();
+    if (alreadySummoned) {
+      alert(
+        "Recipient has already been summoned a Guardian Sigil. Summoning aborted."
+      );
+      return;
+    }
+
+    // Fetch pledge data
+    const pledgeData = await PLEDGEcontract.methods
+      .getPledgerData(tokenRecipient)
+      .call();
+    const pledgerStatus = parseInt(pledgeData[0]);
+    const pledgedBalance = BigInt(pledgeData[2]);
+
+    // Validate pledge requirements
+    if (pledgerStatus !== 1 || pledgedBalance < BigInt(1000000 * 10 ** 18)) {
+      alert("Recipient does not meet Guardian requirements. Summoning aborted.");
+      return;
+    }
+
+    // Summon the token
+    console.log("Proceeding with Summoning...");
+    await SIGILScontract.methods
+      .SUMMON(tokenRecipient)
+      .send({ from: currentAccount })
+      .on("receipt", (receipt) => {
+        console.log("Summoning Successful", receipt);
+        alert("Summoning Successful!");
+      })
+      .on("error", (err) => {
+        console.error("Error during summoning transaction:", err);
+        alert("Summoning was not successful. Please try again.");
+      });
+  } catch (error) {
+    console.error("An error occurred during the summoning process:", error);
+    alert("Summoning was not successful. Please try again.");
   }
 }
 
 async function SACRIFICE() {
-  console.log("Attempting to Sacrifice a token");
-  tokeToSacrifice = document.getElementById('token-to-sacrifice').value;
-  console.log(`Sacrificing: ${tokeToSacrifice}`);
-  try {
-    await SIGILScontract.methods.SACRIFICE(tokeToSacrifice).send(
-      {
-        from: currentAccount,
-      },
-      function (err, res) {
-        if (err) {
-          console.log(err);
-          return;
-        }
-      }
-    );
-  } catch (errorMessage) {
-    error = true;
+  console.log("Attempting to sacrifice a Guardian Sigil");
+
+  // Get the token ID from the user input
+  const tokenToSacrifice = document.getElementById("token-to-sacrifice").value;
+  console.log(`Token to sacrifice: ${tokenToSacrifice}`);
+
+  if (!tokenToSacrifice || isNaN(tokenToSacrifice)) {
+    alert("Invalid token ID. Please enter a valid token ID to sacrifice.");
+    console.error("Invalid token ID provided.");
+    return;
   }
-  if (error) {
-    console.log("Sacrifice was not successfull");
-  } else {
-    console.log("Sacrifice Successful");
+
+  try {
+    // Check ownership of the token
+    const tokenOwner = await SIGILScontract.methods
+      .ownerOf(tokenToSacrifice)
+      .call();
+    if (tokenOwner.toLowerCase() !== currentAccount.toLowerCase()) {
+      alert("You do not own this token. Only the owner can sacrifice a token.");
+      console.error("Token ownership mismatch.");
+      return;
+    }
+
+    console.log(
+      "You are the owner of the token. Proceeding with the sacrifice..."
+    );
+
+    // Sacrifice the token
+    await SIGILScontract.methods
+      .SACRIFICE(tokenToSacrifice)
+      .send({ from: currentAccount })
+      .on("receipt", (receipt) => {
+        console.log("Sacrifice Successful", receipt);
+        alert(`Token #${tokenToSacrifice} successfully sacrificed.`);
+      })
+      .on("error", (err) => {
+        console.error("Error during sacrifice transaction:", err);
+        alert("Sacrifice was not successful. Please try again.");
+      });
+  } catch (error) {
+    console.error("An error occurred during the sacrifice process:", error);
+    alert("An unexpected error occurred. Please try again later.");
   }
 }
+
+
+// async function SACRIFICE() {
+//   console.log("Attempting to Sacrifice a token");
+//   tokeToSacrifice = document.getElementById('token-to-sacrifice').value;
+//   console.log(`Sacrificing: ${tokeToSacrifice}`);
+//   try {
+//     await SIGILScontract.methods.SACRIFICE(tokeToSacrifice).send(
+//       {
+//         from: currentAccount,
+//       },
+//       function (err, res) {
+//         if (err) {
+//           console.log(err);
+//           return;
+//         }
+//       }
+//     );
+//   } catch (errorMessage) {
+//     error = true;
+//   }
+//   if (error) {
+//     console.log("Sacrifice was not successfull");
+//   } else {
+//     console.log("Sacrifice Successful");
+//   }
+// }
