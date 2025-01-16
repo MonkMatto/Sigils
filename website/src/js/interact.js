@@ -53,26 +53,28 @@ async function updateStats() {
   } catch (errorMessage) {
     error = true;
   }
+  document.getElementById("rift-status").style.display = "block";
   if (error) {
     console.log("Circulation was not retrieved");
+    document.getElementById("rift-status").innerHTML = `<h4>The rift wasn't fully formed in this realm, and it fades back into the ether... WAY TO GO (try again later!)</h6>`;
   } else {
     circulation = Number(circulation).toLocaleString()
     console.log("Circulation: " + circulation);
-    document.getElementById("circulation").innerHTML = `<h6>${circulation} / 777</h6>`;
+    document.getElementById("circulation").innerHTML = `${circulation} / 777`;
     locked = circulation * 2500;
     console.log("Locked: " + locked);
-    document.getElementById("locked").innerHTML = `<h6>${locked}</h6>`;
+    document.getElementById("locked").innerHTML = `${locked}`;
+    document.getElementById("stats").style.display = "block";
     if (circulation > 0) {
       document.getElementById(
         "contract-interaction-placeholder"
       ).style.display = "none";
+      document.getElementById("touch-or-run-buttons").style.display = "none";
       document.getElementById("contract-interactions").style.display = "block";
-      document.getElementById("rift-status").innerHTML = `<h6>The rift pulses with magical energy!</h6>`;
-      document.getElementById("connect-approve-anchor-reveal").style.display =
-        "block";
+      document.getElementById("rift-status").innerHTML = `<h2><em>You touch the rift, and it pulses with magical energy!</em></h2>`;
+      checkAllowance();
     } else {
-      document.getElementById("rift-status").innerHTML = `<h6>The rift fades back into the ether.</h6>`;
-      document.getElementById("connect-approve-anchor-reveal").style.display = "none";
+      document.getElementById("rift-status").innerHTML = `<h4>The rift wasn't fully formed in this realm, and it fades back into the ether... WAY TO GO (try again later!)</h6>`;
     }
   }
 }
@@ -120,7 +122,8 @@ async function checkAllowance() {
   } else {
     amount = Number(amount / 10**18).toLocaleString();
     console.log(`Allowance: ${amount}`);
-    document.getElementById('allowance').innerHTML = `<p>Allowance is set to <strong>${amount}</strong> $PLEDGE.</p>`;
+    document.getElementById('allowance').innerHTML = `<input type="text" id="placeholder" value="Allowance: ${amount}" disabled>`
+    // <p>Allowance: <strong>${amount}</strong></p>`;
   }
 }
 
@@ -220,6 +223,60 @@ async function SACRIFICE() {
   }
 }
 
+function runAway() {
+  document.getElementById("no-thanks").style.display = "block";
+  document.getElementById("run-away-button").style.display = "none";
+  document.getElementById("touch-message").innerHTML="Journey back and TOUCH THE RIFT";
+}
+
+
+// document.getElementById("download-html").addEventListener("click", 
+
+  async function downloadHTML() {
+  const tokenIdInput = document.getElementById("token-to-retrieve").value;
+
+  if (!tokenIdInput || isNaN(tokenIdInput) || tokenIdInput < 0 || tokenIdInput >= 777) {
+      document.getElementById("message-center").innerHTML = "<p>Invalid Token ID. Enter a number between 0 and 776.</p>";
+      return;
+  }
+
+  try {
+      console.log("Fetching tokenURI for Token ID:", tokenIdInput);
+      const tokenURI = await SIGILScontract.methods.tokenURI(tokenIdInput).call();
+
+      // Decode the tokenURI JSON
+      const decodedJson = JSON.parse(atob(tokenURI.slice(29)));
+      const animationUrl = decodedJson.animation_url;
+      
+      if (!animationUrl) {
+          document.getElementById("message-center").innerHTML = "<p>Error: animation_url not found in tokenURI.</p>";
+          return;
+      }
+
+      // Decode the base64 content
+      const base64Content = animationUrl.split(',')[1];
+      const decodedHtml = atob(base64Content);
+      
+      // Create and save the HTML file
+      const blob = new Blob([decodedHtml], { type: 'text/html' });
+      const downloadUrl = URL.createObjectURL(blob);
+      const downloadLink = document.createElement('a');
+      downloadLink.href = downloadUrl;
+      downloadLink.download = `GuardianSigils_${tokenIdInput}.html`;
+      
+      // Trigger download
+      downloadLink.click();
+      
+      // Clean up
+      URL.revokeObjectURL(downloadUrl);
+      document.getElementById("message-center").innerHTML = `<p>HTML file for Token ID ${tokenIdInput} downloaded successfully.</p>`;
+      
+  } catch (error) {
+      console.error("Error fetching tokenURI:", error);
+      document.getElementById("message-center").innerHTML = `<p>Error fetching tokenURI: ${error.message}</p>`;
+      alert("An unexpected error occurred. Please try again later.");
+  }
+}
 
 // async function SACRIFICE() {
 //   console.log("Attempting to Sacrifice a token");

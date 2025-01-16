@@ -1,4 +1,4 @@
-let mainnet = true;
+let mainnet = false;
 let PLEDGE_ADDRESS, SIGILS_ADDRESS;
 if (mainnet) {
   PLEDGE_ADDRESS = "0x910812c44eD2a3B611E4b051d9D83A88d652E2DD";

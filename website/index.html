@@ -57,31 +57,27 @@
       <image src="./src/images/pledge_sigil_anima.svg" alt="Sigil of the $PLEDGE Contract"></image>
       <p style="text-align: center;"><em>Sigil of the $PLEDGE Contract</em></p>
       <br><br><br>
-
       <br><br>
       <h4 style="text-align: center;"><em>On your journey, you find yourself standing in front of a great rift.</em></h4>
       <h4 style="text-align: center;"><em>With caution, you extend your hand toward it...</em></h4>
-      <div id="stats-update">
-        <button type="button" onclick="updateStats()">Touch the Rift</button>
-      </div>
-      <br>
-      <div id="stats" class="grid" style="text-align: center">
+      <br><br>
+      <div class="grid" id="touch-or-run-buttons">
         <div>
-          <h4><em>In response...</em></h4>
-          <div id="rift-status"><h6>(connect wallet & Touch the Rift)</h6></div>
+          <button id="run-away-button" type="button" onclick="runAway()">Run Away!</button>
+          <p id="no-thanks" style="text-align: center; display:none"><em>You run like a coward, and you live, but every morning you feel the rift calling and you are compelled to return...</em></p>
         </div>
-        <div>
-          <h4>Summoned Sigils:</h4>
-          <div id="circulation"><h6>(connect wallet & Touch the Rift)</h6></div>
-        </div>
-        <div>        
-          <h4>$PLEDGE Locked in Sigils:</h4>
-          <div id="locked"><h6>(connect wallet & Touch the Rift)</h6></div>
+        <div id="stats-update">
+          <button type="button" id="touch-message" onclick="updateStats()">Touch the Rift</button>
         </div>
       </div>
       <br>
-      <div id="connect-approve-anchor-reveal" style ="display:none; text-align:center;">
-        <h3><a href="#contract-interaction-area">Jump to the Summoning Ritual!</a></h3>
+      <div>
+      </div>
+      <div id="rift-status" style="text-align: center; display:none"></div>
+      <div id="stats" style="text-align: center; display:none">
+        <h4 style="text-align: center;"><em>You feel your mind being filled with the ancient knowledge and profound wisdom of Guardian Sigils - magical emblems granting their owners strength and resolve.</em></h4>
+        <h4 style="text-align: center;"><em>You know that there are <span id="circulation"></span> Guardian Sigils that have been summoned to this realm, and you know that there is <span id="locked"></span> $PLEDGE locked within them.</em></h4>
+        <h4 style="text-align: center;"><em>You feel compelled to summon one to your Guardian wallet, and you are ready to <a href="#contract-interaction-area">begin the Summoning Ritual!</a></em></h4>
       </div>
       <br>
       <hr>
@@ -127,7 +123,7 @@
       <div id="interactivity-info">
         <br>
         <h3>Interactivity</h3>
-        <p>The HTML generated onchain has various interactive features. Marketplaces and DApps may disable this JavaScript interactivity, but by downloading the HTML from the contract or using the viewer here (COMING SOON) you can interact directly with the generator's code that was created onchain.</p>
+        <p>The HTML generated onchain has various interactive features. Marketplaces and DApps may disable this JavaScript interactivity, but by downloading the HTML from the contract on an explorer or by using a tool at the bottom of this page, you can interact directly with the generator's code that was created onchain.</p>
         <p>To use URL parameters, add <code>?</code> to the URL and then the parameters set to a value, eg. <code>?still=true</code>. You can string multiple parameters by using <code>&</code> between them, eg. <code>?still=true&ghost=true&distance=5</code></p>
         <h5>URL Parameters:</h5>
         <ul>
@@ -184,7 +180,7 @@
           <div id="connect-approve">
             <br>
             <br>
-            <h1 style="text-align: center;">PREPARE FOR SIGIL MAGIC!</h1>
+            <h1 style="text-align: center;">PREPARE FOR THE SUMMONING RITUAL!</h1>
             <h3 style="text-align: center;">Please read through the steps so you fully understand them.</h3>
             <br>
             <h4>Step 1: Connect and Approve $PLEDGE from Paying Wallet</h4>
@@ -194,12 +190,7 @@
               <div class="grid">
                 <div>
                   <p>Guardian Sigils are summoned at a cost of 5k $PLEDGE each. To allow the Guardian Sigils contract to transfer your $PLEDGE, you have to approve it on the $PLEDGE contract... Which you can do on <span id="pledge-contract-link"></span> or here on this page (if you connected).</p>
-                  <p>To authorize, use the default value of 10k (enough for 2 Summonings) or edit it and click 'Approve'.</p>
-                  <div id="allowance">
-                    <p>Once that's done, check the allowance...</p>
-                      <button type="submit" id="check-approval-button" class="btn btn-outline-dark btn-lg btn-round"
-                      onclick="checkAllowance(); return false">Check Guardian Sigils Contract Allowance</button>
-                  </div>
+                  <p>To authorize, use the default value of 10k (enough for 2 Summonings) or edit it and click 'Set Allowance'.</p>
                 </div>
                 <div>
                   <!-- <div id="connect-button2" style="display: none;">
@@ -207,9 +198,16 @@
                   </div> -->
                   <br>
                   <div class="grid">
+                    <div id="allowance"></div>
+                    <div>
+                        <button type="submit" id="check-approval-button" class="btn btn-outline-dark btn-lg btn-round"
+                        onclick="checkAllowance(); return false">Check Allowance</button>
+                    </div>
+                  </div>
+                  <div class="grid">
                     <input type="number" id="approved-amount" value="10000" required>
                     <button type="submit" id="submit-button" class="btn btn-outline-dark btn-lg btn-round"
-                      onclick="approve(); return false">Approve</button>
+                      onclick="approve(); return false">Set Allowance</button>
                   </div>
                   <br>
                 </div>
@@ -227,7 +225,7 @@
             <div class="grid">
               <div>
                 <p>Guardian Sigils can only be summoned (minted) to a provided account, and that account (the recipient) must be a Guardian with a pledge of at least 1M tokens.</p>
-                <p>Additionally, if the summoning account (the paying account) is a pledger (note: it doesn't have to be), they must have enough $PLEDGE available in the current window to not break the pledge. If the paying account is not a pledger, then there's no pledge to break, and summoning is allowed.</p>
+                <p>Additionally, if the summoning account (the paying account) is a pledger (note: it doesn't have to be), they must have enough $PLEDGE available in the current window to not break the pledge (<a href="https://www.thepledge.meme/" target="_blank">check here</a>). If the paying account is not a pledger, then there's no pledge to break, and summoning is allowed.</p>
               </div>
               <div>
                 <form _lpchecked="1">
@@ -266,6 +264,28 @@
             <br>
             <hr>
           </div>
+
+          <!-- Download HTML -->
+          <div>
+            <br>
+            <h4>Download Guardian Sigil HTML from the Ethereum Blockchain!</h4>
+            <h4><em>Note: This will access, extract, and download a specified token's HTML from the blockchain.</em></h4>
+            <div class="grid">
+              <div>
+                <p>The Guardian Sigils contract returns the HTML in a compressed format within a JSON object within a compressed format. There are other methods to rebuild the HTML from onchain data, but this one actually uses the least amount of contract calls.</p>
+                <p>Once downloaded, open the file to cast the Guardian Sigil! All interactive features as listed earlier will be available.</p>
+              </div>
+              <form _lpchecked="1">
+                <input type="number" id="token-to-retrieve" placeholder="TokenID to Download HTML" required>
+                <button type="submit" id="submit-button" class="btn btn-outline-dark btn-lg btn-round"
+                onclick="downloadHTML(); return false">Download HTML</button>
+              </form>
+            </div>
+            <div id="message-center"></div>
+            <br>
+            <hr>
+          </div>
+
         </div>
       </div>
     </main><!-- ./ Main -->
@@ -289,7 +309,7 @@
         <p>Minting a Guardian Sigil token costs 5k $PLEDGE as well as the gas required to process the transaction. 1/2 the $PLEDGE (2.5k) is locked to the token and can be reclaimed later. Secondary sales of the ERC-721 tokens have 5% royalties payable to <code>artist.MonkMatto.eth</code>.</p>        
         <br>
         <h5><em>Where's the art from?</em></h5>
-        <p>Matto coded the art in vanilla JavaScript.</p>
+        <p>Matto coded the art in vanilla JavaScript, which was entirely contained within the contract at deployment (as opposed to being stored in many chunks and later assembled). The contract is <em>also</em> an experiment in minimalism, and fits within the limitations imposed by 'Spurious Dragon'.</p>
         <br>
       </details>
       <small>Built by Matto / @MonkMatto: <a href="https://matto.xyz/" target="_blank">Website</a> | <a href="https://instagram.com/MonkMatto" target="_blank">Instagram</a> | <a href="https://warpcast.com/monkmatto" target="_blank">Warpcast</a> | <a href="https://bsky.app/profile/matto.bsky.social" target="_blank">Bluesky (@Matto)</a> | <a href="https://www.threads.net/@monkmatto" target="_blank">Threads</a> | <a href="https://twitter.com/MonkMatto" target="_blank">Twitter</a> | <a href="https://discord.com/invite/AQDwjAa3g2" target="_blank">Discord</a></small>
