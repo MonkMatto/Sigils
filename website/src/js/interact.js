@@ -230,9 +230,7 @@ function runAway() {
 }
 
 
-// document.getElementById("download-html").addEventListener("click", 
-
-  async function downloadHTML() {
+async function downloadHTML() {
   const tokenIdInput = document.getElementById("token-to-retrieve").value;
 
   if (!tokenIdInput || isNaN(tokenIdInput) || tokenIdInput < 0 || tokenIdInput >= 777) {
@@ -241,35 +239,35 @@ function runAway() {
   }
 
   try {
-      console.log("Fetching tokenURI for Token ID:", tokenIdInput);
-      const tokenURI = await SIGILScontract.methods.tokenURI(tokenIdInput).call();
+    console.log("Fetching tokenURI for Token ID:", tokenIdInput);
+    const tokenURI = await SIGILScontract.methods.tokenURI(tokenIdInput).call();
 
-      // Decode the tokenURI JSON
-      const decodedJson = JSON.parse(atob(tokenURI.slice(29)));
-      const animationUrl = decodedJson.animation_url;
-      
-      if (!animationUrl) {
-          document.getElementById("message-center").innerHTML = "<p>Error: animation_url not found in tokenURI.</p>";
-          return;
-      }
+    // Decode the tokenURI JSON
+    const decodedJson = JSON.parse(atob(tokenURI.slice(29)));
+    const animationUrl = decodedJson.animation_url;
+    
+    if (!animationUrl) {
+        document.getElementById("message-center").innerHTML = "<p>Error: animation_url not found in tokenURI.</p>";
+        return;
+    }
 
-      // Decode the base64 content
-      const base64Content = animationUrl.split(',')[1];
-      const decodedHtml = atob(base64Content);
-      
-      // Create and save the HTML file
-      const blob = new Blob([decodedHtml], { type: 'text/html' });
-      const downloadUrl = URL.createObjectURL(blob);
-      const downloadLink = document.createElement('a');
-      downloadLink.href = downloadUrl;
-      downloadLink.download = `GuardianSigils_${tokenIdInput}.html`;
-      
-      // Trigger download
-      downloadLink.click();
-      
-      // Clean up
-      URL.revokeObjectURL(downloadUrl);
-      document.getElementById("message-center").innerHTML = `<p>HTML file for Token ID ${tokenIdInput} downloaded successfully.</p>`;
+    // Decode the base64 content
+    const base64Content = animationUrl.split(',')[1];
+    const decodedHtml = atob(base64Content);
+    
+    // Create and save the HTML file
+    const blob = new Blob([decodedHtml], { type: 'text/html' });
+    const downloadUrl = URL.createObjectURL(blob);
+    const downloadLink = document.createElement('a');
+    downloadLink.href = downloadUrl;
+    downloadLink.download = `GuardianSigils_${tokenIdInput}.html`;
+    
+    // Trigger download
+    downloadLink.click();
+    
+    // Clean up
+    URL.revokeObjectURL(downloadUrl);
+    document.getElementById("message-center").innerHTML = `<p>HTML file for Token ID ${tokenIdInput} downloaded successfully.</p>`;
       
   } catch (error) {
       console.error("Error fetching tokenURI:", error);
@@ -277,29 +275,3 @@ function runAway() {
       alert("An unexpected error occurred. Please try again later.");
   }
 }
-
-// async function SACRIFICE() {
-//   console.log("Attempting to Sacrifice a token");
-//   tokeToSacrifice = document.getElementById('token-to-sacrifice').value;
-//   console.log(`Sacrificing: ${tokeToSacrifice}`);
-//   try {
-//     await SIGILScontract.methods.SACRIFICE(tokeToSacrifice).send(
-//       {
-//         from: currentAccount,
-//       },
-//       function (err, res) {
-//         if (err) {
-//           console.log(err);
-//           return;
-//         }
-//       }
-//     );
-//   } catch (errorMessage) {
-//     error = true;
-//   }
-//   if (error) {
-//     console.log("Sacrifice was not successfull");
-//   } else {
-//     console.log("Sacrifice Successful");
-//   }
-// }
