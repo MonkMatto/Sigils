@@ -88,6 +88,7 @@ function handleAccountsChanged(accounts) {
     console.log("web3 handshake : account connected ", currentAccount)
     renderMessage('Account connected ', currentAccount);
     // Do any other work!
+    document.getElementById("touch-rift-area").style.display = "block";
   }
 }
 
