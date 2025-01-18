@@ -1,77 +1,22 @@
-function makeAddress() {
-  let a = "0x";
-  for (let i = 0; i < 40; i++) {
-    a += Math.floor(Math.random() * 16).toString(16);
-  }
-  console.log(a);
-  return a;
-}
-
-function makeTraits() {
-  let magic = makeMagic();
-  console.log(magic);
-  let data = new Array(7);
-  data[0] = 1;
-  data[1] = magic % 4 == 0 ? 1 : 0;
-  magic = Math.floor(magic / 10);
-  data[2] = magic % 4 == 0 ? 1 : 0;
-  magic = Math.floor(magic / 10);
-  data[3] = magic % 3 == 0 ? 1 : 0;
-  magic = Math.floor(magic / 10);
-  data[4] = magic % 5 == 0 ? 1 : 0;
-  magic = Math.floor(magic / 10);
-  data[5] = magic % 2 == 0 ? 1 : 0;
-  magic = Math.floor(magic / 10);
-  let test = magic % 4;
-  magic = Math.floor(magic / 10);
-  if (test == 2) {
-      data[6] = 0;
-  } else if (test < 2) {
-      data[6] = (magic % 4) + 1;
-  } else {
-      data[6] = ((magic % 3) + 1) * 30;
-  }
-  console.log(data);
-  return data;
-}
-
-function makeMagic() {
-  let m = "";
-  for (let i = 0; i < 10; i++) {
-    m += Math.floor(Math.random() * 10).toString();
-  }
-  console.log(m);
-  return parseInt(m);
-}
-
-const tokenData = {address: makeAddress(), traits: makeTraits()};
-
-// const tokenData = {
-//   address: "0xab8483f64d9c6d1ecf9b849ae677dd3315835cb2",
-//   traits: [1, 1, 0, 1, 0, 0, 3],
-// };
-console.log("#".repeat(40));
-
-////////////////////////////////////////////////////////////////////////////////
 const project = "Guardian Sigils";
 const version = "5.0";
 console.log(`${project} ${version} copyright Matto 2025`);
 console.log(
-    "URL PARAMETERS IN HTML MODE: address=0x...; bools: mono, simplified, signature, invert, ghost, ether-style, still; numbers: stroke-width, distance"
+    "URL PARAMETERS IN HTML MODE: address=0x...; bools: mono, fundamental, signature, invert, ghost, ether-style, still; numbers: stroke-width, distance"
   );
 
-let address  = tokenData.address;
-let traits = tokenData.traits;
-let guardian = ToF(traits[0]);
-let mono = ToF(traits[1]);
-let invert = ToF(traits[2]);
-let simplified = ToF(traits[3]);
-let ghost = ToF(traits[4]);
-let etherStyle = ToF(traits[5]);
-let distance = traits[6];
-if (distance > 10 ) {
-  distance = - distance / 10;
-}
+let address;//  = tokenData.address;
+let traits;// = tokenData.traits;
+let guardian;// = ToF(traits[0]);
+let mono;// = ToF(traits[1]);
+let invert;// = ToF(traits[2]);
+let fundamental;// = ToF(traits[3]);
+let ghost;// = ToF(traits[4]);
+let etherStyle;// = ToF(traits[5]);
+let distance;// = traits[6];
+// if (distance > 10 ) {
+//   distance = - distance / 10;
+// }
 
 let strokeWidth;
 let customStroke = false;
@@ -88,6 +33,11 @@ if (urlAddress) {
     address = urlAddress;
     // console.log(`CUSTOM ADDRESS: ${address}`);
   }
+}
+
+const urlGuardian = urlParams.get("guardian");
+if (urlGuardian == "true") {
+  guardian = true;
 }
 
 const urlStill = urlParams.get("still");
@@ -127,11 +77,11 @@ if (urlSignature == "true") {
   showSignature = true;
 }
 
-const urlsimplified = urlParams.get("simplified");
-if (urlsimplified == "true") {
-  simplified = true;
+const urlfundamental = urlParams.get("fundamental");
+if (urlfundamental == "true") {
+  fundamental = true;
 }
-// console.log(`SIMPLIFIED: ${simplified}`);
+// console.log(`FUNDAMENTAL: ${fundamental}`);
 
 const urlInvert = urlParams.get("invert");
 if (urlInvert == "true") {
@@ -254,7 +204,7 @@ for (let i = 0; i < shapes; i++) {
       for (let j = 0; j < sections; j++) {
         polygon += `${points[i][j].x},${points[i][j].y} `;
 
-        if (!simplified) {
+        if (!fundamental) {
           // concentric circles at inscription points
           if (!etherStyle) {
             tempStr = CC(
