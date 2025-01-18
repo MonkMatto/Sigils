@@ -57,7 +57,7 @@ const project = "Guardian Sigils";
 const version = "5.0";
 console.log(`${project} ${version} copyright Matto 2025`);
 console.log(
-    "URL PARAMETERS IN HTML MODE: address=0x...; bools: mono, simplified, signature, invert, ghost, ether-style, still; numbers: stroke-width, distance"
+    "URL PARAMETERS IN HTML MODE: address=0x...; bools: mono, fundamental, signature, invert, ghost, ether-style, still; numbers: stroke-width, distance"
   );
 
 let address  = tokenData.address;
@@ -65,7 +65,7 @@ let traits = tokenData.traits;
 let guardian = ToF(traits[0]);
 let mono = ToF(traits[1]);
 let invert = ToF(traits[2]);
-let simplified = ToF(traits[3]);
+let fundamental = ToF(traits[3]);
 let ghost = ToF(traits[4]);
 let etherStyle = ToF(traits[5]);
 let distance = traits[6];
@@ -127,11 +127,11 @@ if (urlSignature == "true") {
   showSignature = true;
 }
 
-const urlsimplified = urlParams.get("simplified");
-if (urlsimplified == "true") {
-  simplified = true;
+const urlfundamental = urlParams.get("fundamental");
+if (urlfundamental == "true") {
+  fundamental = true;
 }
-// console.log(`SIMPLIFIED: ${simplified}`);
+// console.log(`FUNDAMENTAL: ${fundamental}`);
 
 const urlInvert = urlParams.get("invert");
 if (urlInvert == "true") {
@@ -254,7 +254,7 @@ for (let i = 0; i < shapes; i++) {
       for (let j = 0; j < sections; j++) {
         polygon += `${points[i][j].x},${points[i][j].y} `;
 
-        if (!simplified) {
+        if (!fundamental) {
           // concentric circles at inscription points
           if (!etherStyle) {
             tempStr = CC(
