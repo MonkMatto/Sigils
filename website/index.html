@@ -172,8 +172,10 @@
       <div id="contract-interaction-area">
         <div id="contract-interaction-placeholder" style="display:block">
           <br>
-          <h3>Have you touched the rift? It may not be ready yet...</h3>
-          <p>Stay tuned for updates in the $PLEDGE discord or twitter, or Matto's discord or twitter. When minting begins, refresh this page to unlock the magic.</p>
+          <h3 style="text-align: center;">Have you touched the rift?</h3>
+          <p style="text-align: center;">You must connect a wallet and touch the rift!</p>
+          <br>
+          <button type="button" id="touch-message" onclick="updateStats()">TOUCH. THE. RIFT.</button>
         </div>
 
         <div id="contract-interactions" style="display:none">
@@ -190,24 +192,21 @@
               <div class="grid">
                 <div>
                   <p>Guardian Sigils are summoned at a cost of 5k $PLEDGE each. To allow the Guardian Sigils contract to transfer your $PLEDGE, you have to approve it on the $PLEDGE contract... Which you can do on <span id="pledge-contract-link"></span> or here on this page (if you connected).</p>
-                  <p>To authorize, use the default value of 10k (enough for 2 Summonings) or edit it and click 'Set Allowance'.</p>
+                  <p>To authorize, use the default value of 10k (enough for 2 Summonings) or edit it and click 'Set Allowance'. Then, check the allowance with 'Check Allowance'.</p>
                 </div>
                 <div>
-                  <!-- <div id="connect-button2" style="display: none;">
-                    <button type="button" onclick="ConnectWallet()">Connect Wallet</button>
-                  </div> -->
                   <br>
-                  <div class="grid">
-                    <div id="allowance"></div>
-                    <div>
-                        <button type="submit" id="check-approval-button" class="btn btn-outline-dark btn-lg btn-round"
-                        onclick="checkAllowance(); return false">Check Allowance</button>
-                    </div>
-                  </div>
                   <div class="grid">
                     <input type="number" id="approved-amount" value="10000" required>
                     <button type="submit" id="submit-button" class="btn btn-outline-dark btn-lg btn-round"
                       onclick="approve(); return false">Set Allowance</button>
+                  </div>
+                  <div class="grid">
+                    <div>
+                      <button type="submit" id="check-approval-button" class="btn btn-outline-dark btn-lg btn-round"
+                      onclick="checkAllowance(); return false">Check Allowance</button>
+                    </div>
+                    <div id="allowance"></div>
                   </div>
                   <br>
                 </div>
@@ -265,15 +264,37 @@
             <hr>
           </div>
 
+          <!-- View Sigil -->
+          <div>
+            <br>
+            <br>
+            <h1 style="text-align: center;">TOKEN INTERACTION TOOLS</h1>
+            <h3 style="text-align: center;">The next sections will allow you to preview any existing token in a new tab, or download a token's HTML directly from the blockchain!</h3>
+            <p style="text-align: center;">When running the live code through either of these options, all previously listed interactive features will be available.</p>
+            <br>
+            <h4>Preview a Guardian Sigil in a new tab.</h4>
+            <h4><em>Note: For convenience, this runs live onchain data with a server-side copy of the art script.</em></h4>
+            <!-- <p>By using the generator code, this tool will launch a viewer with the correct URL parameters to visualize any token.</p> -->
+            <form _lpchecked="1">
+              <div class="grid">
+                <input type="number" id="token-to-preview" placeholder="TokenID to Preview" required>
+                <button type="submit" id="submit-button" class="btn btn-outline-dark btn-lg btn-round"
+                onclick="previewToken(); return false">Preview Token</button>
+              </div>
+            </form>
+            <div id="message-center"></div>
+            <br>
+            <hr>
+          </div>
+
           <!-- Download HTML -->
           <div>
             <br>
-            <h4>Download Guardian Sigil HTML from the Ethereum Blockchain!</h4>
+            <h4>Download Guardian Sigil HTML directly from the Ethereum Blockchain!</h4>
             <h4><em>Note: This will access, extract, and download a specified token's HTML from the blockchain.</em></h4>
             <div class="grid">
               <div>
-                <p>The Guardian Sigils contract returns the HTML in a compressed format within a JSON object within a compressed format. There are other methods to rebuild the HTML from onchain data, but this one actually uses the least amount of contract calls.</p>
-                <p>Once downloaded, open the file to cast the Guardian Sigil! All interactive features as listed earlier will be available.</p>
+                <p>The Guardian Sigils contract returns the HTML in a compressed format within a JSON object within a compressed format. There are other functions to retrieve the HTML from the contract, but this uses a single call to the tokenURI, which is standard to ERC721 DApps.</p>
               </div>
               <form _lpchecked="1">
                 <input type="number" id="token-to-retrieve" placeholder="TokenID to Download HTML" required>

@@ -169,11 +169,15 @@ async function SUMMON() {
       })
       .on("error", (err) => {
         console.error("Error during summoning transaction:", err);
-        alert("Summoning was not successful. Please try again.");
+        alert(
+          "Summoning was not successful. Please check the inputs and try again."
+        );
       });
   } catch (error) {
     console.error("An error occurred during the summoning process:", error);
-    alert("Summoning was not successful. Please try again.");
+    alert(
+      "Summoning was not successful. Please check the inputs and try again."
+    );
   }
 }
 
@@ -215,11 +219,15 @@ async function SACRIFICE() {
       })
       .on("error", (err) => {
         console.error("Error during sacrifice transaction:", err);
-        alert("Sacrifice was not successful. Please try again.");
+        alert(
+          "Sacrifice was not successful. Please check the inputs and try again."
+        );
       });
   } catch (error) {
     console.error("An error occurred during the sacrifice process:", error);
-    alert("An unexpected error occurred. Please try again later.");
+    alert(
+      "An unexpected error occurred. Please check the inputs and try again."
+    );
   }
 }
 
@@ -272,6 +280,74 @@ async function downloadHTML() {
   } catch (error) {
       console.error("Error fetching tokenURI:", error);
       document.getElementById("message-center").innerHTML = `<p>Error fetching tokenURI: ${error.message}</p>`;
-      alert("An unexpected error occurred. Please try again later.");
+      alert(
+        "An unexpected error occurred. Please check the inputs and try again."
+      );
+  }
+}
+
+async function previewToken() {
+  console.log("Attempting to Preview a Guardian Sigil");
+
+  // Get the token ID input
+  const tokenIdInput = document.getElementById("token-to-preview").value;
+  if (
+    !tokenIdInput ||
+    isNaN(tokenIdInput) ||
+    tokenIdInput < 0 ||
+    tokenIdInput >= 777
+  ) {
+    document.getElementById("message-center").innerHTML =
+      "<p>Invalid Token ID. Enter a number between 0 and 776.</p>";
+    return;
+  }
+  console.log(`Previewing Guardian Sigil #${tokenIdInput}`);
+
+  try {
+    // Fetch token owner
+    const tokenOwner = await SIGILScontract.methods
+      .ownerOf(tokenIdInput)
+      .call();
+    console.log(`Owner of Token #${tokenIdInput}: ${tokenOwner}`);
+
+    // Fetch pledge data
+    const traitsArray = await SIGILScontract.methods
+      .getTokenTraitsArray(tokenIdInput)
+      .call();
+    console.log("Token traits:", traitsArray);
+
+    // Parse traits
+    const guardian = traitsArray[0] === "1";
+    const mono = traitsArray[1] === "1";
+    const invert = traitsArray[2] === "1";
+    const fundamental = traitsArray[3] === "1";
+    const ghost = traitsArray[4] === "1";
+    const etherStyle = traitsArray[5] === "1";
+
+    // Calculate distance
+    let distance = parseInt(traitsArray[6]);
+    if (distance > 4) {
+      distance /= -10;
+    }
+    console.log("Parsed traits:", {
+      guardian,
+      mono,
+      invert,
+      fundamental,
+      ghost,
+      etherStyle,
+      distance,
+    });
+
+    // Build the URL
+    const url = `https://sigils.matto.xyz/sigilviewer.html?address=${tokenOwner}&guardian=${guardian}&mono=${mono}&fundamental=${fundamental}&invert=${invert}&ghost=${ghost}&ether-style=${etherStyle}&distance=${distance}`;
+    console.log("Generated URL:", url);
+
+    // Open the viewer in a new tab
+    window.open(url, "_blank");
+  } catch (error) {
+    console.error("An error occurred during the preview process:", error);
+    document.getElementById("message-center").innerHTML =
+      "<p>Previewing was not successful. Please check the inputs and try again.</p>";
   }
 }
