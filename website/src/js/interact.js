@@ -135,15 +135,15 @@ async function SUMMON() {
 
   try {
     // Check if already summoned
-    const alreadySummoned = await SIGILScontract.methods
-      .hasBeenSummonedTo(tokenRecipient)
-      .call();
-    if (alreadySummoned) {
-      alert(
-        "Recipient has already been summoned a Guardian Sigil. Summoning aborted."
-      );
-      return;
-    }
+    // const alreadySummoned = await SIGILScontract.methods
+    //   .hasBeenSummonedTo(tokenRecipient)
+    //   .call();
+    // if (alreadySummoned) {
+    //   alert(
+    //     "Recipient has already been summoned a Guardian Sigil. Summoning aborted."
+    //   );
+    //   return;
+    // }
 
     // Fetch pledge data
     const pledgeData = await PLEDGEcontract.methods
